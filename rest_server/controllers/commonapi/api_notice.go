@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo"
 )
 
+// 공지 조회
 func GetNotice(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
@@ -14,6 +15,7 @@ func GetNotice(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
+// 공지 등록
 func PostNotice(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
@@ -21,6 +23,7 @@ func PostNotice(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
+// 공지 수정
 func PutNotice(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
@@ -28,6 +31,7 @@ func PutNotice(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
+// 공지 삭제
 func DeleteNotice(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
