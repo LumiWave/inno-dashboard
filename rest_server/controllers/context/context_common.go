@@ -1,6 +1,8 @@
 package context
 
-import "github.com/ONBUFF-IP-TOKEN/baseutil/datetime"
+import (
+	"github.com/ONBUFF-IP-TOKEN/baseutil/datetime"
+)
 
 type ContextKey struct {
 	Idx         int64 `json:"idx" query:"idx"`
@@ -19,6 +21,6 @@ type PageInfoResponse struct {
 	TotalSize string `json:"total_size"`
 }
 
-func MakeAt(data *int64) {
+func MakeDt(data *int64) {
 	*data = datetime.GetTS2MilliSec()
 }
