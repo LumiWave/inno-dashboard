@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/basedb"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 )
 
@@ -26,6 +27,12 @@ type AppCoin struct {
 	Coin
 }
 
+type AppInfo struct {
+	AppId   int64  `json:"app_id,omitempty"`
+	AppName string `json:"app_name,omitempty"`
+	IconUrl string `json:"icon_url,omitempty"`
+}
+
 type DB struct {
 	Mysql        *basedb.Mysql
 	MssqlAccount *basedb.Mssql
@@ -33,9 +40,16 @@ type DB struct {
 
 	MssqlPoints map[int64]*basedb.Mssql
 
-	PointList map[int64]Point      // 전체 포인트 종류
-	AppCoins  map[int64][]*AppCoin // 전체 app에 속한 CoinID 정보
-	Coins     map[int64]*Coin      // 전체 coin 정보
+	ScanPointsMap map[int64]context.PointInfo // 전체 포인트 종류 1
+	ScanPoints    context.PointList           // 전체 포인트 종류 2
+
+	ScanAppsMap map[int64]*AppInfo // 전체 app
+
+	AppPointsMap map[int64]*context.AppPointInfo // 전체 app과 포인트 1
+	AppPoints    context.AppPoints               // 전체 app과 포인트 2
+
+	AppCoins map[int64][]*AppCoin // 전체 app에 속한 CoinID 정보
+	Coins    map[int64]*Coin      // 전체 coin 정보
 }
 
 var gDB *DB
@@ -49,14 +63,18 @@ func SetDB(db *basedb.Mssql, cache *basedb.Cache, pointdbs map[int64]*basedb.Mss
 }
 
 func SetDBPoint(pointdbs map[int64]*basedb.Mssql) {
-	gDB.PointList = make(map[int64]Point)
+	gDB.ScanPointsMap = make(map[int64]context.PointInfo)
 	gDB.AppCoins = make(map[int64][]*AppCoin)
+	gDB.ScanAppsMap = make(map[int64]*AppInfo)
+	gDB.AppPointsMap = make(map[int64]*context.AppPointInfo)
 	gDB.Coins = make(map[int64]*Coin)
 	gDB.MssqlPoints = pointdbs
 
 	gDB.GetPointList()
 	gDB.GetAppCoins()
 	gDB.GetCoins()
+	gDB.GetApps()
+	gDB.GetAppPoints()
 }
 
 func GetDB() *DB {

@@ -10,15 +10,16 @@ type PointList struct {
 	Points []PointInfo `json:"points"`
 }
 
-type AppInfo struct {
-	AppId   int64  `json:"app_id,omitempty"`
-	AppName string `json:"app_name,omitempty"`
-	IconUrl string `json:"icon_url,omitempty"`
-	PointId int64  `json:"point_id,omitempty"`
+type AppPointInfo struct {
+	AppId                int64  `json:"app_id,omitempty"`
+	AppName              string `json:"app_name,omitempty"`
+	IconUrl              string `json:"icon_url"`
+	PointId              int64  `json:"point_id"`
+	DaliyLimitedQuantity int64  `json:"daliy_limited_quantity"`
 }
 
-type Apps struct {
-	Apps []AppInfo `json:"apps"`
+type AppPoints struct {
+	Apps []*AppPointInfo `json:"apps"`
 }
 
 type CoinInfo struct {
