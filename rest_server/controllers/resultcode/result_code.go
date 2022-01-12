@@ -5,6 +5,9 @@ const (
 
 	Result_Require_PageInfo = 10001 // 유효한 페이지 정보 필요
 
+	Result_Empty_CoinSymbol    = 12001 // 코인 심볼이 비어있다.
+	Result_Upbit_TickerMarkets = 12002 // 업비트 시세 Ticker 조회 API 에러.
+
 	Result_DBError         = 19000 // db 에러
 	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
 	Result_DBError_Unknown = 19002 // 알려지지 않은 db 에러
@@ -21,6 +24,9 @@ var ResultCodeText = map[int]string{
 	Result_Success: "success",
 
 	Result_Require_PageInfo: "require page info",
+
+	Result_Empty_CoinSymbol:    "Empty coin symbol",
+	Result_Upbit_TickerMarkets: "Upbit Ticker Markets API Error",
 
 	Result_DBError:         "Internal DB error",
 	Result_Invalid_DBID:    "Invalid DB ID",

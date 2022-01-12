@@ -14,6 +14,7 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/externalapi"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/internalapi"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/upbit"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/schedule"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/util"
@@ -21,8 +22,7 @@ import (
 
 type ServerApp struct {
 	base.BaseApp
-	conf       *config.ServerConfig
-	configFile string
+	conf *config.ServerConfig
 
 	sysMonitor *schedule.SystemMonitor
 }
@@ -39,6 +39,8 @@ func (o *ServerApp) Init(configFile string) (err error) {
 	if err := o.NewDB(o.conf); err != nil {
 		return err
 	}
+
+	o.InitUpbit()
 
 	return err
 }
@@ -70,8 +72,11 @@ func NewApp() (*ServerApp, error) {
 
 func (o *ServerApp) InitScheduler() error {
 	o.sysMonitor = schedule.GetSystemMonitor()
-
 	return nil
+}
+
+func (o *ServerApp) InitUpbit() {
+	upbit.InitUpbitInfo()
 }
 
 func (o *ServerApp) NewDB(conf *config.ServerConfig) error {

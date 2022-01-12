@@ -1,11 +1,19 @@
 package context
 
+import (
+	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+)
+
 // 가격 정보
+type ReqPriceInfo struct {
+	CoinSymbol string `json:"coin_symbol" query:"coin_symbol"`
+}
 type PriceInfo struct {
-	OpeningPrice float64 `json:"opening_price,omitempty"`
-	HighPrice    float64 `json:"high_price,omitempty"`
-	LowPrice     float64 `json:"low_price,omitempty"`
-	TradePrice   float64 `json:"trade_price,omitempty"`
+	CoinSymbol     string  `json:"coin_symbol,omitempty"`
+	ONITPrice      float64 `json:"onit_price,omitempty"`
+	KRWPrice       float64 `json:"krw_price,omitempty"`
+	PriceTimeStamp int64   `json:"price_timestamp,omitempty"`
 }
 
 // 시세 정보
@@ -39,4 +47,11 @@ type LiquidityHistory struct {
 	ItemCount        int64  `json:"item_count,omitempty"`
 	Candle           string `json:"candle,omitempty"`
 	Liquiditys       []LiquidityInfo
+}
+
+func (o *ReqPriceInfo) CheckValidate() *base.BaseResponse {
+	if len(o.CoinSymbol) == 0 {
+		return base.MakeBaseResponse(resultcode.Result_Empty_CoinSymbol)
+	}
+	return nil
 }
