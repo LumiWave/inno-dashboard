@@ -33,3 +33,13 @@ func SumString(data1, data2 string) string {
 func SubString(data1, data2 string) string {
 	return strconv.FormatInt(ParseInt(data1)-ParseInt(data2), 10)
 }
+
+// string 배열에서 원소 찾기
+func Contains(x string, arr []string) bool {
+	for _, i := range arr {
+		if x == i {
+			return true
+		}
+	}
+	return false
+}
