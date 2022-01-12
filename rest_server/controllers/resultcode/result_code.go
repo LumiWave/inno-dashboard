@@ -5,8 +5,17 @@ const (
 
 	Result_Require_PageInfo = 10001 // 유효한 페이지 정보 필요
 
-	Result_Empty_CoinSymbol    = 12001 // 코인 심볼이 비어있다.
-	Result_Upbit_TickerMarkets = 12002 // 업비트 시세 Ticker 조회 API 에러.
+	Result_Upbit_EmptyCoinSymbol = 12001 // 코인 심볼이 비어있다.
+	Result_Upbit_EmptyUnit       = 12002 // Unit 이 비어있다.
+	Result_Upbit_InvalidUnit     = 12003 // Unit 이 유효하지 않다.
+	Result_Upbit_EmptyCount      = 12004 // Count가 비어있다.
+	Result_Upbit_EmptyTo         = 12005 // To가  비어있다.
+
+	Result_Upbit_TickerMarkets = 13001 // 업비트 시세 Ticker 조회 API 에러.
+	Result_Upbit_CandleMinutes = 13002 // 업비트 CandleDays 조회 API 에러.
+	Result_Upbit_CandleDays    = 13003 // 업비트 CandleDays 조회 API 에러.
+	Result_Upbit_CandleWeeks   = 13004 // 업비트 CandleWeeks 조회 API 에러.
+	Result_Upbit_CandleMonths  = 13005 // 업비트 CandleMonths 조회 API 에러.
 
 	Result_DBError         = 19000 // db 에러
 	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
@@ -25,8 +34,17 @@ var ResultCodeText = map[int]string{
 
 	Result_Require_PageInfo: "require page info",
 
-	Result_Empty_CoinSymbol:    "Empty coin symbol",
+	Result_Upbit_EmptyCoinSymbol: "Empty coin symbol",
+	Result_Upbit_EmptyUnit:       "Empty Unit",
+	Result_Upbit_InvalidUnit:     "Invalid Unit",
+	Result_Upbit_EmptyCount:      "Empty Count",
+	Result_Upbit_EmptyTo:         "Empty To",
+
 	Result_Upbit_TickerMarkets: "Upbit Ticker Markets API Error",
+	Result_Upbit_CandleMinutes: "Upbit Candle Minutes API Error",
+	Result_Upbit_CandleDays:    "Upbit Candle Days API Error",
+	Result_Upbit_CandleWeeks:   "Upbit Candle Weeks API Error",
+	Result_Upbit_CandleMonths:  "Upbit Candle Months API Error",
 
 	Result_DBError:         "Internal DB error",
 	Result_Invalid_DBID:    "Invalid DB ID",

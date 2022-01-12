@@ -3,6 +3,7 @@ module github.com/ONBUFF-IP-TOKEN/inno-dashboard
 go 1.17
 
 require (
+	github.com/ONBUFF-IP-TOKEN/baseMarket v1.0.2
 	github.com/ONBUFF-IP-TOKEN/baseapp v1.0.9
 	github.com/ONBUFF-IP-TOKEN/basedb v1.1.3
 	github.com/ONBUFF-IP-TOKEN/baseutil v1.0.1
@@ -13,7 +14,6 @@ require (
 )
 
 require (
-	github.com/ONBUFF-IP-TOKEN/baseMarket v1.0.1 // indirect
 	github.com/ONBUFF-IP-TOKEN/basenet v1.0.2 // indirect
 	github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 // indirect
 	github.com/couchbase/gocb v1.6.0 // indirect

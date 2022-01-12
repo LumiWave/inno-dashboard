@@ -24,11 +24,58 @@ func GetCoinPrice(c echo.Context, reqPriceInfo *context.ReqPriceInfo) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
-// 시세 history 조회
-func GetCoinHistoryPrice(c echo.Context) error {
+// 시세 history 조회 (Minutes)
+func GetCoinCandleMinutes(c echo.Context, reqcandle *context.ReqCandleMinutes) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
+	if value, err := upbit.GetCandleMinutes(reqcandle); err != nil {
+		resp.SetReturn(resultcode.Result_Upbit_CandleDays)
+	} else {
+		resp.Value = value
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+// 시세 history 조회 (Days)
+func GetCoinCandleDays(c echo.Context, reqcandle *context.ReqCandleDays) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if value, err := upbit.GetCandleDays(reqcandle); err != nil {
+		resp.SetReturn(resultcode.Result_Upbit_CandleDays)
+	} else {
+		resp.Value = value
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+// 시세 history 조회 (Weeks)
+func GetCoinCandleWeeks(c echo.Context, reqcandle *context.ReqCandleWeeks) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if value, err := upbit.GetCandleWeeks(reqcandle); err != nil {
+		resp.SetReturn(resultcode.Result_Upbit_CandleWeeks)
+	} else {
+		resp.Value = value
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+// 시세 history 조회 (Months)
+func GetCoinCandleMonths(c echo.Context, reqcandle *context.ReqCandleMonths) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if value, err := upbit.GetCandleMonths(reqcandle); err != nil {
+		resp.SetReturn(resultcode.Result_Upbit_CandleMonths)
+	} else {
+		resp.Value = value
+	}
 	return c.JSON(http.StatusOK, resp)
 }
 

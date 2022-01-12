@@ -1,6 +1,7 @@
 package upbit
 
 import (
+	"strconv"
 	"strings"
 
 	baseupbit "github.com/ONBUFF-IP-TOKEN/baseMarket/market/upbit"
@@ -54,4 +55,50 @@ func GetQuoteTicker(coinSymbol string) (*context.PriceInfo, error) {
 	}
 
 	return priceInfo, nil
+}
+
+func GetCandleMinutes(reqCandle *context.ReqCandleMinutes) (*[]baseupbit.CandleMinute, error) {
+	count, _ := strconv.Atoi(reqCandle.Count)
+	unit, _ := strconv.Atoi(reqCandle.Unit)
+
+	resp, err := baseupbit.GetCandleMinutesByStruct(gUpbitInfo, unit, &baseupbit.ReqCandleMinute{
+		Market: reqCandle.CoinSymbol,
+		Count:  count,
+		To:     reqCandle.To,
+	})
+	return resp, err
+}
+
+func GetCandleDays(reqCandle *context.ReqCandleDays) (*[]baseupbit.CandleDay, error) {
+	count, _ := strconv.Atoi(reqCandle.Count)
+
+	resp, err := baseupbit.GetCandleDaysByStruct(gUpbitInfo, &baseupbit.ReqCandleDay{
+		Market:              reqCandle.CoinSymbol,
+		Count:               count,
+		To:                  reqCandle.To,
+		ConvertingPriceUnit: reqCandle.ConvertingPriceUnit,
+	})
+	return resp, err
+}
+
+func GetCandleWeeks(reqCandle *context.ReqCandleWeeks) (*[]baseupbit.CandleWeek, error) {
+	count, _ := strconv.Atoi(reqCandle.Count)
+
+	resp, err := baseupbit.GetCandleWeeksByStruct(gUpbitInfo, &baseupbit.ReqCandleWeek{
+		Market: reqCandle.CoinSymbol,
+		Count:  count,
+		To:     reqCandle.To,
+	})
+	return resp, err
+}
+
+func GetCandleMonths(reqCandle *context.ReqCandleMonths) (*[]baseupbit.CandleMonth, error) {
+	count, _ := strconv.Atoi(reqCandle.Count)
+
+	resp, err := baseupbit.GetCandleMonthsByStruct(gUpbitInfo, &baseupbit.ReqCandleMonth{
+		Market: reqCandle.CoinSymbol,
+		Count:  count,
+		To:     reqCandle.To,
+	})
+	return resp, err
 }
