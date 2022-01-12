@@ -66,6 +66,25 @@ func GetCoinList(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
+	resp.Value = model.GetDB().Coins.Coins
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func PostReloadCoinList(c echo.Context) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if err := model.GetDB().GetAppCoins(); err == nil {
+		if err = model.GetDB().GetCoins(); err == nil {
+			resp.Value = model.GetDB().Coins.Coins
+		} else {
+			resp.SetReturn(resultcode.Result_DBError)
+		}
+	} else {
+		resp.SetReturn(resultcode.Result_DBError)
+	}
+
 	return c.JSON(http.StatusOK, resp)
 }
 

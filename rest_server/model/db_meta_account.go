@@ -83,9 +83,10 @@ func (o *DB) GetAppCoins() error {
 
 	defer rows.Close()
 
+	o.AppCoins = make(map[int64][]*AppCoin)
 	for rows.Next() {
 		appCoin := &AppCoin{}
-		if err := rows.Scan(&appCoin.AppID, &appCoin.CoinID); err == nil {
+		if err := rows.Scan(&appCoin.AppID, &appCoin.CoinId); err == nil {
 			o.AppCoins[appCoin.AppID] = append(o.AppCoins[appCoin.AppID], appCoin)
 		}
 	}
@@ -104,18 +105,24 @@ func (o *DB) GetCoins() error {
 
 	defer rows.Close()
 
+	o.CoinsMap = make(map[int64]*context.CoinInfo)
+	o.Coins.Coins = nil
+
 	for rows.Next() {
-		coin := &Coin{}
-		if err := rows.Scan(&coin.CoinID, &coin.CoinName); err == nil {
-			o.Coins[coin.CoinID] = coin
+		coin := &context.CoinInfo{}
+		if err := rows.Scan(&coin.CoinId, &coin.CoinSymbol, &coin.ContractAddress, &coin.IconUrl); err == nil {
+			o.Coins.Coins = append(o.Coins.Coins, coin)
+			o.CoinsMap[coin.CoinId] = coin
 		}
 	}
 
 	for _, appCoins := range o.AppCoins {
 		for _, appCoin := range appCoins {
-			for coinId, coin := range o.Coins {
-				if appCoin.CoinID == coinId {
-					appCoin.CoinName = coin.CoinName
+			for _, coin := range o.Coins.Coins {
+				if appCoin.CoinId == coin.CoinId {
+					appCoin.CoinSymbol = coin.CoinSymbol
+					appCoin.ContractAddress = coin.ContractAddress
+					appCoin.IconUrl = coin.IconUrl
 					break
 				}
 			}

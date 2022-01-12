@@ -14,3 +14,8 @@ func (o *InternalAPI) PostReLoadPointList(c echo.Context) error {
 func (o *InternalAPI) PostReLoadAppList(c echo.Context) error {
 	return commonapi.PostReLoadAppList(c)
 }
+
+// 전체 코인 리스트 DB reload
+func (o *InternalAPI) PostReloadCoinList(c echo.Context) error {
+	return commonapi.PostReloadCoinList(c)
+}

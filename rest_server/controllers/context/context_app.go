@@ -29,6 +29,6 @@ type CoinInfo struct {
 	IconUrl         string `json:"icon_url,omitempty"`
 }
 
-type Coins struct {
-	Coins []CoinInfo `json:"coins"`
+type CoinList struct {
+	Coins []*CoinInfo `json:"coins"`
 }

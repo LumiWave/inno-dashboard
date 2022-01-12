@@ -17,14 +17,9 @@ type Point struct {
 	PointIds []int64
 }
 
-type Coin struct {
-	CoinID   int64  `json:"coin_id"`
-	CoinName string `json:"coin_symbol"`
-}
-
 type AppCoin struct {
 	AppID int64 `json:"app_id"`
-	Coin
+	context.CoinInfo
 }
 
 type AppInfo struct {
@@ -48,8 +43,10 @@ type DB struct {
 	AppPointsMap map[int64]*context.AppPointInfo // 전체 app과 포인트 1
 	AppPoints    context.AppPoints               // 전체 app과 포인트 2
 
-	AppCoins map[int64][]*AppCoin // 전체 app에 속한 CoinID 정보
-	Coins    map[int64]*Coin      // 전체 coin 정보
+	AppCoins map[int64][]*AppCoin // 전체 app에 속한 CoinID 정보 : key AppId
+
+	CoinsMap map[int64]*context.CoinInfo // 전체 coin 정보 1 : key CoinId
+	Coins    context.CoinList            // 전체 coin 정보 2
 }
 
 var gDB *DB
@@ -67,7 +64,7 @@ func SetDBPoint(pointdbs map[int64]*basedb.Mssql) {
 	gDB.AppCoins = make(map[int64][]*AppCoin)
 	gDB.ScanAppsMap = make(map[int64]*AppInfo)
 	gDB.AppPointsMap = make(map[int64]*context.AppPointInfo)
-	gDB.Coins = make(map[int64]*Coin)
+	gDB.CoinsMap = make(map[int64]*context.CoinInfo)
 	gDB.MssqlPoints = pointdbs
 
 	gDB.GetPointList()
