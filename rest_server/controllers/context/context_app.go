@@ -4,7 +4,7 @@ type PointInfo struct {
 	PointId              int64  `json:"point_id,omitempty"`
 	PointName            string `json:"point_name,omitempty"`
 	IconUrl              string `json:"icon_url,omitempty"`
-	DaliyLimitedQuantity int64  `json:"daliy_limited_quantity"`
+	DaliyLimitedQuantity int64  `json:"daliy_limited_quantity,omitempty"`
 }
 
 type PointList struct {
