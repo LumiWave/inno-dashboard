@@ -38,8 +38,6 @@ type DB struct {
 	ScanPointsMap map[int64]context.PointInfo // 전체 포인트 종류 1 : key PointId
 	ScanPoints    context.PointList           // 전체 포인트 종류 2
 
-	ScanAppsMap map[int64]*AppInfo // 전체 app
-
 	AppPointsMap map[int64]*context.AppPointInfo // 전체 app과 포인트 1
 	AppPoints    context.AppPoints               // 전체 app과 포인트 2
 
@@ -62,7 +60,6 @@ func SetDB(db *basedb.Mssql, cache *basedb.Cache, pointdbs map[int64]*basedb.Mss
 func SetDBPoint(pointdbs map[int64]*basedb.Mssql) {
 	gDB.ScanPointsMap = make(map[int64]context.PointInfo)
 	gDB.AppCoins = make(map[int64][]*AppCoin)
-	gDB.ScanAppsMap = make(map[int64]*AppInfo)
 	gDB.AppPointsMap = make(map[int64]*context.AppPointInfo)
 	gDB.CoinsMap = make(map[int64]*context.CoinInfo)
 	gDB.MssqlPoints = pointdbs
