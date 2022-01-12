@@ -166,14 +166,12 @@ func (o *DB) GetAppPoints() error {
 
 	defer rows.Close()
 
-	var daliyLimiteQuantity sql.NullInt64
-	appPointInfo := &context.AppPointInfo{}
+	var appId, daliyLimiteQuantity, pointId sql.NullInt64
 	for rows.Next() {
-		if err := rows.Scan(&appPointInfo.AppId, &appPointInfo.PointId, &daliyLimiteQuantity); err == nil {
-			o.AppPointsMap[appPointInfo.AppId].PointId = appPointInfo.PointId
-			temp := o.ScanPointsMap[appPointInfo.PointId]
+		if err := rows.Scan(&appId, &pointId, &daliyLimiteQuantity); err == nil {
+			temp := o.ScanPointsMap[pointId.Int64]
 			temp.DaliyLimitedQuantity = daliyLimiteQuantity.Int64
-			o.AppPointsMap[appPointInfo.AppId].Points = append(o.AppPointsMap[appPointInfo.AppId].Points, &temp)
+			o.AppPointsMap[appId.Int64].Points = append(o.AppPointsMap[appId.Int64].Points, &temp)
 		}
 	}
 

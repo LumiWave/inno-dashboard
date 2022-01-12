@@ -15,7 +15,6 @@ type AppPointInfo struct {
 	AppId   int64        `json:"app_id,omitempty"`
 	AppName string       `json:"app_name,omitempty"`
 	IconUrl string       `json:"icon_url"`
-	PointId int64        `json:"-"`
 	Points  []*PointInfo `json:"points"`
 }
 
