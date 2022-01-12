@@ -2,6 +2,7 @@ package model
 
 import (
 	originCtx "context"
+	"database/sql"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
@@ -165,11 +166,14 @@ func (o *DB) GetAppPoints() error {
 
 	defer rows.Close()
 
+	var daliyLimiteQuantity sql.NullInt64
 	appPointInfo := &context.AppPointInfo{}
 	for rows.Next() {
-		if err := rows.Scan(&appPointInfo.AppId, &appPointInfo.PointId, &appPointInfo.DaliyLimitedQuantity); err == nil {
+		if err := rows.Scan(&appPointInfo.AppId, &appPointInfo.PointId, &daliyLimiteQuantity); err == nil {
 			o.AppPointsMap[appPointInfo.AppId].PointId = appPointInfo.PointId
-			o.AppPointsMap[appPointInfo.AppId].DaliyLimitedQuantity = appPointInfo.DaliyLimitedQuantity
+			temp := o.ScanPointsMap[appPointInfo.PointId]
+			temp.DaliyLimitedQuantity = daliyLimiteQuantity.Int64
+			o.AppPointsMap[appPointInfo.AppId].Points = append(o.AppPointsMap[appPointInfo.AppId].Points, &temp)
 		}
 	}
 

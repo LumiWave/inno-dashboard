@@ -35,7 +35,7 @@ type DB struct {
 
 	MssqlPoints map[int64]*basedb.Mssql
 
-	ScanPointsMap map[int64]context.PointInfo // 전체 포인트 종류 1
+	ScanPointsMap map[int64]context.PointInfo // 전체 포인트 종류 1 : key PointId
 	ScanPoints    context.PointList           // 전체 포인트 종류 2
 
 	ScanAppsMap map[int64]*AppInfo // 전체 app

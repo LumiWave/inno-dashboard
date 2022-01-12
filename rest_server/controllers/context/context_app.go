@@ -1,9 +1,10 @@
 package context
 
 type PointInfo struct {
-	PointId   int64  `json:"point_id,omitempty"`
-	PointName string `json:"point_name,omitempty"`
-	IconUrl   string `json:"icon_url,omitempty"`
+	PointId              int64  `json:"point_id,omitempty"`
+	PointName            string `json:"point_name,omitempty"`
+	IconUrl              string `json:"icon_url,omitempty"`
+	DaliyLimitedQuantity int64  `json:"daliy_limited_quantity"`
 }
 
 type PointList struct {
@@ -11,11 +12,11 @@ type PointList struct {
 }
 
 type AppPointInfo struct {
-	AppId                int64  `json:"app_id,omitempty"`
-	AppName              string `json:"app_name,omitempty"`
-	IconUrl              string `json:"icon_url"`
-	PointId              int64  `json:"point_id"`
-	DaliyLimitedQuantity int64  `json:"daliy_limited_quantity"`
+	AppId   int64        `json:"app_id,omitempty"`
+	AppName string       `json:"app_name,omitempty"`
+	IconUrl string       `json:"icon_url"`
+	PointId int64        `json:"-"`
+	Points  []*PointInfo `json:"points"`
 }
 
 type AppPoints struct {
