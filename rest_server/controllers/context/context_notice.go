@@ -1,5 +1,6 @@
 package context
 
+///////// Notice Info
 type NoticeInfo struct {
 	Id       int64  `json:"id,omitempty"`
 	Title    string `json:"title,omitempty"`
@@ -7,3 +8,5 @@ type NoticeInfo struct {
 	Url      string `json:"url,omitempty"`
 	CreateDt int64  `json:"create_dt,omitempty"`
 }
+
+////////////////////////////////////////
