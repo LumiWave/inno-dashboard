@@ -115,8 +115,3 @@ func (o *ExternalAPI) GetCoinCandleMonths(c echo.Context) error {
 
 	return commonapi.GetCoinCandleMonths(c, reqCandleMonths)
 }
-
-// 유동량 조회
-func (o *ExternalAPI) GetCoinHistoryLiquidity(c echo.Context) error {
-	return commonapi.GetCoinHistoryLiquidity(c)
-}

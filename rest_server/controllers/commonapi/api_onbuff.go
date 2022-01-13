@@ -78,11 +78,3 @@ func GetCoinCandleMonths(c echo.Context, reqcandle *context.ReqCandleMonths) err
 	}
 	return c.JSON(http.StatusOK, resp)
 }
-
-// 유동량 조회
-func GetCoinHistoryLiquidity(c echo.Context) error {
-	resp := new(base.BaseResponse)
-	resp.Success()
-
-	return c.JSON(http.StatusOK, resp)
-}
