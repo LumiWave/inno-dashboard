@@ -19,13 +19,3 @@ func (o *ExternalAPI) GetMePointList(c echo.Context) error {
 func (o *ExternalAPI) GetMeCoinList(c echo.Context) error {
 	return commonapi.GetMeCoinList(c)
 }
-
-// App 별 포인트 획득 history 조회
-func (o *ExternalAPI) GetMeHistoryPoint(c echo.Context) error {
-	return commonapi.GetMeHistoryPoint(c)
-}
-
-// App 별 포인트/코인 교환 history 조회
-func (o *ExternalAPI) GetMeHistorySwap(c echo.Context) error {
-	return commonapi.GetMeHistorySwap(c)
-}

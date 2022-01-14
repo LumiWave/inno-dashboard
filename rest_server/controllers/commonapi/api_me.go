@@ -30,19 +30,3 @@ func GetMeCoinList(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, resp)
 }
-
-// App 별 포인트 획득 history 조회
-func GetMeHistoryPoint(c echo.Context) error {
-	resp := new(base.BaseResponse)
-	resp.Success()
-
-	return c.JSON(http.StatusOK, resp)
-}
-
-// App 별 포인트/코인 교환 history 조회
-func GetMeHistorySwap(c echo.Context) error {
-	resp := new(base.BaseResponse)
-	resp.Success()
-
-	return c.JSON(http.StatusOK, resp)
-}
