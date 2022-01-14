@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/labstack/echo"
 )
 
@@ -16,7 +17,7 @@ func GetSwapList(c echo.Context) error {
 }
 
 // Swap 가능 정보 조회 (최소, 변동률, 수수료)
-func GetSwapEnable(c echo.Context) error {
+func GetSwapEnable(c echo.Context, reqSwapEnable *context.ReqSwapEnable) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
@@ -24,7 +25,7 @@ func GetSwapEnable(c echo.Context) error {
 }
 
 // Swap 처리
-func PostSwap(c echo.Context) error {
+func PostSwap(c echo.Context, swapInfo *context.SwapInfo) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
