@@ -38,7 +38,7 @@ type DB struct {
 	ScanPointsMap map[int64]context.PointInfo // 전체 포인트 종류 1 : key PointId
 	ScanPoints    context.PointList           // 전체 포인트 종류 2
 
-	AppPointsMap map[int64]*context.AppPointInfo // 전체 app과 포인트 1
+	AppPointsMap map[int64]*context.AppPointInfo // 전체 app과 포인트 1 : key appId
 	AppPoints    context.AppPoints               // 전체 app과 포인트 2
 
 	AppCoins map[int64][]*AppCoin // 전체 app에 속한 CoinID 정보 : key AppId
