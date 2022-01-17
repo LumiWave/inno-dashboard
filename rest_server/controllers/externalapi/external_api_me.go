@@ -1,7 +1,12 @@
 package externalapi
 
 import (
+	"net/http"
+
+	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/commonapi"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/labstack/echo"
 )
 
@@ -12,10 +17,38 @@ func (o *ExternalAPI) GetMeWallets(c echo.Context) error {
 
 // App 별 총/금일 누적 포인트 리스트 조회
 func (o *ExternalAPI) GetMePointList(c echo.Context) error {
-	return commonapi.GetMePointList(c)
+	reqMePoint := new(context.ReqMePoint)
+
+	// Request json 파싱
+	if err := c.Bind(reqMePoint); err != nil {
+		log.Error(err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := reqMePoint.CheckValidate(); err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetMePointList(c, reqMePoint)
 }
 
 // App 별 총/금일 누적 코인 리스트 조회
 func (o *ExternalAPI) GetMeCoinList(c echo.Context) error {
-	return commonapi.GetMeCoinList(c)
+	reqMeCoin := new(context.ReqMeCoin)
+
+	// Request json 파싱
+	if err := c.Bind(reqMeCoin); err != nil {
+		log.Error(err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := reqMeCoin.CheckValidate(); err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetMeCoinList(c, reqMeCoin)
 }

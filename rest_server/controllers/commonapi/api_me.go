@@ -4,6 +4,9 @@ import (
 	"net/http"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
 	"github.com/labstack/echo"
 )
 
@@ -16,17 +19,29 @@ func GetMeWallets(c echo.Context) error {
 }
 
 // App 별 총/금일 누적 포인트 리스트 조회
-func GetMePointList(c echo.Context) error {
+func GetMePointList(c echo.Context, reqMePoint *context.ReqMePoint) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
+
+	if pointList, err := model.GetDB().GetListApplicationPoints(reqMePoint.AppId); pointList == nil || err != nil {
+		resp.SetReturn(resultcode.Result_Get_Me_PointList_Empty)
+	} else {
+		resp.Value = pointList
+	}
 
 	return c.JSON(http.StatusOK, resp)
 }
 
 // App 별 총/금일 누적 코인 리스트 조회
-func GetMeCoinList(c echo.Context) error {
+func GetMeCoinList(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
+
+	if coinList, err := model.GetDB().GetListApplicationCoins(reqMeCoin.AppId); coinList == nil || err != nil {
+		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Empty)
+	} else {
+		resp.Value = coinList
+	}
 
 	return c.JSON(http.StatusOK, resp)
 }

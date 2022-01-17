@@ -3,19 +3,23 @@ package resultcode
 const (
 	Result_Success = 0
 
-	Result_Require_PageInfo = 10001 // 유효한 페이지 정보 필요
+	Result_Require_PageInfo = 30001 // 유효한 페이지 정보 필요
 
-	Result_Upbit_EmptyCoinSymbol = 12001 // 코인 심볼이 비어있음
-	Result_Upbit_EmptyUnit       = 12002 // Unit 이 비어있음
-	Result_Upbit_InvalidUnit     = 12003 // Unit 이 유효하지 않음
-	Result_Upbit_EmptyCount      = 12004 // Count가 비어있음
-	Result_Upbit_EmptyTo         = 12005 // To가  비어있음
+	Result_Upbit_EmptyCoinSymbol = 32001 // 코인 심볼이 비어있음
+	Result_Upbit_EmptyUnit       = 32002 // Unit 이 비어있음
+	Result_Upbit_InvalidUnit     = 32003 // Unit 이 유효하지 않음
+	Result_Upbit_EmptyCount      = 32004 // Count가 비어있음
+	Result_Upbit_EmptyTo         = 32005 // To가  비어있음
+	Result_Upbit_TickerMarkets   = 32006 // 업비트 시세 Ticker 조회 API 에러
+	Result_Upbit_CandleMinutes   = 32007 // 업비트 CandleMinutes 조회 API 에러
+	Result_Upbit_CandleDays      = 32008 // 업비트 CandleDays 조회 API 에러
+	Result_Upbit_CandleWeeks     = 32009 // 업비트 CandleWeeks 조회 API 에러
+	Result_Upbit_CandleMonths    = 32010 // 업비트 CandleMonths 조회 API 에러
 
-	Result_Upbit_TickerMarkets = 13001 // 업비트 시세 Ticker 조회 API 에러
-	Result_Upbit_CandleMinutes = 13002 // 업비트 CandleMinutes 조회 API 에러
-	Result_Upbit_CandleDays    = 13003 // 업비트 CandleDays 조회 API 에러
-	Result_Upbit_CandleWeeks   = 13004 // 업비트 CandleWeeks 조회 API 에러
-	Result_Upbit_CandleMonths  = 13005 // 업비트 CandleMonths 조회 API 에러
+	Result_Get_Me_PointList_Empty      = 33001 // GetMePointList Request Empty
+	Result_Get_Me_CoinList_Empty       = 33002 // GetMeCoinList Request Empty
+	Result_Get_Me_PointList_Scan_Error = 33003 // GetMePointList DB Scan Error
+	Result_Get_Me_CoinList_Scan_Error  = 33004 // GetMeCoinList DB Scan Error
 
 	Result_DBError         = 19000 // db 에러
 	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
@@ -45,6 +49,11 @@ var ResultCodeText = map[int]string{
 	Result_Upbit_CandleDays:    "Upbit Candle Days API Error",
 	Result_Upbit_CandleWeeks:   "Upbit Candle Weeks API Error",
 	Result_Upbit_CandleMonths:  "Upbit Candle Months API Error",
+
+	Result_Get_Me_PointList_Empty:      "Get Me PointList AppId is empty",
+	Result_Get_Me_CoinList_Empty:       "Get Me CoinList AppId is empty",
+	Result_Get_Me_PointList_Scan_Error: "GetMePointList DB Scan Error",
+	Result_Get_Me_CoinList_Scan_Error:  "GetMeCoinList DB Scan Error",
 
 	Result_DBError:         "Internal DB error",
 	Result_Invalid_DBID:    "Invalid DB ID",
