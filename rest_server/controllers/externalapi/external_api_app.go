@@ -1,7 +1,12 @@
 package externalapi
 
 import (
+	"net/http"
+
+	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/commonapi"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/labstack/echo"
 )
 
@@ -22,17 +27,44 @@ func (o *ExternalAPI) GetCoinList(c echo.Context) error {
 
 // App 포인트 별 당일 누적/전환량 정보 조회
 func (o *ExternalAPI) GetAppPoint(c echo.Context) error {
-	return commonapi.GetAppPoint(c)
+	reqAppPoint := new(context.ReqAppPoint)
+
+	// Request json 파싱
+	if err := c.Bind(reqAppPoint); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := reqAppPoint.CheckValidate(); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetAppPoint(c, reqAppPoint)
+}
+
+// 코인 별 당일 누적/전환량 조회
+func (o *ExternalAPI) GetAppCoin(c echo.Context) error {
+	reqAppCoin := new(context.ReqAppCoin)
+
+	// Request json 파싱
+	if err := c.Bind(reqAppCoin); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := reqAppCoin.CheckValidate(); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+	return commonapi.GetAppCoin(c, reqAppCoin)
 }
 
 // App 포인트 별 유동량 history 조회
 func (o *ExternalAPI) GetAppPointHistory(c echo.Context) error {
 	return commonapi.GetAppPointHistory(c)
-}
-
-// 코인 별 당일 누적/전환량 조회
-func (o *ExternalAPI) GetAppCoin(c echo.Context) error {
-	return commonapi.GetAppCoin(c)
 }
 
 // 코인별 유동량 history 조회
