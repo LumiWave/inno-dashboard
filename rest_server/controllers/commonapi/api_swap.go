@@ -5,6 +5,7 @@ import (
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
 	"github.com/labstack/echo"
 )
@@ -14,9 +15,16 @@ func GetSwapList(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
+	swapAble, err := model.GetDB().GetScanExchangeGoods()
+	if err != nil {
+		resp.SetReturn(resultcode.Result_Get_Swap_ExchangeGoods_Scan_Error)
+		return c.JSON(http.StatusOK, resp)
+	}
+
 	swapList := context.SwapList{
 		PointList: model.GetDB().ScanPoints,
 		CoinList:  model.GetDB().Coins,
+		Swapable:  swapAble,
 	}
 
 	resp.Value = swapList

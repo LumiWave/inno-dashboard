@@ -1,9 +1,17 @@
 package context
 
 ///////// Swap Info 전체 포인트, 코인 정보 리스트 조회
+type Swapable struct {
+	AppID   int64 `json:"app_id"`
+	CoinID  int64 `json:"coin_id"`
+	PointID int64 `json:"point_id"`
+}
+
 type SwapList struct {
 	PointList
 	CoinList
+
+	Swapable []*Swapable `json:"swapable"`
 }
 
 ////////////////////////////////////////
