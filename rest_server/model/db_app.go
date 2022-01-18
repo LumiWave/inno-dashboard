@@ -67,10 +67,10 @@ func (o *DB) GetListApplicationPoints(AppId int64) ([]*context.MePoint, error) {
 			return nil, err
 		} else {
 			mePoint := &context.MePoint{
-				PointID:               pointId,
-				PointName:             o.ScanPointsMap[pointId].PointName,
-				DailyQuantity:         dailyQuantity,
-				DailyExchangeQuantity: dailyExchangeQuantity,
+				PointID: pointId,
+				//PointName: o.ScanPointsMap[pointId].PointName,
+				//DailyQuantity:         dailyQuantity,
+				//DailyExchangeQuantity: dailyExchangeQuantity,
 			}
 			mePointList = append(mePointList, mePoint)
 		}

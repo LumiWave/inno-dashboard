@@ -18,6 +18,7 @@ type VerifyAuthToken struct {
 	AppID     int64  `json:"app_id"`
 	LoginType int64  `json:"login_type"`
 	Uuid      string `json:"uuid"`
+	AUID      int64  `json:"au_id"`
 }
 
 type AuthResponse struct {

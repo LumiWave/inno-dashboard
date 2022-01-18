@@ -29,7 +29,7 @@ func GetMePointList(c echo.Context, reqMePoint *context.ReqMePoint) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if pointList, err := model.GetDB().GetListApplicationPoints(reqMePoint.AppId); pointList == nil || err != nil {
+	if pointList, err := model.GetDB().GetListAccountPoints(reqMePoint.AUID, 0); pointList == nil || err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_PointList_Scan_Error)
 	} else {
 		resp.Value = pointList
@@ -43,7 +43,7 @@ func GetMeCoinList(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if coinList, err := model.GetDB().GetListApplicationCoins(reqMeCoin.AppId); coinList == nil || err != nil {
+	if coinList, err := model.GetDB().GetListAccountCoins(reqMeCoin.AUID); coinList == nil || err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Scan_Error)
 	} else {
 		resp.Value = coinList

@@ -31,37 +31,35 @@ type MeWalletInfo struct {
 
 ///////// Me Point List
 type ReqMePoint struct {
-	AppId int64 `json:"app_id" query:"app_id"`
+	AUID int64 `json:"au_id" query:"au_id"`
+	MUID int64 `json:"mu_id" query:"mu_id"`
 }
 
-func (o *ReqMePoint) CheckValidate() *base.BaseResponse {
-	if o.AppId == 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_Me_AppID_Empty)
+func (o *ReqMePoint) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+	if ctx.GetValue() != nil {
+		o.AUID = ctx.GetValue().AUID
 	}
+
 	return nil
 }
 
 type MePoint struct {
-	PointID               int64  `json:"point_id" query:"point_id"`
-	PointName             string `json:"point_name" query:"point_name"`
-	DailyQuantity         int64  `json:"daily_quantity" query:"daily_quantity"`
-	DailyExchangeQuantity int64  `json:"daily_exchange_quantity" query:"daily_exchange_quantity"`
-}
-
-type MePointList struct {
-	MePointList []MePoint
+	AppID         int64     `json:"app_id" query:"app_id"`
+	PointID       int64     `json:"point_id" query:"point_id"`
+	DailyQuantity float64   `json:"daily_quantity" query:"daily_quantity"`
+	ResetDate     time.Time `json:"reset_date" query:"reset_date"`
 }
 
 ////////////////////////////////////////
 
 ///////// Me Coin List
 type ReqMeCoin struct {
-	AppId int64 `json:"app_id" query:"app_id"`
+	AUID int64 `json:"au_id" query:"au_id"`
 }
 
-func (o *ReqMeCoin) CheckValidate() *base.BaseResponse {
-	if o.AppId == 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_Me_AppID_Empty)
+func (o *ReqMeCoin) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+	if ctx.GetValue() != nil {
+		o.AUID = ctx.GetValue().AUID
 	}
 	return nil
 }

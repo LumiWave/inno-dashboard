@@ -51,7 +51,7 @@ func PreCheck(c echo.Context) base.PreCheckResponse {
 			}
 		} else {
 			base.GetContext(c).(*context.InnoDashboardContext).SetVerifyAuthToken(value)
-			log.Debugf("from : [companyid:%v][appid:%v][logintype:%v]", value.CompanyID, value.AppID, value.LoginType)
+			log.Debugf("from : [companyid:%v][appid:%v][logintype:%v][au_id:%v]", value.CompanyID, value.AppID, value.LoginType, value.AUID)
 		}
 	}
 
