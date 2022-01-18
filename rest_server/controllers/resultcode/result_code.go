@@ -16,8 +16,8 @@ const (
 	Result_Upbit_CandleWeeks     = 32009 // 업비트 CandleWeeks 조회 API 에러
 	Result_Upbit_CandleMonths    = 32010 // 업비트 CandleMonths 조회 API 에러
 
-	Result_GetApp_Point_Scan_Error = 33001
-	Result_GetApp_Coin_Scan_Error  = 33002
+	Result_GetApp_Point_Scan_Error = 33001 // Get App Point DB Scan Error
+	Result_GetApp_Coin_Scan_Error  = 33002 // Get App Coin DB Scan Error
 
 	Result_Get_Me_AUID_Empty            = 34001 // GetMeWallets AUID Empty
 	Result_Get_Me_AppID_Empty           = 34002 // GetMeWallets AppID Empty
