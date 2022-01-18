@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
 	"github.com/labstack/echo"
@@ -89,23 +90,35 @@ func PostReloadCoinList(c echo.Context) error {
 }
 
 // App 포인트 별 당일 누적/전환량 정보 조회
-func GetAppPoint(c echo.Context) error {
+func GetAppPoint(c echo.Context, reqAppPoint *context.ReqAppPoint) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
+
+	if pointList, err := model.GetDB().GetListApplicationPoints(reqAppPoint.AppId); pointList == nil || err != nil {
+		resp.SetReturn(resultcode.Result_Get_Me_PointList_Scan_Error)
+	} else {
+		resp.Value = pointList
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+// 코인 별 당일 누적/전환량 조회
+func GetAppCoin(c echo.Context, reqAppCoin *context.ReqAppCoin) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if coinList, err := model.GetDB().GetListApplicationCoins(reqAppCoin.AppId); coinList == nil || err != nil {
+		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Scan_Error)
+	} else {
+		resp.Value = coinList
+	}
 
 	return c.JSON(http.StatusOK, resp)
 }
 
 // App 포인트 별 유동량 history 조회
 func GetAppPointHistory(c echo.Context) error {
-	resp := new(base.BaseResponse)
-	resp.Success()
-
-	return c.JSON(http.StatusOK, resp)
-}
-
-// 코인 별 당일 누적/전환량 조회
-func GetAppCoin(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
