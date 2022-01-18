@@ -51,7 +51,7 @@ type ReqAppPoint struct {
 
 func (o *ReqAppPoint) CheckValidate() *base.BaseResponse {
 	if o.AppId == 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_Me_AppID_Empty)
+		return base.MakeBaseResponse(resultcode.Result_Get_App_AppID_Empty)
 	}
 	return nil
 }
@@ -72,7 +72,7 @@ type ReqAppCoin struct {
 
 func (o *ReqAppCoin) CheckValidate() *base.BaseResponse {
 	if o.AppId == 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_Me_AppID_Empty)
+		return base.MakeBaseResponse(resultcode.Result_Get_App_AppID_Empty)
 	}
 	return nil
 }

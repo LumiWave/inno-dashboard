@@ -95,7 +95,7 @@ func GetAppPoint(c echo.Context, reqAppPoint *context.ReqAppPoint) error {
 	resp.Success()
 
 	if pointList, err := model.GetDB().GetListApplicationPoints(reqAppPoint.AppId); pointList == nil || err != nil {
-		resp.SetReturn(resultcode.Result_Get_Me_PointList_Scan_Error)
+		resp.SetReturn(resultcode.Result_Get_App_Point_Scan_Error)
 	} else {
 		resp.Value = pointList
 	}
@@ -109,7 +109,7 @@ func GetAppCoin(c echo.Context, reqAppCoin *context.ReqAppCoin) error {
 	resp.Success()
 
 	if coinList, err := model.GetDB().GetListApplicationCoins(reqAppCoin.AppId); coinList == nil || err != nil {
-		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Scan_Error)
+		resp.SetReturn(resultcode.Result_Get_App_Coin_Scan_Error)
 	} else {
 		resp.Value = coinList
 	}
