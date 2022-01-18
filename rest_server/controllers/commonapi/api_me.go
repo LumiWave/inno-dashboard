@@ -11,9 +11,15 @@ import (
 )
 
 // 지갑 정보 조회
-func GetMeWallets(c echo.Context) error {
+func GetMeWallets(c echo.Context, reqMeWallet *context.ReqMeWallet) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
+
+	if walletList, err := model.GetDB().GetListAccountCoins(reqMeWallet.AUID); walletList == nil || err != nil {
+		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
+	} else {
+		resp.Value = walletList
+	}
 
 	return c.JSON(http.StatusOK, resp)
 }
@@ -24,7 +30,7 @@ func GetMePointList(c echo.Context, reqMePoint *context.ReqMePoint) error {
 	resp.Success()
 
 	if pointList, err := model.GetDB().GetListApplicationPoints(reqMePoint.AppId); pointList == nil || err != nil {
-		resp.SetReturn(resultcode.Result_Get_Me_PointList_Empty)
+		resp.SetReturn(resultcode.Result_Get_Me_PointList_Scan_Error)
 	} else {
 		resp.Value = pointList
 	}
@@ -38,7 +44,7 @@ func GetMeCoinList(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	resp.Success()
 
 	if coinList, err := model.GetDB().GetListApplicationCoins(reqMeCoin.AppId); coinList == nil || err != nil {
-		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Empty)
+		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Scan_Error)
 	} else {
 		resp.Value = coinList
 	}

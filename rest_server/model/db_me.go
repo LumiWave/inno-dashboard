@@ -11,9 +11,47 @@ import (
 )
 
 const (
+	USPAU_GetList_AccountCoins      = "[dbo].[USPAU_GetList_AccountCoins]"
 	USPAU_GetList_ApplicationCoins  = "[dbo].[USPAU_GetList_ApplicationCoins]"
 	USPAU_GetList_ApplicationPoints = "[dbo].[USPAU_GetList_ApplicationPoints]"
 )
+
+// 계정 코인 조회
+func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeWalletInfo, error) {
+	var returnValue orginMssql.ReturnStatus
+	rows, _ := o.MssqlAccount.GetDB().QueryContext(contextR.Background(), USPAU_GetList_AccountCoins,
+		sql.Named("AUID", auid),
+		&returnValue)
+
+	var coinId int64
+	var walletAddress string
+	var quantity, dailyQuantity string
+	var resetDate time.Time
+
+	var meWalletList []*context.MeWalletInfo
+
+	for rows.Next() {
+		if err := rows.Scan(&coinId, &walletAddress, &quantity, &dailyQuantity, &resetDate); err != nil {
+			log.Error(err)
+			return nil, err
+		} else {
+			meWallet := &context.MeWalletInfo{
+				CoinID:        coinId,
+				WalletAddress: walletAddress,
+				Quantity:      quantity,
+				DailyQuantity: dailyQuantity,
+				ResetDate:     resetDate,
+			}
+			meWalletList = append(meWalletList, meWallet)
+		}
+	}
+	defer rows.Close()
+
+	if returnValue != 1 {
+		return nil, nil
+	}
+	return meWalletList, nil
+}
 
 // 앱 일일 코인량 목록
 func (o *DB) GetListApplicationCoins(AppId int64) ([]*context.MeCoin, error) {

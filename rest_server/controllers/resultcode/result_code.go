@@ -16,10 +16,11 @@ const (
 	Result_Upbit_CandleWeeks     = 32009 // 업비트 CandleWeeks 조회 API 에러
 	Result_Upbit_CandleMonths    = 32010 // 업비트 CandleMonths 조회 API 에러
 
-	Result_Get_Me_PointList_Empty      = 33001 // GetMePointList Request Empty
-	Result_Get_Me_CoinList_Empty       = 33002 // GetMeCoinList Request Empty
-	Result_Get_Me_PointList_Scan_Error = 33003 // GetMePointList DB Scan Error
-	Result_Get_Me_CoinList_Scan_Error  = 33004 // GetMeCoinList DB Scan Error
+	Result_Get_Me_AUID_Empty            = 33001 // GetMeWallets AUID Empty
+	Result_Get_Me_AppID_Empty           = 33002 // GetMeWallets AppID Empty
+	Result_Get_Me_WalletList_Scan_Error = 33003 // GetMeWalletList DB Scan Error
+	Result_Get_Me_PointList_Scan_Error  = 33004 // GetMePointList DB Scan Error
+	Result_Get_Me_CoinList_Scan_Error   = 33005 // GetMeCoinList DB Scan Error
 
 	Result_DBError         = 19000 // db 에러
 	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
@@ -50,10 +51,11 @@ var ResultCodeText = map[int]string{
 	Result_Upbit_CandleWeeks:   "Upbit Candle Weeks API Error",
 	Result_Upbit_CandleMonths:  "Upbit Candle Months API Error",
 
-	Result_Get_Me_PointList_Empty:      "Get Me PointList AppId is empty",
-	Result_Get_Me_CoinList_Empty:       "Get Me CoinList AppId is empty",
-	Result_Get_Me_PointList_Scan_Error: "GetMePointList DB Scan Error",
-	Result_Get_Me_CoinList_Scan_Error:  "GetMeCoinList DB Scan Error",
+	Result_Get_Me_AUID_Empty:            "AUID is empty",
+	Result_Get_Me_AppID_Empty:           "AppID is empty",
+	Result_Get_Me_WalletList_Scan_Error: "GetMeWalletList DB Scan Error",
+	Result_Get_Me_PointList_Scan_Error:  "GetMePointList DB Scan Error",
+	Result_Get_Me_CoinList_Scan_Error:   "GetMeCoinList DB Scan Error",
 
 	Result_DBError:         "Internal DB error",
 	Result_Invalid_DBID:    "Invalid DB ID",

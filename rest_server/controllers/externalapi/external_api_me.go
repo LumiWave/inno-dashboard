@@ -12,7 +12,21 @@ import (
 
 // 지갑 정보 조회
 func (o *ExternalAPI) GetMeWallets(c echo.Context) error {
-	return commonapi.GetMeWallets(c)
+	reqMeWallet := new(context.ReqMeWallet)
+
+	// Request json 파싱
+	if err := c.Bind(reqMeWallet); err != nil {
+		log.Error(err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := reqMeWallet.CheckValidate(); err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetMeWallets(c, reqMeWallet)
 }
 
 // App 별 총/금일 누적 포인트 리스트 조회
