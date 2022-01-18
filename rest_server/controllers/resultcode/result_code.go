@@ -20,12 +20,12 @@ const (
 	Result_Get_App_Point_Scan_Error = 33002 // Get App Point DB Scan Error
 	Result_Get_App_Coin_Scan_Error  = 33003 // Get App Coin DB Scan Error
 
+	Result_Get_Swap_ExchangeGoods_Scan_Error = 33100 // GetListAccountPoints DB Scan Error
+
 	Result_Get_Me_AUID_Empty            = 34001 // GetMeWallets AUID Empty
 	Result_Get_Me_WalletList_Scan_Error = 34002 // GetMeWalletList DB Scan Error
 	Result_Get_Me_PointList_Scan_Error  = 34003 // GetMePointList DB Scan Error
 	Result_Get_Me_CoinList_Scan_Error   = 34004 // GetMeCoinList DB Scan Error
-
-	Result_Get_Swap_ExchangeGoods_Scan_Error = 33100 // GetListAccountPoints DB Scan Error
 
 	Result_DBError         = 19000 // db 에러
 	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
@@ -60,12 +60,12 @@ var ResultCodeText = map[int]string{
 	Result_Get_App_Point_Scan_Error: "Get App Point DB Scan Error",
 	Result_Get_App_Coin_Scan_Error:  "Get App Coin DB Scan Error",
 
+	Result_Get_Swap_ExchangeGoods_Scan_Error: "GetListAccountPoints DB Scan Error",
+
 	Result_Get_Me_AUID_Empty:            "AUID is empty",
 	Result_Get_Me_WalletList_Scan_Error: "GetMeWalletList DB Scan Error",
 	Result_Get_Me_PointList_Scan_Error:  "GetMePointList DB Scan Error",
 	Result_Get_Me_CoinList_Scan_Error:   "GetMeCoinList DB Scan Error",
-
-	Result_Get_Swap_ExchangeGoods_Scan_Error: "GetListAccountPoints DB Scan Error",
 
 	Result_DBError:         "Internal DB error",
 	Result_Invalid_DBID:    "Invalid DB ID",
