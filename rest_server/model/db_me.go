@@ -24,7 +24,7 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeWalletInfo, error) {
 
 	var coinId int64
 	var walletAddress string
-	var quantity, dailyQuantity string
+	var quantity, dailyQuantity float64
 	var resetDate time.Time
 
 	var meWalletList []*context.MeWalletInfo
@@ -65,8 +65,7 @@ func (o *DB) GetListAccountPoints(auid, muid int64) ([]*context.MePoint, error) 
 		return nil, err
 	}
 
-	var appID, pointID int64
-	var dailyQuantity float64
+	var appID, pointID, dailyQuantity int64
 	var resetDate time.Time
 
 	var mePointList []*context.MePoint
