@@ -5,6 +5,7 @@ import (
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
 	"github.com/labstack/echo"
 )
 
@@ -12,6 +13,13 @@ import (
 func GetSwapList(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
+
+	swapList := context.SwapList{
+		PointList: model.GetDB().ScanPoints,
+		CoinList:  model.GetDB().Coins,
+	}
+
+	resp.Value = swapList
 
 	return c.JSON(http.StatusOK, resp)
 }

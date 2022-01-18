@@ -1,19 +1,9 @@
 package context
 
 ///////// Swap Info 전체 포인트, 코인 정보 리스트 조회
-type SwapPointInfo struct {
-	PointID   int64  `json:"point_id" query:"point_id"`
-	PointName string `json:"point_name" query:"point_name"`
-}
-
-type SwapCoinInfo struct {
-	CoinID     int64  `json:"coin_id" query:"coin_id"`
-	CoinSymbol string `json:"coin_symbol" query:"coin_symbol"`
-}
-
-type RespSwapInfo struct {
-	Points []SwapPointInfo `json:"Points"`
-	Coins  []SwapCoinInfo  `json:"Coins"`
+type SwapList struct {
+	PointList
+	CoinList
 }
 
 ////////////////////////////////////////
