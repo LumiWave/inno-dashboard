@@ -21,7 +21,7 @@ type InternalAPI struct {
 func PreCheck(c echo.Context) base.PreCheckResponse {
 	conf := config.GetInstance()
 	if err := base.SetContext(c, &conf.Config, context.NewInnoDashboardContext); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.PreCheckResponse{
 			IsSucceed: false,
 		}

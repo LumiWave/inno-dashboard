@@ -34,7 +34,7 @@ func CheckAuthToken(authToken string) (bool, *VerifyAuthToken, error) {
 
 	req, err := http.NewRequest("GET", callURL, bytes.NewBuffer(nil))
 	if err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return false, nil, err
 	}
 

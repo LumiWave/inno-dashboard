@@ -32,7 +32,7 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeWalletInfo, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&coinId, &walletAddress, &quantity, &dailyQuantity, &resetDate); err != nil {
-			log.Error(err)
+			log.Errorf("%v", err)
 			return nil, err
 		} else {
 			meWallet := &context.MeWalletInfo{
@@ -67,7 +67,7 @@ func (o *DB) GetListApplicationCoins(AppId int64) ([]*context.MeCoin, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&coinId, &dailyQuantity, &dailyExchangeQuantity, &resetDate); err != nil {
-			log.Error(err)
+			log.Errorf("%v", err)
 			return nil, err
 		} else {
 			meCoin := &context.MeCoin{
@@ -101,7 +101,7 @@ func (o *DB) GetListApplicationPoints(AppId int64) ([]*context.MePoint, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&pointId, &dailyQuantity, &dailyExchangeQuantity, &resetDate); err != nil {
-			log.Error(err)
+			log.Errorf("%v", err)
 			return nil, err
 		} else {
 			mePoint := &context.MePoint{

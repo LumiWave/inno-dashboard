@@ -16,13 +16,13 @@ func (o *ExternalAPI) GetMeWallets(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqMeWallet); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
 	if err := reqMeWallet.CheckValidate(); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 
@@ -35,13 +35,13 @@ func (o *ExternalAPI) GetMePointList(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqMePoint); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
 	if err := reqMePoint.CheckValidate(); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 
@@ -54,13 +54,13 @@ func (o *ExternalAPI) GetMeCoinList(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqMeCoin); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
 	if err := reqMeCoin.CheckValidate(); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 

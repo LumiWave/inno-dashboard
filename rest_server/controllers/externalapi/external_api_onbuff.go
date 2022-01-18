@@ -16,13 +16,13 @@ func (o *ExternalAPI) GetCoinPrice(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqPriceInfo); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
 	if err := reqPriceInfo.CheckValidate(); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 	return commonapi.GetCoinPrice(c, reqPriceInfo)
@@ -37,13 +37,13 @@ func (o *ExternalAPI) GetCoinCandleMinutes(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqCandleMinutes); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
 	if err := reqCandleMinutes.CheckValidate(); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 
@@ -59,13 +59,13 @@ func (o *ExternalAPI) GetCoinCandleDays(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqCandleDays); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
 	if err := reqCandleDays.CheckValidate(); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 
@@ -81,13 +81,13 @@ func (o *ExternalAPI) GetCoinCandleWeeks(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqCandleWeeks); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
 	if err := reqCandleWeeks.CheckValidate(); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 
@@ -103,13 +103,13 @@ func (o *ExternalAPI) GetCoinCandleMonths(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqCandleMonths); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
 	if err := reqCandleMonths.CheckValidate(); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 

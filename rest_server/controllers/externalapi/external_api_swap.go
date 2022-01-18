@@ -19,7 +19,7 @@ func (o *ExternalAPI) GetSwapEnable(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(reqSwapEnable); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 	return commonapi.GetSwapEnable(c, reqSwapEnable)
@@ -31,7 +31,7 @@ func (o *ExternalAPI) PostSwap(c echo.Context) error {
 
 	// Request json 파싱
 	if err := c.Bind(swapInfo); err != nil {
-		log.Error(err)
+		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 	return commonapi.PostSwap(c, swapInfo)
