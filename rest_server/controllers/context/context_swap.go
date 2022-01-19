@@ -8,7 +8,7 @@ type Swapable struct {
 }
 
 type SwapList struct {
-	PointList
+	AppPoints
 	CoinList
 
 	Swapable []*Swapable `json:"swapable"`

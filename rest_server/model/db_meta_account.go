@@ -167,6 +167,8 @@ func (o *DB) GetAppPoints() error {
 
 	defer rows.Close()
 
+	o.AppPoints.Apps = nil
+
 	var appId, pointId, minExchangeQuantity, daliyLimiteQuantity sql.NullInt64
 	var exchangeRatio sql.NullFloat64
 	for rows.Next() {
@@ -177,14 +179,13 @@ func (o *DB) GetAppPoints() error {
 			temp.ExchangeRatio = exchangeRatio.Float64
 
 			o.AppPointsMap[appId.Int64].Points = append(o.AppPointsMap[appId.Int64].Points, &temp)
+			o.AppPoints.Apps = append(o.AppPoints.Apps, o.AppPointsMap[appId.Int64])
 		}
 	}
 
-	o.AppPoints.Apps = nil
-
-	for _, appPoint := range o.AppPointsMap {
-		o.AppPoints.Apps = append(o.AppPoints.Apps, appPoint)
-	}
+	// for _, appPoint := range o.AppPointsMap {
+	// 	o.AppPoints.Apps = append(o.AppPoints.Apps, appPoint)
+	// }
 
 	return nil
 }

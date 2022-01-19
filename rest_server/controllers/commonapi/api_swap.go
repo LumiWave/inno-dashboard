@@ -22,7 +22,7 @@ func GetSwapList(c echo.Context) error {
 	}
 
 	swapList := context.SwapList{
-		PointList: model.GetDB().ScanPoints,
+		AppPoints: model.GetDB().AppPoints,
 		CoinList:  model.GetDB().Coins,
 		Swapable:  swapAble,
 	}
