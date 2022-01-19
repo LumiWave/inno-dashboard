@@ -22,7 +22,7 @@ func (o *DB) GetListApplicationPoints(AppId int64) ([]*context.AppPointDailyInfo
 		sql.Named("AppID", AppId),
 		&returnValue)
 	if err != nil {
-		log.Errorf("%v", err)
+		log.Errorf("USPAU_GetList_ApplicationPoints QueryContext error: %v", err)
 		return nil, nil
 	}
 
@@ -33,7 +33,7 @@ func (o *DB) GetListApplicationPoints(AppId int64) ([]*context.AppPointDailyInfo
 
 	for rows.Next() {
 		if err := rows.Scan(&pointId, &dailyQuantity, &dailyExchangeQuantity, &resetDate); err != nil {
-			log.Errorf("%v", err)
+			log.Errorf("USPAU_GetList_ApplicationPoints Scan error : %v", err)
 			return nil, err
 		} else {
 			appPointDailyInfo := &context.AppPointDailyInfo{

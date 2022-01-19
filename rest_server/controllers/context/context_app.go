@@ -7,10 +7,12 @@ import (
 
 ///////// Point Info
 type PointInfo struct {
-	PointId              int64  `json:"point_id,omitempty"`
-	PointName            string `json:"point_name,omitempty"`
-	IconUrl              string `json:"icon_url,omitempty"`
-	DaliyLimitedQuantity int64  `json:"daliy_limited_quantity,omitempty"`
+	PointId              int64   `json:"point_id,omitempty"`
+	PointName            string  `json:"point_name,omitempty"`
+	IconUrl              string  `json:"icon_url,omitempty"`
+	MinExchangeQuantity  int64   `json:"minimum_exchange_quantity"`
+	ExchangeRatio        float64 `json:"exchange_ratio"`
+	DaliyLimitedQuantity int64   `json:"daliy_limited_quantity,omitempty"`
 }
 
 type PointList struct {
@@ -32,10 +34,11 @@ type AppPoints struct {
 
 ///////// Coin Info
 type CoinInfo struct {
-	CoinId          int64  `json:"coin_id,omitempty"`
-	CoinSymbol      string `json:"coin_symbol,omitempty"`
-	ContractAddress string `json:"contract_address,omitempty"`
-	IconUrl         string `json:"icon_url,omitempty"`
+	CoinId          int64   `json:"coin_id,omitempty"`
+	CoinSymbol      string  `json:"coin_symbol,omitempty"`
+	ContractAddress string  `json:"contract_address,omitempty"`
+	IconUrl         string  `json:"icon_url,omitempty"`
+	ExchangeFees    float64 `json:"exchange_fees"`
 }
 
 type CoinList struct {
