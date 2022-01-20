@@ -3,7 +3,6 @@ package model
 import (
 	contextR "context"
 	"database/sql"
-	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
@@ -18,29 +17,22 @@ const (
 // 계정 코인 조회
 func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeWalletInfo, error) {
 	var returnValue orginMssql.ReturnStatus
-	rows, _ := o.MssqlAccount.GetDB().QueryContext(contextR.Background(), USPAU_GetList_AccountCoins,
+	rows, err := o.MssqlAccount.GetDB().QueryContext(contextR.Background(), USPAU_GetList_AccountCoins,
 		sql.Named("AUID", auid),
 		&returnValue)
 
-	var coinId int64
-	var walletAddress string
-	var quantity, dailyQuantity float64
-	var resetDate time.Time
+	if err != nil {
+		log.Error("USPAU_GetList_AccountCoins QueryContext err : ", err)
+		return nil, err
+	}
 
 	var meWalletList []*context.MeWalletInfo
-
 	for rows.Next() {
-		if err := rows.Scan(&coinId, &walletAddress, &quantity, &dailyQuantity, &resetDate); err != nil {
-			log.Errorf("%v", err)
+		meWallet := &context.MeWalletInfo{}
+		if err := rows.Scan(&meWallet.CoinID, &meWallet.WalletAddress, &meWallet.Quantity, &meWallet.TodayAcqQuantity, &meWallet.TodayCnsmQuantity, &meWallet.ResetDate); err != nil {
+			log.Errorf("USPAU_GetList_AccountCoins Scan error %v", err)
 			return nil, err
 		} else {
-			meWallet := &context.MeWalletInfo{
-				CoinID:        coinId,
-				WalletAddress: walletAddress,
-				Quantity:      quantity,
-				DailyQuantity: dailyQuantity,
-				ResetDate:     resetDate,
-			}
 			meWalletList = append(meWalletList, meWallet)
 		}
 	}
@@ -61,27 +53,19 @@ func (o *DB) GetListAccountPoints(auid, muid int64) ([]*context.MePoint, error) 
 		&returnValue)
 
 	if err != nil {
-		log.Error("QueryContext err : ", err)
+		log.Error("USPAU_GetList_AccountPoints QueryContext err : %v", err)
 		return nil, err
 	}
-
-	var appID, pointID, dailyQuantity int64
-	var resetDate time.Time
 
 	var mePointList []*context.MePoint
 
 	for rows.Next() {
-		if err := rows.Scan(&appID, &pointID, &dailyQuantity, &resetDate); err != nil {
-			log.Errorf("%v", err)
+		mePoint := context.MePoint{}
+		if err := rows.Scan(&mePoint.AppID, &mePoint.PointID, &mePoint.TodayLimitedQuantity, &mePoint.TodayAcqQuantity, &mePoint.TodayCnsmQuantity, &mePoint.ResetDate); err != nil {
+			log.Errorf("USPAU_GetList_AccountPoints Scan error : %v", err)
 			return nil, err
 		} else {
-			mePoint := &context.MePoint{
-				AppID:         appID,
-				PointID:       pointID,
-				DailyQuantity: dailyQuantity,
-				ResetDate:     resetDate,
-			}
-			mePointList = append(mePointList, mePoint)
+			mePointList = append(mePointList, &mePoint)
 		}
 	}
 	defer rows.Close()

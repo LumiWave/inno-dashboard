@@ -20,11 +20,12 @@ func (o *ReqMeWallet) CheckValidate() *base.BaseResponse {
 }
 
 type MeWalletInfo struct {
-	CoinID        int64     `json:"coin_id" query:"coin_id"`
-	WalletAddress string    `json:"wallet_address" query:"wallet_address"`
-	Quantity      float64   `json:"quantity" query:"quantity"`
-	DailyQuantity float64   `json:"daily_quantity" query:"daily_quantity"`
-	ResetDate     time.Time `json:"reset_date" query:"reset_date"`
+	CoinID            int64     `json:"coin_id" query:"coin_id"`
+	WalletAddress     string    `json:"wallet_address" query:"wallet_address"`
+	Quantity          float64   `json:"quantity" query:"quantity"`
+	TodayAcqQuantity  float64   `json:"today_acq_quantity" query:"today_acq_quantity"`
+	TodayCnsmQuantity float64   `json:"today_cnsm_quantity" query:"today_cnsm_quantity"`
+	ResetDate         time.Time `json:"reset_date" query:"reset_date"`
 }
 
 ////////////////////////////////////////
@@ -44,10 +45,13 @@ func (o *ReqMePoint) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse
 }
 
 type MePoint struct {
-	AppID         int64     `json:"app_id" query:"app_id"`
-	PointID       int64     `json:"point_id" query:"point_id"`
-	DailyQuantity int64     `json:"daily_quantity" query:"daily_quantity"`
-	ResetDate     time.Time `json:"reset_date" query:"reset_date"`
+	AppID                int64  `json:"app_id" query:"app_id"`
+	PointID              int64  `json:"point_id" query:"point_id"`
+	Quantity             int64  `json:"quantity"`
+	TodayLimitedQuantity int64  `json:"today_limited_quantity" query:"today_limited_quantity"`
+	TodayAcqQuantity     int64  `json:"today_acq_quantity" query:"today_acq_quantity"`
+	TodayCnsmQuantity    int64  `json:"today_cnsm_quantity" query:"today_cnsm_quantity"`
+	ResetDate            string `json:"reset_date" query:"reset_date"`
 }
 
 ////////////////////////////////////////

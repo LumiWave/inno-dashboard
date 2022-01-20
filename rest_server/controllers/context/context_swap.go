@@ -39,8 +39,11 @@ type RespSwapEnable struct {
 ///////// Swap 처리
 
 type BaseSwapInfo struct {
-	Type          string `json:"type"`                     // point or coin
-	ID            int64  `json:"id"`                       // point_id or coin_id
+	EventType string `json:"event_type"` // point or coin
+	AppID     int64  `json:"app_id"`
+	PointID   int64  `json:"point_id"`
+	CoinID    int64  `json:"coin_id"`
+
 	PointQuantity int64  `json:"point_quantity,omitempty"` // 포인트 양
 	CoinQuantity  string `json:"coin_quantity,omitempty"`  // 코인 양
 }
