@@ -26,6 +26,7 @@ const (
 	Result_Get_Me_WalletList_Scan_Error = 34002 // GetMeWalletList DB Scan Error
 	Result_Get_Me_PointList_Scan_Error  = 34003 // GetMePointList DB Scan Error
 	Result_Get_Me_CoinList_Scan_Error   = 34004 // GetMeCoinList DB Scan Error
+	Result_Get_MemberList_Scan_Error    = 34005 // GetListMembers DB Scan Error
 
 	Result_DBError         = 19000 // db 에러
 	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
@@ -66,6 +67,7 @@ var ResultCodeText = map[int]string{
 	Result_Get_Me_WalletList_Scan_Error: "GetMeWalletList DB Scan Error",
 	Result_Get_Me_PointList_Scan_Error:  "GetMePointList DB Scan Error",
 	Result_Get_Me_CoinList_Scan_Error:   "GetMeCoinList DB Scan Error",
+	Result_Get_MemberList_Scan_Error:    "GetListMembers DB Scan Error",
 
 	Result_DBError:         "Internal DB error",
 	Result_Invalid_DBID:    "Invalid DB ID",

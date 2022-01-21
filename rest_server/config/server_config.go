@@ -24,6 +24,11 @@ type ApiAuth struct {
 	ApiAuthVerify string `json:"api_auth_verify" yaml:"api_auth_verify"`
 }
 
+type ApiPointManagerServer struct {
+	ApiDomain string `yaml:"api_internal_domain"`
+	Ver       string `yaml:"ver"`
+}
+
 type MssqlPoint struct {
 	Port     string `json:"port" yaml:"port"`
 	ID       string `json:"id" yaml:"id"`
@@ -33,10 +38,11 @@ type MssqlPoint struct {
 type ServerConfig struct {
 	baseconf.Config `yaml:",inline"`
 
-	App            App             `yaml:"app"`
-	MssqlDBAccount baseconf.DBAuth `yaml:"mssql_db_account"`
-	MssqlDBPoint   MssqlPoint      `yaml:"mssql_db_point"`
-	Auth           ApiAuth         `yaml:"api_auth"`
+	App            App                   `yaml:"app"`
+	MssqlDBAccount baseconf.DBAuth       `yaml:"mssql_db_account"`
+	MssqlDBPoint   MssqlPoint            `yaml:"mssql_db_point"`
+	Auth           ApiAuth               `yaml:"api_auth"`
+	PointMgrServer ApiPointManagerServer `yaml:"api_point_manager_server"`
 }
 
 func GetInstance(filepath ...string) *ServerConfig {

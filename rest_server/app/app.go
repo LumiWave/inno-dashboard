@@ -13,6 +13,7 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/externalapi"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/internalapi"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/upbit"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
@@ -35,6 +36,8 @@ func (o *ServerApp) Init(configFile string) (err error) {
 	if err := o.InitScheduler(); err != nil {
 		return err
 	}
+
+	o.InitPointManagerServer(o.conf)
 
 	if err := o.NewDB(o.conf); err != nil {
 		return err
@@ -77,6 +80,11 @@ func (o *ServerApp) InitScheduler() error {
 
 func (o *ServerApp) InitUpbit() {
 	upbit.InitUpbitInfo()
+}
+
+func (o *ServerApp) InitPointManagerServer(conf *config.ServerConfig) {
+	pointMgrServer := conf.PointMgrServer
+	point_manager_server.NewPointManagerServerInfo("", point_manager_server.HostInfo{HostUri: pointMgrServer.ApiDomain, Ver: pointMgrServer.Ver})
 }
 
 func (o *ServerApp) NewDB(conf *config.ServerConfig) error {
