@@ -2,12 +2,13 @@ package point_manager_server
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 )
 
 func (o *PointManagerServerInfo) GetPointAppList(muid, databaseid int64) (*MePointInfo, error) {
 	uri := fmt.Sprintf(ApiList[Api_get_point_list].Uri, muid, databaseid)
-	callUrl := fmt.Sprintf("%s%s%s", o.HostUri, o.Ver, uri)
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, uri)
 
 	data, err := HttpCall(callUrl, o.ApiKey, "GET", Api_get_point_list, bytes.NewBuffer(nil), nil)
 	if err != nil {
@@ -15,6 +16,20 @@ func (o *PointManagerServerInfo) GetPointAppList(muid, databaseid int64) (*MePoi
 	}
 
 	return data.(*MePointInfo), nil
+}
+
+func (o *PointManagerServerInfo) PostPointCoinSwap(swapInfo *ReqSwapInfo) (*ResSwapInfo, error) {
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, ApiList[Api_post_swap].Uri)
+
+	pbytes, _ := json.Marshal(swapInfo)
+	buff := bytes.NewBuffer(pbytes)
+
+	data, err := HttpCall(callUrl, o.ApiKey, "POST", Api_post_swap, buff, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResSwapInfo), nil
 }
 
 // func GetCandleMinutes(upbitInfo *PointManagerInfo, interval int, symbol string, count int, to string) (*[]CandleMinute, error) {

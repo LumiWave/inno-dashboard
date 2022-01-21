@@ -3,6 +3,8 @@ package model
 import (
 	contextR "context"
 	"database/sql"
+	"errors"
+	"strconv"
 	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
@@ -48,7 +50,8 @@ func (o *DB) GetListApplicationPoints(AppId int64) ([]*context.AppPointDailyInfo
 	defer rows.Close()
 
 	if returnValue != 1 {
-		return nil, nil
+		log.Errorf("USPAU_GetList_ApplicationPoints returnvalue error : %v", returnValue)
+		return nil, errors.New("USPAU_GetList_ApplicationPoints returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 	return appPointDailyInfoList, nil
 
@@ -87,7 +90,8 @@ func (o *DB) GetListApplicationCoins(AppId int64) ([]*context.AppCoinDailyInfo, 
 	defer rows.Close()
 
 	if returnValue != 1 {
-		return nil, nil
+		log.Errorf("USPAU_GetList_ApplicationCoins returnvalue error : %v", returnValue)
+		return nil, errors.New("USPAU_GetList_ApplicationCoins returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 	return appCoinDailyInfoList, nil
 }

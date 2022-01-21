@@ -84,7 +84,13 @@ func (o *ServerApp) InitUpbit() {
 
 func (o *ServerApp) InitPointManagerServer(conf *config.ServerConfig) {
 	pointMgrServer := conf.PointMgrServer
-	point_manager_server.NewPointManagerServerInfo("", point_manager_server.HostInfo{HostUri: pointMgrServer.ApiDomain, Ver: pointMgrServer.Ver})
+	hostInfo := point_manager_server.HostInfo{
+		IntHostUri: pointMgrServer.InternalpiDomain,
+		ExtHostUri: pointMgrServer.ExternalpiDomain,
+		IntVer:     pointMgrServer.InternalVer,
+		ExtVer:     pointMgrServer.ExternalVer,
+	}
+	point_manager_server.NewPointManagerServerInfo("", hostInfo)
 }
 
 func (o *ServerApp) NewDB(conf *config.ServerConfig) error {

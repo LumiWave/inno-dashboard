@@ -3,6 +3,7 @@ package model
 import (
 	contextR "context"
 	"errors"
+	"strconv"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
@@ -37,7 +38,8 @@ func (o *DB) GetScanExchangeGoods() ([]*context.Swapable, error) {
 	defer rows.Close()
 
 	if returnValue != 1 {
-		return nil, errors.New("USPAU_Scan_ExchangeGoods error")
+		log.Errorf("USPAU_Scan_ExchangeGoods returnvalue error : %v", returnValue)
+		return nil, errors.New("USPAU_Scan_ExchangeGoods returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 	return swapableList, nil
 

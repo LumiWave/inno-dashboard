@@ -3,8 +3,10 @@ package point_manager_server
 var gPointManagerServerInfo *PointManagerServerInfo
 
 type HostInfo struct {
-	HostUri string
-	Ver     string // /v1
+	IntHostUri string
+	ExtHostUri string
+	IntVer     string // m1.0
+	ExtVer     string // v1.0
 }
 
 type AuthInfo struct {
@@ -32,4 +34,8 @@ func NewPointManagerServerInfo(apiKey string, hostInfo HostInfo) *PointManagerSe
 	}
 
 	return gPointManagerServerInfo
+}
+
+func (o *PointManagerServerInfo) SetApiKey(key string) {
+	gPointManagerServerInfo.ApiKey = key
 }

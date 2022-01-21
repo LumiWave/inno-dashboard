@@ -16,6 +16,17 @@ const (
 	Result_Upbit_CandleWeeks     = 32009 // 업비트 CandleWeeks 조회 API 에러
 	Result_Upbit_CandleMonths    = 32010 // 업비트 CandleMonths 조회 API 에러
 
+	Result_Invalid_EventID_Error        = 32100 // eventid 유효성 에러
+	Result_Invalid_AppID_Error          = 32101 // appid 유효성 에러
+	Result_Invalid_PointID_Error        = 32102 // pointid 유효성 에러
+	Result_Invalid_PointQuantity_Error  = 32103 // point 수량 유효성 에러
+	Result_Invalid_CoinID_Error         = 32104 // coinid 유효성 에러
+	Result_Invalid_CoinQuantity_Error   = 32105 // coin 수량 유효성 에러
+	Result_Invalid_AdjustQuantity_Error = 32106 // adjust 수량 유효성 에러
+
+	Result_Not_Exist_AppPointInfo_Error = 32201 // 앱 포인트 정보가 존재하지 않는다.
+	Result_Unknown_Swap_Error           = 32202 // unknown swap 에러
+
 	Result_Get_App_AppID_Empty      = 33001 // Get App AppID Empty
 	Result_Get_App_Point_Scan_Error = 33002 // Get App Point DB Scan Error
 	Result_Get_App_Coin_Scan_Error  = 33003 // Get App Coin DB Scan Error
@@ -56,6 +67,17 @@ var ResultCodeText = map[int]string{
 	Result_Upbit_CandleDays:    "Upbit Candle Days API Error",
 	Result_Upbit_CandleWeeks:   "Upbit Candle Weeks API Error",
 	Result_Upbit_CandleMonths:  "Upbit Candle Months API Error",
+
+	Result_Invalid_EventID_Error:        "EventID is invalid",
+	Result_Invalid_AppID_Error:          "AppID is invalid",
+	Result_Invalid_PointID_Error:        "PointID is invalid",
+	Result_Invalid_PointQuantity_Error:  "point quantity is invalid",
+	Result_Invalid_CoinID_Error:         "CoinID is invalid",
+	Result_Invalid_CoinQuantity_Error:   "Coin quantity is invalid",
+	Result_Invalid_AdjustQuantity_Error: "Adjust quantity is invalid",
+
+	Result_Not_Exist_AppPointInfo_Error: "App point information does not exist",
+	Result_Unknown_Swap_Error:           "Unknown swap error",
 
 	Result_Get_App_AppID_Empty:      "AppID is empty",
 	Result_Get_App_Point_Scan_Error: "Get App Point DB Scan Error",

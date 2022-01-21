@@ -43,7 +43,8 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeCoin, error) {
 	defer rows.Close()
 
 	if returnValue != 1 {
-		return nil, errors.New("QueryContext return error " + strconv.Itoa(int(returnValue)))
+		log.Errorf("USPAU_GetList_AccountCoins returnvalue error : %v", returnValue)
+		return nil, errors.New("USPAU_GetList_AccountCoins returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 	return meCoinList, nil
 }
@@ -75,7 +76,8 @@ func (o *DB) GetListAccountPoints(auid, muid int64) ([]*context.MePoint, error) 
 	defer rows.Close()
 
 	if returnValue != 1 {
-		return nil, nil
+		log.Errorf("USPAU_GetList_AccountPoints returnvalue error : %v", returnValue)
+		return nil, errors.New("USPAU_GetList_AccountPoints returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 	return mePointList, nil
 }
@@ -108,8 +110,8 @@ func (o *DB) GetListMembers(auid int64) ([]*context.Member, map[int64]*context.M
 	defer rows.Close()
 
 	if returnValue != 1 {
-		log.Errorf("USPAU_GetList_Members returnvalue : %v", returnValue)
-		return nil, nil, nil
+		log.Errorf("USPAU_GetList_Members returnvalue error : %v", returnValue)
+		return nil, nil, errors.New("USPAU_GetList_Members returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 	return memberList, memberMap, nil
 }

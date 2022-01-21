@@ -25,8 +25,10 @@ type ApiAuth struct {
 }
 
 type ApiPointManagerServer struct {
-	ApiDomain string `yaml:"api_internal_domain"`
-	Ver       string `yaml:"ver"`
+	InternalpiDomain string `yaml:"api_internal_domain"`
+	ExternalpiDomain string `yaml:"api_external_domain"`
+	InternalVer      string `yaml:"internal_ver"`
+	ExternalVer      string `yaml:"external_ver"`
 }
 
 type MssqlPoint struct {

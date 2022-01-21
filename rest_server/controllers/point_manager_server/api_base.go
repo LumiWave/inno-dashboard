@@ -14,8 +14,8 @@ import (
 type api_kind int
 
 const (
-	Api_get_point_list = 0 // 포인트 리스트 조회
-
+	Api_get_point_list = 0 // 포인트 리스트 조회 : GetPointAppList
+	Api_post_swap      = 1 // swap 요청 : PostPointCoinSwap
 )
 
 type ApiInfo struct {
@@ -26,6 +26,7 @@ type ApiInfo struct {
 
 var ApiList = map[api_kind]ApiInfo{
 	Api_get_point_list: ApiInfo{ApiType: Api_get_point_list, Uri: "/point/app?mu_id=%d&database_id=%d", ResponseType: new(MePointInfo)},
+	Api_post_swap:      ApiInfo{ApiType: Api_post_swap, Uri: "/swap", ResponseType: new(ResSwapInfo)},
 }
 
 func MakeHttpClient(callUrl string, auth string, method string, body *bytes.Buffer, queryStr string) (*http.Client, *http.Request) {

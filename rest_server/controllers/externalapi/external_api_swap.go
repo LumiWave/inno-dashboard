@@ -1,6 +1,8 @@
 package externalapi
 
 import (
+	"net/http"
+
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/commonapi"
@@ -27,12 +29,19 @@ func (o *ExternalAPI) GetSwapEnable(c echo.Context) error {
 
 // Swap 처리
 func (o *ExternalAPI) PostSwap(c echo.Context) error {
-	swapInfo := new(context.SwapInfo)
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	params := new(context.ReqSwapInfo)
 
 	// Request json 파싱
-	if err := c.Bind(swapInfo); err != nil {
+	if err := c.Bind(params); err != nil {
 		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
-	return commonapi.PostSwap(c, swapInfo)
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+	return commonapi.PostSwap(ctx, params)
 }
