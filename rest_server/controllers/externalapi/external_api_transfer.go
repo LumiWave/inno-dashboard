@@ -28,6 +28,8 @@ func (o *ExternalAPI) PostTransfer(c echo.Context) error {
 	}
 
 	// 클라이언트로부터 전달받은 파라미터 정보 검증
+	// 유저의 코인의 양이 가능한지,
+	// 클라이언트가 전달해준 수수료가 맞는지 등.
 
 	return commonapi.PostTransfer(c, params)
 }
