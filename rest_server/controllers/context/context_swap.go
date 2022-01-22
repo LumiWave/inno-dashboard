@@ -85,7 +85,7 @@ func (o *ReqSwapInfo) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespons
 			return base.MakeBaseResponse(resultcode.Result_Invalid_AdjustQuantity_Error)
 		}
 	} else if o.EventID == EventID_toPoint {
-		if !(o.AdjustCoinQuantity > 0 && o.AdjustPointQuantity < 0) {
+		if !(o.AdjustCoinQuantity < 0 && o.AdjustPointQuantity > 0) {
 			return base.MakeBaseResponse(resultcode.Result_Invalid_AdjustQuantity_Error)
 		}
 	}

@@ -108,21 +108,11 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 		}
 	}
 
-	if swapInfo.EventID == context.EventID_toCoin {
-		// 포인트 -> 코인 전환시 체크는 point manager server 에서 lock을 걸고 체크한다.
-	} else if swapInfo.EventID == context.EventID_toPoint {
-		// 포인트로 전환은 전환 수량이 보유수량보다 작은지 확인
-		if swapInfo.PreviousCoinQuantity < swapInfo.AdjustCoinQuantity {
-			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Invalid_AdjustQuantity_Error])
-			resp.SetReturn(resultcode.Result_Invalid_AdjustQuantity_Error)
-			return ctx.EchoContext.JSON(http.StatusOK, resp)
-		}
-	}
+	swapInfo.LogID = context.LogID_exchange
 
 	// 아래 체크 사항은 point manager server에서 처리한다.
 	// 최소 변환 비율에 맞는지 체크
 	// 전환 비율 계산 후 타당성 확인
-
 	if resSwap, err := point_manager_server.GetInstance().PostPointCoinSwap(swapInfo); err != nil {
 		resp.SetReturn(resultcode.Result_Unknown_Swap_Error)
 	} else {
@@ -130,7 +120,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 			resp.Return = resSwap.Return
 			resp.Message = resSwap.Message
 		} else {
-			resp.Value = swapInfo
+			resp.Value = resSwap.ReqSwapInfo
 		}
 	}
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
