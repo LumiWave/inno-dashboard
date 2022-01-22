@@ -39,6 +39,12 @@ const (
 	Result_Get_Me_CoinList_Scan_Error   = 34004 // GetMeCoinList DB Scan Error
 	Result_Get_MemberList_Scan_Error    = 34005 // GetListMembers DB Scan Error
 
+	Result_CoinTransfer_CoinSymbol_Empty    = 36001 // Coin Symbol is Empty
+	Result_CoinTransfer_ToAddress_Empty     = 36002 // To Address is Empty
+	Result_CoinTransfer_Quantity_Empty      = 36003 // Amount is Empty
+	Result_CoinTransfer_TransferFee_Empty   = 36004 // Memo is Empty
+	Result_CoinTransfer_TotalQuantity_Empty = 36005 // Memo is Empty
+
 	Result_DBError         = 19000 // db 에러
 	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
 	Result_DBError_Unknown = 19002 // 알려지지 않은 db 에러
@@ -90,6 +96,12 @@ var ResultCodeText = map[int]string{
 	Result_Get_Me_PointList_Scan_Error:  "GetMePointList DB Scan Error",
 	Result_Get_Me_CoinList_Scan_Error:   "GetMeCoinList DB Scan Error",
 	Result_Get_MemberList_Scan_Error:    "GetListMembers DB Scan Error",
+
+	Result_CoinTransfer_CoinSymbol_Empty:    "CoinSymbol is empty",
+	Result_CoinTransfer_ToAddress_Empty:     "ToAddress is empty",
+	Result_CoinTransfer_Quantity_Empty:      "Quantity is empty",
+	Result_CoinTransfer_TransferFee_Empty:   "TransferFee is empty",
+	Result_CoinTransfer_TotalQuantity_Empty: "TotalQuantity is empty",
 
 	Result_DBError:         "Internal DB error",
 	Result_Invalid_DBID:    "Invalid DB ID",
