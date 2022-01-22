@@ -17,7 +17,7 @@ const (
 // 교환 가능 코인, 포인트 정보
 func (o *DB) GetScanExchangeGoods() ([]*context.Swapable, error) {
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlAccount.GetDB().QueryContext(contextR.Background(), USPAU_Scan_ExchangeGoods,
+	rows, err := o.MssqlAccountRead.GetDB().QueryContext(contextR.Background(), USPAU_Scan_ExchangeGoods,
 		&returnValue)
 	if err != nil {
 		log.Errorf("%v", err)

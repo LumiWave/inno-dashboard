@@ -31,20 +31,15 @@ type ApiPointManagerServer struct {
 	ExternalVer      string `yaml:"external_ver"`
 }
 
-type MssqlPoint struct {
-	Port     string `json:"port" yaml:"port"`
-	ID       string `json:"id" yaml:"id"`
-	Password string `json:"password" yaml:"password"`
-}
-
 type ServerConfig struct {
 	baseconf.Config `yaml:",inline"`
 
-	App            App                   `yaml:"app"`
-	MssqlDBAccount baseconf.DBAuth       `yaml:"mssql_db_account"`
-	MssqlDBPoint   MssqlPoint            `yaml:"mssql_db_point"`
-	Auth           ApiAuth               `yaml:"api_auth"`
-	PointMgrServer ApiPointManagerServer `yaml:"api_point_manager_server"`
+	App                App                   `yaml:"app"`
+	MssqlDBAccountAll  baseconf.DBAuth       `yaml:"mssql_db_account"`
+	MssqlDBAccountRead baseconf.DBAuth       `yaml:"mssql_db_account_read"`
+	MssqlDBLogRead     baseconf.DBAuth       `yaml:"mssql_db_log_read"`
+	Auth               ApiAuth               `yaml:"api_auth"`
+	PointMgrServer     ApiPointManagerServer `yaml:"api_point_manager_server"`
 }
 
 func GetInstance(filepath ...string) *ServerConfig {

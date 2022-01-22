@@ -1,8 +1,13 @@
 package model
 
 import (
+	"strconv"
+
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	baseconf "github.com/ONBUFF-IP-TOKEN/baseapp/config"
 	"github.com/ONBUFF-IP-TOKEN/basedb"
+	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 )
@@ -29,9 +34,10 @@ type AppInfo struct {
 }
 
 type DB struct {
-	Mysql        *basedb.Mysql
-	MssqlAccount *basedb.Mssql
-	Cache        *basedb.Cache
+	MssqlAccountAll  *basedb.Mssql
+	MssqlAccountRead *basedb.Mssql
+	MssqlLogRead     *basedb.Mssql
+	Cache            *basedb.Cache
 
 	MssqlPoints map[int64]*basedb.Mssql
 
@@ -49,20 +55,40 @@ type DB struct {
 
 var gDB *DB
 
-func SetDB(db *basedb.Mssql, cache *basedb.Cache, pointdbs map[int64]*basedb.Mssql) {
-	gDB = &DB{
-		MssqlAccount: db,
-		Cache:        cache,
-		MssqlPoints:  pointdbs,
-	}
+func GetDB() *DB {
+	return gDB
 }
 
-func SetDBPoint(pointdbs map[int64]*basedb.Mssql) {
+func InitDB(conf *config.ServerConfig) (err error) {
+	cache := basedb.GetCache(&conf.Cache)
+	gDB = &DB{
+		Cache: cache,
+	}
+
+	gDB.MssqlAccountAll, err = gDB.ConnectDB(&conf.MssqlDBAccountAll)
+	if err != nil {
+		return err
+	}
+
+	gDB.MssqlAccountRead, err = gDB.ConnectDB(&conf.MssqlDBAccountRead)
+	if err != nil {
+		return err
+	}
+
+	gDB.MssqlLogRead, err = gDB.ConnectDB(&conf.MssqlDBLogRead)
+	if err != nil {
+		return err
+	}
+
+	LoadDBPoint()
+	return nil
+}
+
+func LoadDBPoint() {
 	gDB.ScanPointsMap = make(map[int64]context.PointInfo)
 	gDB.AppCoins = make(map[int64][]*AppCoin)
 	gDB.AppPointsMap = make(map[int64]*context.AppPointInfo)
 	gDB.CoinsMap = make(map[int64]*context.CoinInfo)
-	gDB.MssqlPoints = pointdbs
 
 	gDB.GetPointList()
 	gDB.GetAppCoins()
@@ -71,11 +97,19 @@ func SetDBPoint(pointdbs map[int64]*basedb.Mssql) {
 	gDB.GetAppPoints()
 }
 
-func GetDB() *DB {
-	return gDB
-}
-
 func MakeDbError(resp *base.BaseResponse, errCode int, err error) {
 	resp.Return = errCode
 	resp.Message = resultcode.ResultCodeText[errCode] + " : " + err.Error()
+}
+
+func (o *DB) ConnectDB(conf *baseconf.DBAuth) (*basedb.Mssql, error) {
+	port, _ := strconv.ParseInt(conf.Port, 10, 32)
+	mssqlDB, err := basedb.NewMssql(conf.Database, "", conf.ID, conf.Password, conf.Host, int(port))
+	if err != nil {
+		log.Errorf("err: %v, val: %v, %v, %v, %v, %v, %v",
+			err, conf.Host, conf.ID, conf.Password, conf.Database, conf.PoolSize, conf.IdleSize)
+		return nil, err
+	}
+
+	return mssqlDB, nil
 }

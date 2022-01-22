@@ -20,7 +20,7 @@ const (
 // 앱 일일 포인트량 목록
 func (o *DB) GetListApplicationPoints(AppId int64) ([]*context.AppPointDailyInfo, error) {
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlAccount.GetDB().QueryContext(contextR.Background(), USPAU_GetList_ApplicationPoints,
+	rows, err := o.MssqlAccountRead.GetDB().QueryContext(contextR.Background(), USPAU_GetList_ApplicationPoints,
 		sql.Named("AppID", AppId),
 		&returnValue)
 	if err != nil {
@@ -60,7 +60,7 @@ func (o *DB) GetListApplicationPoints(AppId int64) ([]*context.AppPointDailyInfo
 // 앱 일일 코인량 목록
 func (o *DB) GetListApplicationCoins(AppId int64) ([]*context.AppCoinDailyInfo, error) {
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlAccount.GetDB().QueryContext(contextR.Background(), USPAU_GetList_ApplicationCoins,
+	rows, err := o.MssqlAccountRead.GetDB().QueryContext(contextR.Background(), USPAU_GetList_ApplicationCoins,
 		sql.Named("AppID", AppId),
 		&returnValue)
 	if err != nil {
