@@ -104,11 +104,14 @@ func GetAppPoint(c echo.Context, reqAppPoint *context.ReqAppPointDaily) error {
 	if pointLiquiditys, err := model.GetDB().GetListDailyPoints(reqPointLiquidity); len(pointLiquiditys) == 0 || err != nil {
 		resp.SetReturn(resultcode.Result_Get_App_Point_DailyLiquidity_Error)
 	} else {
+		if pointLiquiditys[0].CnsmExchangeQuantity < 0 { // 전환량은 음수이기 때문에 임시로 양수로 전환해준다.
+			pointLiquiditys[0].CnsmExchangeQuantity = -pointLiquiditys[0].CnsmExchangeQuantity
+		}
 		res := context.ResAppPointDaily{
 			AppID:                    reqPointLiquidity.AppID,
 			PointID:                  reqPointLiquidity.PointID,
 			TodayAcqQuantity:         pointLiquiditys[0].AcqQuantity,
-			TodayAcqExchangeQuantity: pointLiquiditys[0].AcqExchangeQuantity,
+			TodayAcqExchangeQuantity: pointLiquiditys[0].CnsmExchangeQuantity,
 		}
 		resp.Value = res
 	}
@@ -129,11 +132,13 @@ func GetAppCoinDaily(c echo.Context, reqAppCoinDaily *context.ReqAppCoinDaily) e
 	if coinLiquiditys, err := model.GetDB().GetListDailyCoins(reqCoinLiquidity); len(coinLiquiditys) == 0 || err != nil {
 		resp.SetReturn(resultcode.Result_Get_App_Coin_DailyLiquidity_Error)
 	} else {
-
+		if coinLiquiditys[0].CnsmExchangeQuantity < 0 {
+			coinLiquiditys[0].CnsmExchangeQuantity = -coinLiquiditys[0].CnsmExchangeQuantity
+		}
 		res := context.ResAppCoinDaily{
 			CoinID:                   reqAppCoinDaily.CoinID,
-			TodayAcqQuantity:         coinLiquiditys[0].AcqQuantity,
-			TodayAcqExchangeQuantity: coinLiquiditys[0].AcqExchangeQuantity,
+			TodayAcqQuantity:         coinLiquiditys[0].AcqExchangeQuantity,
+			TodayAcqExchangeQuantity: coinLiquiditys[0].CnsmExchangeQuantity,
 		}
 		resp.Value = res
 	}
