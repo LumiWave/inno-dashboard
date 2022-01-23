@@ -50,43 +50,43 @@ type CoinList struct {
 ////////////////////////////////////////
 
 ///////// AppPointDailyInfo
-type ReqAppPoint struct {
-	AppId int64 `json:"app_id" query:"app_id"`
+type ReqAppPointDaily struct {
+	AppID   int64 `json:"app_id" query:"app_id"`
+	PointID int64 `json:"point_id" query:"point_id"`
 }
 
-func (o *ReqAppPoint) CheckValidate() *base.BaseResponse {
-	if o.AppId == 0 {
+func (o *ReqAppPointDaily) CheckValidate() *base.BaseResponse {
+	if o.AppID == 0 {
 		return base.MakeBaseResponse(resultcode.Result_Get_App_AppID_Empty)
 	}
 	return nil
 }
 
-type AppPointDailyInfo struct {
-	PointID               int64  `json:"point_id" query:"point_id"`
-	PointName             string `json:"point_name" query:"point_name"`
-	DailyQuantity         int64  `json:"daily_quantity" query:"daily_quantity"`
-	DailyExchangeQuantity int64  `json:"daily_exchange_quantity" query:"daily_exchange_quantity"`
+type ResAppPointDaily struct {
+	AppID                    int64 `json:"app_id" query:"app_id"`
+	PointID                  int64 `json:"point_id" query:"point_id"`
+	TodayAcqQuantity         int64 `json:"today_acq_quantity" query:"today_acq_quantity"`
+	TodayAcqExchangeQuantity int64 `json:"today_acq_exchange_quantity" query:"today_acq_exchange_quantity"`
 }
 
 ////////////////////////////////////////
 
 ///////// AppCoinDailyInfo
-type ReqAppCoin struct {
-	AppId int64 `json:"app_id" query:"app_id"`
+type ReqAppCoinDaily struct {
+	CoinID int64 `json:"coin_id" query:"coin_id"`
 }
 
-func (o *ReqAppCoin) CheckValidate() *base.BaseResponse {
-	if o.AppId == 0 {
+func (o *ReqAppCoinDaily) CheckValidate() *base.BaseResponse {
+	if o.CoinID <= 0 {
 		return base.MakeBaseResponse(resultcode.Result_Get_App_AppID_Empty)
 	}
 	return nil
 }
 
-type AppCoinDailyInfo struct {
-	CoinID                int64   `json:"coin_id" query:"coin_id"`
-	CoinSymbol            string  `json:"coin_symbol" query:"coin_symbol"`
-	DailyQuantity         float64 `json:"daily_quantity" query:"daily_quantity"`
-	DailyExchangeQuantity float64 `json:"daily_exchange_quantity" query:"daily_exchange_quantity"`
+type ResAppCoinDaily struct {
+	CoinID                   int64   `json:"coin_id" query:"coin_id"`
+	TodayAcqQuantity         float64 `json:"today_acq_quantity" query:"today_acq_quantity"`
+	TodayAcqExchangeQuantity float64 `json:"today_acq_exchange_quantity" query:"today_acq_exchange_quantity"`
 }
 
 ////////////////////////////////////////
@@ -100,13 +100,13 @@ type ReqCoinLiquidity struct {
 
 type CoinLiquidity struct {
 	BaseDate             time.Time `json:"base_date" query:"base_date"`                           // 기준날짜
-	AcqQuantity          int64     `json:"acq_quantity" query:"acq_quantity"`                     // 획득량
+	AcqQuantity          float64   `json:"acq_quantity" query:"acq_quantity"`                     // 획득량
 	AcqCount             int64     `json:"acq_count" query:"acq_count"`                           // 획득 횟수
-	CnsmQuantity         int64     `json:"cnsm_quntity" query:"cnsm_quntity"`                     // 소모량
+	CnsmQuantity         float64   `json:"cnsm_quntity" query:"cnsm_quntity"`                     // 소모량
 	CnsmCount            int64     `json:"cnsm_count" query:"cnsm_count"`                         // 소모 횟수
-	AcqExchangeQuantity  int64     `json:"acq_exchange_quantity" query:"acq_exchange_quantity"`   // 획득 전환량
+	AcqExchangeQuantity  float64   `json:"acq_exchange_quantity" query:"acq_exchange_quantity"`   // 획득 전환량
 	PointsToCoinsCount   int64     `json:"points_to_coins_count" query:"points_to_coins_count"`   // 획득 전환 횟수
-	CnsmExchangeQuantity int64     `json:"cnsm_exchange_quantity" query:"cnsm_exchange_quantity"` //소모 전환량
+	CnsmExchangeQuantity float64   `json:"cnsm_exchange_quantity" query:"cnsm_exchange_quantity"` // 소모 전환량
 	CoinsToPointsCount   int64     `json:"coins_to_points_count" query:"coins_to_points_count"`   // 소모 전환 횟수
 }
 

@@ -90,28 +90,52 @@ func PostReloadCoinList(c echo.Context) error {
 }
 
 // App 포인트 별 당일 누적/전환량 정보 조회
-func GetAppPoint(c echo.Context, reqAppPoint *context.ReqAppPoint) error {
+func GetAppPoint(c echo.Context, reqAppPoint *context.ReqAppPointDaily) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if pointList, err := model.GetDB().GetListApplicationPoints(reqAppPoint.AppId); pointList == nil || err != nil {
-		resp.SetReturn(resultcode.Result_Get_App_Point_Scan_Error)
+	reqPointLiquidity := &context.ReqPointLiquidity{
+		//BaseDate: nil,
+		AppID:    reqAppPoint.AppID,
+		PointID:  reqAppPoint.PointID,
+		Interval: 0,
+	}
+
+	if pointLiquiditys, err := model.GetDB().GetListDailyPoints(reqPointLiquidity); len(pointLiquiditys) == 0 || err != nil {
+		resp.SetReturn(resultcode.Result_Get_App_Point_DailyLiquidity_Error)
 	} else {
-		resp.Value = pointList
+		res := context.ResAppPointDaily{
+			AppID:                    reqPointLiquidity.AppID,
+			PointID:                  reqPointLiquidity.PointID,
+			TodayAcqQuantity:         pointLiquiditys[0].AcqQuantity,
+			TodayAcqExchangeQuantity: pointLiquiditys[0].AcqExchangeQuantity,
+		}
+		resp.Value = res
 	}
 
 	return c.JSON(http.StatusOK, resp)
 }
 
 // 코인 별 당일 누적/전환량 조회
-func GetAppCoin(c echo.Context, reqAppCoin *context.ReqAppCoin) error {
+func GetAppCoinDaily(c echo.Context, reqAppCoinDaily *context.ReqAppCoinDaily) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if coinList, err := model.GetDB().GetListApplicationCoins(reqAppCoin.AppId); coinList == nil || err != nil {
-		resp.SetReturn(resultcode.Result_Get_App_Coin_Scan_Error)
+	reqCoinLiquidity := &context.ReqCoinLiquidity{
+		CoinID:   reqAppCoinDaily.CoinID,
+		Interval: 0,
+	}
+
+	if coinLiquiditys, err := model.GetDB().GetListDailyCoins(reqCoinLiquidity); len(coinLiquiditys) == 0 || err != nil {
+		resp.SetReturn(resultcode.Result_Get_App_Coin_DailyLiquidity_Error)
 	} else {
-		resp.Value = coinList
+
+		res := context.ResAppCoinDaily{
+			CoinID:                   reqAppCoinDaily.CoinID,
+			TodayAcqQuantity:         coinLiquiditys[0].AcqQuantity,
+			TodayAcqExchangeQuantity: coinLiquiditys[0].AcqExchangeQuantity,
+		}
+		resp.Value = res
 	}
 
 	return c.JSON(http.StatusOK, resp)

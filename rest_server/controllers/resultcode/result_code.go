@@ -27,9 +27,9 @@ const (
 	Result_Not_Exist_AppPointInfo_Error = 32201 // 앱 포인트 정보가 존재하지 않는다.
 	Result_Unknown_Swap_Error           = 32202 // unknown swap 에러
 
-	Result_Get_App_AppID_Empty      = 33001 // Get App AppID Empty
-	Result_Get_App_Point_Scan_Error = 33002 // Get App Point DB Scan Error
-	Result_Get_App_Coin_Scan_Error  = 33003 // Get App Coin DB Scan Error
+	Result_Get_App_AppID_Empty                = 33001 // Get App AppID Empty
+	Result_Get_App_Point_DailyLiquidity_Error = 33002 // Get App Point DailyLiquidity DB Error
+	Result_Get_App_Coin_DailyLiquidity_Error  = 33003 // Get App Coin DailyLiquidity DB Error
 
 	Result_Get_Swap_ExchangeGoods_Scan_Error = 33100 // GetListAccountPoints DB Scan Error
 
@@ -85,9 +85,9 @@ var ResultCodeText = map[int]string{
 	Result_Not_Exist_AppPointInfo_Error: "App point information does not exist",
 	Result_Unknown_Swap_Error:           "Unknown swap error",
 
-	Result_Get_App_AppID_Empty:      "AppID is empty",
-	Result_Get_App_Point_Scan_Error: "Get App Point DB Scan Error",
-	Result_Get_App_Coin_Scan_Error:  "Get App Coin DB Scan Error",
+	Result_Get_App_AppID_Empty:                "AppID is empty",
+	Result_Get_App_Point_DailyLiquidity_Error: "Get App Point DailyLiquidity DB Error",
+	Result_Get_App_Coin_DailyLiquidity_Error:  "Get App Coin DailyLiquidity DB Error",
 
 	Result_Get_Swap_ExchangeGoods_Scan_Error: "GetListAccountPoints DB Scan Error",
 

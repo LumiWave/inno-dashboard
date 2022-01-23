@@ -27,39 +27,39 @@ func (o *ExternalAPI) GetCoinList(c echo.Context) error {
 
 // App 포인트 별 당일 누적/전환량 정보 조회
 func (o *ExternalAPI) GetAppPoint(c echo.Context) error {
-	reqAppPoint := new(context.ReqAppPoint)
+	reqAppPointDaily := new(context.ReqAppPointDaily)
 
 	// Request json 파싱
-	if err := c.Bind(reqAppPoint); err != nil {
+	if err := c.Bind(reqAppPointDaily); err != nil {
 		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
-	if err := reqAppPoint.CheckValidate(); err != nil {
+	if err := reqAppPointDaily.CheckValidate(); err != nil {
 		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
 
-	return commonapi.GetAppPoint(c, reqAppPoint)
+	return commonapi.GetAppPoint(c, reqAppPointDaily)
 }
 
 // 코인 별 당일 누적/전환량 조회
 func (o *ExternalAPI) GetAppCoin(c echo.Context) error {
-	reqAppCoin := new(context.ReqAppCoin)
+	reqAppCoinDaily := new(context.ReqAppCoinDaily)
 
 	// Request json 파싱
-	if err := c.Bind(reqAppCoin); err != nil {
+	if err := c.Bind(reqAppCoinDaily); err != nil {
 		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
 
 	// 유효성 체크
-	if err := reqAppCoin.CheckValidate(); err != nil {
+	if err := reqAppCoinDaily.CheckValidate(); err != nil {
 		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
-	return commonapi.GetAppCoin(c, reqAppCoin)
+	return commonapi.GetAppCoinDaily(c, reqAppCoinDaily)
 }
 
 // App 포인트 별 유동량 history 조회
