@@ -1,7 +1,8 @@
 package resultcode
 
 const (
-	Result_Success = 0
+	Result_Success            = 0
+	ResultInternalServerError = 500
 
 	Result_Require_PageInfo = 30001 // 유효한 페이지 정보 필요
 
@@ -39,11 +40,10 @@ const (
 	Result_Get_Me_CoinList_Scan_Error   = 34004 // GetMeCoinList DB Scan Error
 	Result_Get_MemberList_Scan_Error    = 34005 // GetListMembers DB Scan Error
 
-	Result_CoinTransfer_CoinSymbol_Empty    = 36001 // Coin Symbol is Empty
-	Result_CoinTransfer_ToAddress_Empty     = 36002 // To Address is Empty
-	Result_CoinTransfer_Quantity_Empty      = 36003 // Amount is Empty
-	Result_CoinTransfer_TransferFee_Empty   = 36004 // Memo is Empty
-	Result_CoinTransfer_TotalQuantity_Empty = 36005 // Memo is Empty
+	Result_CoinTransfer_CoinSymbol_Empty = 36001 // Coin Symbol is Empty
+	Result_CoinTransfer_ToAddress_Empty  = 36002 // To Address is Empty
+	Result_CoinTransfer_Quantity_Empty   = 36003 // Amount is Empty
+	Result_CoinTransfer_NotEnough_Coin   = 36004 // 전송할 코인량이 충분하지 않다.
 
 	Result_DBError         = 19000 // db 에러
 	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
@@ -58,7 +58,8 @@ const (
 )
 
 var ResultCodeText = map[int]string{
-	Result_Success: "success",
+	Result_Success:            "success",
+	ResultInternalServerError: "internal server error",
 
 	Result_Require_PageInfo: "require page info",
 
@@ -97,11 +98,10 @@ var ResultCodeText = map[int]string{
 	Result_Get_Me_CoinList_Scan_Error:   "GetMeCoinList DB Scan Error",
 	Result_Get_MemberList_Scan_Error:    "GetListMembers DB Scan Error",
 
-	Result_CoinTransfer_CoinSymbol_Empty:    "CoinSymbol is empty",
-	Result_CoinTransfer_ToAddress_Empty:     "ToAddress is empty",
-	Result_CoinTransfer_Quantity_Empty:      "Quantity is empty",
-	Result_CoinTransfer_TransferFee_Empty:   "TransferFee is empty",
-	Result_CoinTransfer_TotalQuantity_Empty: "TotalQuantity is empty",
+	Result_CoinTransfer_CoinSymbol_Empty: "CoinSymbol is empty",
+	Result_CoinTransfer_ToAddress_Empty:  "ToAddress is empty",
+	Result_CoinTransfer_Quantity_Empty:   "Quantity is empty",
+	Result_CoinTransfer_NotEnough_Coin:   "Not enough Coin Quantity",
 
 	Result_DBError:         "Internal DB error",
 	Result_Invalid_DBID:    "Invalid DB ID",

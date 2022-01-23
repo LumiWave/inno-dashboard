@@ -31,5 +31,5 @@ func (o *ExternalAPI) PostTransfer(c echo.Context) error {
 	// 유저의 코인의 양이 가능한지,
 	// 클라이언트가 전달해준 수수료가 맞는지 등.
 
-	return commonapi.PostTransfer(c, params)
+	return commonapi.PostTransfer(ctx, params)
 }
