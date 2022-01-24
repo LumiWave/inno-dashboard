@@ -101,9 +101,15 @@ func GetAppPoint(c echo.Context, reqAppPoint *context.ReqAppPointDaily) error {
 		Interval: 0,
 	}
 
-	if pointLiquiditys, err := model.GetDB().GetListDailyPoints(reqPointLiquidity); len(pointLiquiditys) == 0 || err != nil {
+	if pointLiquiditys, err := model.GetDB().GetListDailyPoints(reqPointLiquidity); err != nil {
 		resp.SetReturn(resultcode.Result_Get_App_Point_DailyLiquidity_Error)
 	} else {
+		if len(pointLiquiditys) == 0 { //오늘 누적된 포인터가 없을때 강제로 0으로 보정
+			pointLiquiditys = append(pointLiquiditys, &context.PointLiquidity{
+				AcqQuantity:          0,
+				CnsmExchangeQuantity: 0,
+			})
+		}
 		if pointLiquiditys[0].CnsmExchangeQuantity < 0 { // 전환량은 음수이기 때문에 임시로 양수로 전환해준다.
 			pointLiquiditys[0].CnsmExchangeQuantity = -pointLiquiditys[0].CnsmExchangeQuantity
 		}
@@ -129,9 +135,15 @@ func GetAppCoinDaily(c echo.Context, reqAppCoinDaily *context.ReqAppCoinDaily) e
 		Interval: 0,
 	}
 
-	if coinLiquiditys, err := model.GetDB().GetListDailyCoins(reqCoinLiquidity); len(coinLiquiditys) == 0 || err != nil {
+	if coinLiquiditys, err := model.GetDB().GetListDailyCoins(reqCoinLiquidity); err != nil {
 		resp.SetReturn(resultcode.Result_Get_App_Coin_DailyLiquidity_Error)
 	} else {
+		if len(coinLiquiditys) == 0 { // 오늘 누적된 코인량이 없을때
+			coinLiquiditys = append(coinLiquiditys, &context.CoinLiquidity{
+				AcqExchangeQuantity:  0,
+				CnsmExchangeQuantity: 0,
+			})
+		}
 		if coinLiquiditys[0].CnsmExchangeQuantity < 0 {
 			coinLiquiditys[0].CnsmExchangeQuantity = -coinLiquiditys[0].CnsmExchangeQuantity
 		}
