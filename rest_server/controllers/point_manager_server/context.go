@@ -66,8 +66,8 @@ type ResSwapInfo struct {
 
 ///////// swap 요청
 type ReqCoinTransfer struct {
-	AUID       int64   `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
-	CoinID     int64   `json:"coin_id" url:"coin_id"`
+	AUID       int64   `json:"au_id" url:"au_id"`             // 계정의 UID (Access Token에서 가져옴)
+	CoinID     int64   `json:"coin_id" url:"coin_id"`         // 코인 ID
 	CoinSymbol string  `json:"coin_symbol" url:"coin_symbol"` // 코인 심볼
 	ToAddress  string  `json:"to_address" url:"to_address"`   // 보낼 지갑 주소
 	Quantity   float64 `json:"quantity" url:"quantity"`       // 보낼 코인량
