@@ -51,14 +51,14 @@ func (o *DB) GetPointList() error {
 
 	defer rows.Close()
 
-	o.ScanPointsMap = make(map[int64]context.PointInfo)
+	o.ScanPointsMap = make(map[int64]*context.PointInfo)
 	o.ScanPoints.Points = nil
 
 	var pointId int64
 	var pointName, iconPath string
 	for rows.Next() {
 		if err := rows.Scan(&pointId, &pointName, &iconPath); err == nil {
-			info := context.PointInfo{
+			info := &context.PointInfo{
 				PointId:   pointId,
 				PointName: pointName,
 				IconUrl:   iconPath,
@@ -178,7 +178,7 @@ func (o *DB) GetAppPoints() error {
 			temp.MinExchangeQuantity = minExchangeQuantity.Int64
 			temp.ExchangeRatio = exchangeRatio.Float64
 
-			o.AppPointsMap[appId.Int64].Points = append(o.AppPointsMap[appId.Int64].Points, &temp)
+			o.AppPointsMap[appId.Int64].Points = append(o.AppPointsMap[appId.Int64].Points, temp)
 			o.AppPoints.Apps = append(o.AppPoints.Apps, o.AppPointsMap[appId.Int64])
 		}
 	}

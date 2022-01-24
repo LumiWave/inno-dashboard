@@ -18,7 +18,7 @@ type PointInfo struct {
 }
 
 type PointList struct {
-	Points []PointInfo `json:"points"`
+	Points []*PointInfo `json:"points"`
 }
 
 type AppPointInfo struct {
