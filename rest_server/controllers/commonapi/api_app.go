@@ -15,7 +15,7 @@ func GetPointList(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	resp.Value = model.GetDB().ScanPoints
+	resp.Value = model.GetDB().ScanPoints.Points
 
 	return c.JSON(http.StatusOK, resp)
 }
@@ -26,7 +26,7 @@ func PostReLoadPointList(c echo.Context) error {
 	resp.Success()
 
 	if err := model.GetDB().GetPointList(); err == nil {
-		resp.Value = model.GetDB().ScanPoints
+		resp.Value = model.GetDB().ScanPoints.Points
 	} else {
 		resp.SetReturn(resultcode.Result_DBError)
 	}
