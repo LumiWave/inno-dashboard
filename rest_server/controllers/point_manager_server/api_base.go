@@ -14,21 +14,24 @@ import (
 type api_kind int
 
 const (
-	Api_get_point_list = 0 // 포인트 리스트 조회 : GetPointAppList
-	Api_post_swap      = 1 // swap 요청 : PostPointCoinSwap
-	Api_coin_transfer  = 2 // 외부 지갑 coin 전송  : PostCoinTransfer
+	Api_get_point_list                 = 0 // 포인트 리스트 조회 : GetPointAppList
+	Api_post_swap                      = 1 // swap 요청 : PostPointCoinSwap
+	Api_coin_transfer                  = 2 // 외부 지갑 coin 전송  : PostCoinTransfer
+	Api_coin_transfer_exist_inprogress = 3 // 외부 지갑 coin 전송 중 체크 : GetCoinTransferExistInProgress
 )
 
 type ApiInfo struct {
 	ApiType      api_kind
 	Uri          string
+	Method       string
 	ResponseType interface{}
 }
 
 var ApiList = map[api_kind]ApiInfo{
-	Api_get_point_list: ApiInfo{ApiType: Api_get_point_list, Uri: "/point/app?mu_id=%d&database_id=%d", ResponseType: new(MePointInfo)},
-	Api_post_swap:      ApiInfo{ApiType: Api_post_swap, Uri: "/swap", ResponseType: new(ResSwapInfo)},
-	Api_coin_transfer:  ApiInfo{ApiType: Api_coin_transfer, Uri: "/transfer", ResponseType: new(ResCoinTransfer)},
+	Api_get_point_list:                 ApiInfo{ApiType: Api_get_point_list, Uri: "/point/app?mu_id=%d&database_id=%d", Method: "GET", ResponseType: new(MePointInfo)},
+	Api_post_swap:                      ApiInfo{ApiType: Api_post_swap, Uri: "/swap", Method: "POST", ResponseType: new(ResSwapInfo)},
+	Api_coin_transfer:                  ApiInfo{ApiType: Api_coin_transfer, Uri: "/transfer", Method: "POST", ResponseType: new(ResCoinTransfer)},
+	Api_coin_transfer_exist_inprogress: ApiInfo{ApiType: Api_coin_transfer_exist_inprogress, Uri: "/transfer/existinprogress?au_id=%d", Method: "GET", ResponseType: new(ResCoinTransfer)},
 }
 
 func MakeHttpClient(callUrl string, auth string, method string, body *bytes.Buffer, queryStr string) (*http.Client, *http.Request) {

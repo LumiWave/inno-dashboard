@@ -7,10 +7,11 @@ import (
 )
 
 func (o *PointManagerServerInfo) GetPointAppList(muid, databaseid int64) (*MePointInfo, error) {
-	uri := fmt.Sprintf(ApiList[Api_get_point_list].Uri, muid, databaseid)
+	api := ApiList[Api_get_point_list]
+	uri := fmt.Sprintf(api.Uri, muid, databaseid)
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, uri)
 
-	data, err := HttpCall(callUrl, o.ApiKey, "GET", Api_get_point_list, bytes.NewBuffer(nil), nil)
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, bytes.NewBuffer(nil), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -19,12 +20,13 @@ func (o *PointManagerServerInfo) GetPointAppList(muid, databaseid int64) (*MePoi
 }
 
 func (o *PointManagerServerInfo) PostPointCoinSwap(swapInfo *ReqSwapInfo) (*ResSwapInfo, error) {
-	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, ApiList[Api_post_swap].Uri)
+	api := ApiList[Api_post_swap]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
 
 	pbytes, _ := json.Marshal(swapInfo)
 	buff := bytes.NewBuffer(pbytes)
 
-	data, err := HttpCall(callUrl, o.ApiKey, "POST", Api_post_swap, buff, nil)
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, buff, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -33,12 +35,26 @@ func (o *PointManagerServerInfo) PostPointCoinSwap(swapInfo *ReqSwapInfo) (*ResS
 }
 
 func (o *PointManagerServerInfo) PostCoinTransfer(req *ReqCoinTransfer) (*ResCoinTransfer, error) {
-	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, ApiList[Api_coin_transfer].Uri)
+	api := ApiList[Api_coin_transfer]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
 
 	pbytes, _ := json.Marshal(req)
 	buff := bytes.NewBuffer(pbytes)
 
-	data, err := HttpCall(callUrl, o.ApiKey, "POST", Api_coin_transfer, buff, nil)
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, buff, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResCoinTransfer), nil
+}
+
+func (o *PointManagerServerInfo) GetCoinTransferExistInProgress(auid int64) (*ResCoinTransfer, error) {
+	api := ApiList[Api_coin_transfer_exist_inprogress]
+	uri := fmt.Sprintf(api.Uri, auid)
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, uri)
+
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, bytes.NewBuffer(nil), nil)
 	if err != nil {
 		return nil, err
 	}

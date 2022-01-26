@@ -67,3 +67,19 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
+
+// 코인 외부 지갑 전송 중인 상태 정보 요청
+func GetCoinTransferExistInProgress(ctx *context.InnoDashboardContext, params *context.GetCoinTransferExistInProgress) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if res, err := point_manager_server.GetInstance().GetCoinTransferExistInProgress(params.AUID); err != nil {
+		resp.SetReturn(resultcode.ResultInternalServerError)
+	} else {
+		resp.Return = res.Return
+		resp.Message = res.Message
+		resp.Value = res.Value
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}

@@ -64,7 +64,7 @@ type ResSwapInfo struct {
 
 ////////////////////////////////////////
 
-///////// swap 요청
+///////// coin 전송 요청
 type ReqCoinTransfer struct {
 	AUID       int64   `json:"au_id" url:"au_id"`             // 계정의 UID (Access Token에서 가져옴)
 	CoinID     int64   `json:"coin_id" url:"coin_id"`         // 코인 ID
