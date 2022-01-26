@@ -17,16 +17,18 @@ func GetSwapList(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	swapAble, err := model.GetDB().GetScanExchangeGoods()
-	if err != nil {
-		resp.SetReturn(resultcode.Result_Get_Swap_ExchangeGoods_Scan_Error)
-		return c.JSON(http.StatusOK, resp)
-	}
+	// swapAble, err := model.GetDB().GetScanExchangeGoods()
+	// if err != nil {
+	// 	resp.SetReturn(resultcode.Result_Get_Swap_ExchangeGoods_Scan_Error)
+	// 	return c.JSON(http.StatusOK, resp)
+	// }
 
 	swapList := context.SwapList{
+		PointList: model.GetDB().ScanPoints,
 		AppPoints: model.GetDB().AppPoints,
 		CoinList:  model.GetDB().Coins,
-		Swapable:  swapAble,
+		//Swapable:  swapAble,
+		Swapable: model.GetDB().SwapAble,
 	}
 
 	resp.Value = swapList

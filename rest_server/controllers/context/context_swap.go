@@ -6,13 +6,19 @@ import (
 )
 
 ///////// Swap Info 전체 포인트, 코인 정보 리스트, swap 가능 정보 조회
-type Swapable struct {
-	AppID   int64 `json:"app_id"`
-	CoinID  int64 `json:"coin_id"`
+type SwapablePoint struct {
 	PointID int64 `json:"point_id"`
 }
 
+type Swapable struct {
+	AppID    int64            `json:"app_id"`
+	CoinID   int64            `json:"coin_id"`
+	IsEnable bool             `json:"is_enabled"`
+	Points   []*SwapablePoint `json:"points"`
+}
+
 type SwapList struct {
+	PointList
 	AppPoints
 	CoinList
 

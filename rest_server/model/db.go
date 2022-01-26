@@ -51,6 +51,9 @@ type DB struct {
 
 	CoinsMap map[int64]*context.CoinInfo // 전체 coin 정보 1 : key CoinId
 	Coins    context.CoinList            // 전체 coin 정보 2
+
+	SwapAbleMap map[int64]*context.Swapable // 전체 스왑 가능한 정보 1 : key appID
+	SwapAble    []*context.Swapable         // 전체 스왑 가능한 정보 2
 }
 
 var gDB *DB
@@ -89,12 +92,14 @@ func LoadDBPoint() {
 	gDB.AppCoins = make(map[int64][]*AppCoin)
 	gDB.AppPointsMap = make(map[int64]*context.AppPointInfo)
 	gDB.CoinsMap = make(map[int64]*context.CoinInfo)
+	gDB.SwapAbleMap = make(map[int64]*context.Swapable)
 
 	gDB.GetPointList()
 	gDB.GetAppCoins()
 	gDB.GetCoins()
 	gDB.GetApps()
 	gDB.GetAppPoints()
+	gDB.GetScanExchangeGoods()
 }
 
 func MakeDbError(resp *base.BaseResponse, errCode int, err error) {
