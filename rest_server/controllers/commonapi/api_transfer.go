@@ -78,7 +78,9 @@ func GetCoinTransferExistInProgress(ctx *context.InnoDashboardContext, params *c
 	} else {
 		resp.Return = res.Return
 		resp.Message = res.Message
-		resp.Value = res.Value
+		if resp.Return == 0 {
+			resp.Value = res.Value
+		}
 	}
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)

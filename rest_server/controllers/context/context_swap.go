@@ -100,23 +100,3 @@ func (o *ReqSwapInfo) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespons
 }
 
 ////////////////////////////////////////
-
-///////// Swap 중인 상태 정보 요청
-type GetCoinTransferExistInProgress struct {
-	AUID int64 `json:"au_id" query:"au_id"`
-}
-
-func NewGetCoinTransferExistInProgress() *GetCoinTransferExistInProgress {
-	return new(GetCoinTransferExistInProgress)
-}
-
-func (o *GetCoinTransferExistInProgress) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
-	if ctx.GetValue() != nil {
-		o.AUID = ctx.GetValue().AUID
-	} else if ctx.GetValue() == nil || o.AUID == 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_Me_AUID_Empty)
-	}
-	return nil
-}
-
-////////////////////////////////////////
