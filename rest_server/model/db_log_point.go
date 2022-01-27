@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
@@ -12,70 +14,72 @@ import (
 )
 
 const (
-	USPW_GetList_HourlyCoins  = "[dbo].[USPW_GetList_HourlyCoins]"
-	USPW_GetList_DailyCoins   = "[dbo].[USPW_GetList_DailyCoins]"
-	USPW_GetList_WeeklyCoins  = "[dbo].[USPW_GetList_WeeklyCoins]"
-	USPW_GetList_MonthlyCoins = "[dbo].[USPW_GetList_MonthlyCoins]"
-
 	USPW_GetList_HourlyPoints  = "[dbo].[USPW_GetList_HourlyPoints]"
 	USPW_GetList_DailyPoints   = "[dbo].[USPW_GetList_DailyPoints]"
 	USPW_GetList_WeeklyPoints  = "[dbo].[USPW_GetList_WeeklyPoints]"
 	USPW_GetList_MonthlyPoints = "[dbo].[USPW_GetList_MonthlyPoints]"
 )
 
-// 일일 코인 유동량 검색
-func (o *DB) GetListDailyCoins(reqCoinLiquidity *context.ReqCoinLiquidity) ([]*context.CoinLiquidity, error) {
-	baseDate := &reqCoinLiquidity.BaseDate
-	if reqCoinLiquidity.BaseDate.IsZero() {
-		baseDate = nil
-	}
+// 포인트 유동량 검색
+func (o *DB) GetListPointLiquidity(dateType string, reqPointLiquidity *context.ReqPointLiquidity) ([]*context.PointLiquidity, *time.Time, error) {
+	baseDate := ChangeTime(reqPointLiquidity.BaseDate)
 
+	baseDateStr := "BaseDate"
+	firstDateStr := "FirstDate"
+	if strings.EqualFold(dateType, "USPW_GetList_HourlyPoints") {
+		baseDateStr = "BaseSDT"
+		firstDateStr = "FirstSDT"
+	}
+	firstDate := &time.Time{}
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), USPW_GetList_DailyCoins,
-		sql.Named("BaseDate", baseDate),
-		sql.Named("CoinID", reqCoinLiquidity.CoinID),
-		sql.Named("Interval", reqCoinLiquidity.Interval),
+	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), dateType,
+		sql.Named(baseDateStr, baseDate),
+		sql.Named("AppID", reqPointLiquidity.AppID),
+		sql.Named("PointID", reqPointLiquidity.PointID),
+		sql.Named("Interval", reqPointLiquidity.Interval),
+		sql.Named(firstDateStr, sql.Out{Dest: &firstDate}),
 		&returnValue)
 	if err != nil {
-		log.Errorf("USPW_GetList_DailyCoins QueryContext error : %v", err)
-		return nil, nil
+		log.Errorf("%v QueryContext error : %v", dateType, err)
+		return nil, nil, err
 	}
 
-	coinLiquiditys := []*context.CoinLiquidity{}
+	pointLiquiditys := []*context.PointLiquidity{}
 	for rows.Next() {
-		coinLiquidity := new(context.CoinLiquidity)
-		if err := rows.Scan(&coinLiquidity.BaseDate, &coinLiquidity.AcqQuantity, &coinLiquidity.AcqCount,
-			&coinLiquidity.CnsmQuantity, &coinLiquidity.CnsmCount, &coinLiquidity.AcqExchangeQuantity,
-			&coinLiquidity.PointsToCoinsCount, &coinLiquidity.CnsmExchangeQuantity, &coinLiquidity.CoinsToPointsCount); err != nil {
-			log.Errorf("USPW_GetList_DailyCoins Scan error : %v", err)
-			return nil, err
+		pointLiquidity := new(context.PointLiquidity)
+		if err := rows.Scan(&pointLiquidity.BaseDate, &pointLiquidity.AcqQuantity, &pointLiquidity.AcqCount,
+			&pointLiquidity.CnsmQuantity, &pointLiquidity.CnsmCount, &pointLiquidity.AcqExchangeQuantity,
+			&pointLiquidity.PointsToCoinsCount, &pointLiquidity.CnsmExchangeQuantity, &pointLiquidity.CoinsToPointsCount); err != nil {
+			log.Errorf("%v Scan error : %v", dateType, err)
+			return nil, nil, err
 		} else {
-			coinLiquiditys = append(coinLiquiditys, coinLiquidity)
+			pointLiquidity.BaseDateToNumber = pointLiquidity.BaseDate.Unix()
+			pointLiquiditys = append(pointLiquiditys, pointLiquidity)
 		}
 	}
 	defer rows.Close()
 
 	if returnValue != 1 {
-		log.Errorf("USPW_GetList_DailyCoins returnvalue error : %v", returnValue)
-		return nil, errors.New("USPW_GetList_DailyCoins returnvalue error " + strconv.Itoa(int(returnValue)))
+		log.Errorf("%v returnvalue error : %v", dateType, returnValue)
+		return nil, nil, errors.New(dateType + " returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 
-	return coinLiquiditys, nil
+	return pointLiquiditys, firstDate, nil
 }
 
-// 일일 포인트 유동량 검색
+// 일별 포인트 유동량 검색
 func (o *DB) GetListDailyPoints(reqPointLiquidity *context.ReqPointLiquidity) ([]*context.PointLiquidity, error) {
-	baseDate := &reqPointLiquidity.BaseDate
-	if reqPointLiquidity.BaseDate.IsZero() {
-		baseDate = nil
-	}
+	baseDate := ChangeTime(reqPointLiquidity.BaseDate)
 
+	//firstDate := &time.Time{}
+	firstDate := ""
 	var returnValue orginMssql.ReturnStatus
 	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), USPW_GetList_DailyPoints,
 		sql.Named("BaseDate", baseDate),
 		sql.Named("AppID", reqPointLiquidity.AppID),
 		sql.Named("PointID", reqPointLiquidity.PointID),
 		sql.Named("Interval", reqPointLiquidity.Interval),
+		sql.Named("FirstDate", sql.Out{Dest: &firstDate}),
 		&returnValue)
 	if err != nil {
 		log.Errorf("USPW_GetList_DailyPoints QueryContext error : %v", err)

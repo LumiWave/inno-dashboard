@@ -2,6 +2,7 @@ package model
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	baseconf "github.com/ONBUFF-IP-TOKEN/baseapp/config"
@@ -117,4 +118,22 @@ func (o *DB) ConnectDB(conf *baseconf.DBAuth) (*basedb.Mssql, error) {
 	}
 
 	return mssqlDB, nil
+}
+
+func ChangeTime(strTime string) *time.Time {
+	if len(strTime) == 0 {
+		return nil
+	}
+	var baseDate *time.Time
+	t, err := time.Parse("2006-01-02T15:04:05Z", strTime)
+	if err != nil {
+		log.Errorf("time.Parse [err%v]", err)
+		return nil
+	} else {
+		baseDate = &t
+	}
+	if t.IsZero() {
+		baseDate = nil
+	}
+	return baseDate
 }

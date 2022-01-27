@@ -29,7 +29,7 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeCoin, error) {
 		return nil, err
 	}
 
-	var meCoinList []*context.MeCoin
+	meCoinList := []*context.MeCoin{}
 	for rows.Next() {
 		meCoin := &context.MeCoin{}
 		if err := rows.Scan(&meCoin.CoinID, &meCoin.WalletAddress, &meCoin.Quantity, &meCoin.TodayAcqQuantity, &meCoin.TodayCnsmQuantity, &meCoin.ResetDate); err != nil {

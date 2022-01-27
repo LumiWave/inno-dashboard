@@ -64,7 +64,21 @@ func (o *ExternalAPI) GetAppCoin(c echo.Context) error {
 
 // App 포인트 별 유동량 history 조회
 func (o *ExternalAPI) GetAppPointHistory(c echo.Context) error {
-	return commonapi.GetAppPointHistory(c)
+	params := context.NewReqPointLiquidity()
+
+	// Request json 파싱
+	if err := c.Bind(params); err != nil {
+		log.Errorf("context bind error : %v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetAppPointHistory(c, params)
 }
 
 // 코인별 유동량 history 조회

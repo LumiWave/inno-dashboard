@@ -17,7 +17,7 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if walletList, err := model.GetDB().GetListAccountCoins(reqMeCoin.AUID); walletList == nil || err != nil {
+	if walletList, err := model.GetDB().GetListAccountCoins(reqMeCoin.AUID); err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 	} else {
 		resp.Value = walletList

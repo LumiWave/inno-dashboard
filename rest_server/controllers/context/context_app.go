@@ -56,8 +56,8 @@ type ReqAppPointDaily struct {
 }
 
 func (o *ReqAppPointDaily) CheckValidate() *base.BaseResponse {
-	if o.AppID == 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_App_AppID_Empty)
+	if o.AppID <= 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_AppID_Error)
 	}
 	return nil
 }
@@ -78,7 +78,7 @@ type ReqAppCoinDaily struct {
 
 func (o *ReqAppCoinDaily) CheckValidate() *base.BaseResponse {
 	if o.CoinID <= 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_App_AppID_Empty)
+		return base.MakeBaseResponse(resultcode.Result_Invalid_CoinID_Error)
 	}
 	return nil
 }
@@ -93,9 +93,9 @@ type ResAppCoinDaily struct {
 
 ///////// Get List Coin Liquidity (코인 유동량)
 type ReqCoinLiquidity struct {
-	BaseDate time.Time `json:"base_date" query:"base_date"` // 기준날짜
-	CoinID   int64     `json:"coin_id" query:"coin_id"`     // 코인ID
-	Interval int64     `json:"interval" query:"interval"`   // 기간 간격 (0:오늘)
+	BaseDate string `json:"base_date" query:"base_date"` // 기준날짜
+	CoinID   int64  `json:"coin_id" query:"coin_id"`     // 코인ID
+	Interval int64  `json:"interval" query:"interval"`   // 기간 간격 (0:오늘)
 }
 
 type CoinLiquidity struct {
@@ -113,15 +113,38 @@ type CoinLiquidity struct {
 ////////////////////////////////////////
 
 ///////// Get List Point Liquidity (포인트 유동량)
+var CandleType = map[string]string{
+	"hour":  "USPW_GetList_HourlyPoints",
+	"day":   "USPW_GetList_DailyPoints",
+	"week":  "USPW_GetList_WeeklyPoints",
+	"month": "USPW_GetList_MonthlyPoints",
+}
+
 type ReqPointLiquidity struct {
-	BaseDate time.Time `json:"base_date" query:"base_date"` // 기준날짜
-	AppID    int64     `json:"app_id" query:"app_id"`       // 앱ID
-	PointID  int64     `json:"point_id" query:"point_id"`   // 포인트ID
-	Interval int64     `json:"interval" query:"interval"`   // 기간 간격 (0:오늘)
+	BaseDate string `json:"base_date" query:"base_date"` // 기준날짜
+	AppID    int64  `json:"app_id" query:"app_id"`       // 앱ID
+	PointID  int64  `json:"point_id" query:"point_id"`   // 포인트ID
+	Interval int64  `json:"interval" query:"interval"`   // 기간 간격 (0:오늘)
+	Candle   string `json:"candle" query:"candle"`       // 조회 종류 "hour", "day", "week", "month"
+}
+
+func NewReqPointLiquidity() *ReqPointLiquidity {
+	return new(ReqPointLiquidity)
+}
+
+func (o *ReqPointLiquidity) CheckValidate() *base.BaseResponse {
+	if o.AppID <= 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_AppID_Error)
+	}
+	if o.PointID <= 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_PointID_Error)
+	}
+	return nil
 }
 
 type PointLiquidity struct {
-	BaseDate             time.Time `json:"base_date" query:"base_date"`                           // 기준날짜
+	BaseDate             time.Time `json:"base_date" query:"base_date"` // 기준날짜
+	BaseDateToNumber     int64     `json:"base_date_number" query:"base_date_number"`
 	AcqQuantity          int64     `json:"acq_quantity" query:"acq_quantity"`                     // 획득량
 	AcqCount             int64     `json:"acq_count" query:"acq_count"`                           // 획득 횟수
 	CnsmQuantity         int64     `json:"cnsm_quntity" query:"cnsm_quntity"`                     // 소모량

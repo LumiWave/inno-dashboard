@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/commonapi/inner"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
@@ -159,10 +160,8 @@ func GetAppCoinDaily(c echo.Context, reqAppCoinDaily *context.ReqAppCoinDaily) e
 }
 
 // App 포인트 별 유동량 history 조회
-func GetAppPointHistory(c echo.Context) error {
-	resp := new(base.BaseResponse)
-	resp.Success()
-
+func GetAppPointHistory(c echo.Context, req *context.ReqPointLiquidity) error {
+	resp := inner.GetPointHistory(req)
 	return c.JSON(http.StatusOK, resp)
 }
 
