@@ -78,7 +78,7 @@ type ReqAppCoinDaily struct {
 
 func (o *ReqAppCoinDaily) CheckValidate() *base.BaseResponse {
 	if o.CoinID <= 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_App_AppID_Empty)
+		return base.MakeBaseResponse(resultcode.Result_Get_App_CoinID_Empty)
 	}
 	return nil
 }
