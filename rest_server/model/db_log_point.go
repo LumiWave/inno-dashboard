@@ -6,7 +6,6 @@ import (
 	"errors"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
@@ -21,27 +20,23 @@ const (
 )
 
 // 포인트 유동량 검색
-func (o *DB) GetListPointLiquidity(dateType string, reqPointLiquidity *context.ReqPointLiquidity) ([]*context.PointLiquidity, *time.Time, error) {
-	baseDate := ChangeTime(reqPointLiquidity.BaseDate)
+func (o *DB) GetListPointLiquidity(procedureType string, reqPointLiquidity *context.ReqPointLiquidity) ([]*context.PointLiquidity, error) {
+	baseDate := ChangeBaseTime(reqPointLiquidity.BaseDate)
 
 	baseDateStr := "BaseDate"
-	firstDateStr := "FirstDate"
-	if strings.EqualFold(dateType, "USPW_GetList_HourlyPoints") {
+	if strings.EqualFold(procedureType, "USPW_GetList_HourlyPoints") {
 		baseDateStr = "BaseSDT"
-		firstDateStr = "FirstSDT"
 	}
-	firstDate := &time.Time{}
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), dateType,
+	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), procedureType,
 		sql.Named(baseDateStr, baseDate),
 		sql.Named("AppID", reqPointLiquidity.AppID),
 		sql.Named("PointID", reqPointLiquidity.PointID),
 		sql.Named("Interval", reqPointLiquidity.Interval),
-		sql.Named(firstDateStr, sql.Out{Dest: &firstDate}),
 		&returnValue)
 	if err != nil {
-		log.Errorf("%v QueryContext error : %v", dateType, err)
-		return nil, nil, err
+		log.Errorf("%v QueryContext error : %v", procedureType, err)
+		return nil, err
 	}
 
 	pointLiquiditys := []*context.PointLiquidity{}
@@ -50,36 +45,34 @@ func (o *DB) GetListPointLiquidity(dateType string, reqPointLiquidity *context.R
 		if err := rows.Scan(&pointLiquidity.BaseDate, &pointLiquidity.AcqQuantity, &pointLiquidity.AcqCount,
 			&pointLiquidity.CnsmQuantity, &pointLiquidity.CnsmCount, &pointLiquidity.AcqExchangeQuantity,
 			&pointLiquidity.PointsToCoinsCount, &pointLiquidity.CnsmExchangeQuantity, &pointLiquidity.CoinsToPointsCount); err != nil {
-			log.Errorf("%v Scan error : %v", dateType, err)
-			return nil, nil, err
+			log.Errorf("%v Scan error : %v", procedureType, err)
+			return nil, err
 		} else {
 			pointLiquidity.BaseDateToNumber = pointLiquidity.BaseDate.Unix()
 			pointLiquiditys = append(pointLiquiditys, pointLiquidity)
 		}
 	}
+
 	defer rows.Close()
 
 	if returnValue != 1 {
-		log.Errorf("%v returnvalue error : %v", dateType, returnValue)
-		return nil, nil, errors.New(dateType + " returnvalue error " + strconv.Itoa(int(returnValue)))
+		log.Errorf("%v returnvalue error : %v", procedureType, returnValue)
+		return nil, errors.New(procedureType + " returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 
-	return pointLiquiditys, firstDate, nil
+	return pointLiquiditys, nil
 }
 
 // 일별 포인트 유동량 검색
 func (o *DB) GetListDailyPoints(reqPointLiquidity *context.ReqPointLiquidity) ([]*context.PointLiquidity, error) {
 	baseDate := ChangeTime(reqPointLiquidity.BaseDate)
 
-	//firstDate := &time.Time{}
-	firstDate := ""
 	var returnValue orginMssql.ReturnStatus
 	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), USPW_GetList_DailyPoints,
 		sql.Named("BaseDate", baseDate),
 		sql.Named("AppID", reqPointLiquidity.AppID),
 		sql.Named("PointID", reqPointLiquidity.PointID),
 		sql.Named("Interval", reqPointLiquidity.Interval),
-		sql.Named("FirstDate", sql.Out{Dest: &firstDate}),
 		&returnValue)
 	if err != nil {
 		log.Errorf("USPW_GetList_DailyPoints QueryContext error : %v", err)

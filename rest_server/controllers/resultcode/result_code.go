@@ -33,6 +33,8 @@ const (
 	Result_Get_App_CoinID_Empty               = 33003 // Get App CoinID Empty
 	Result_Get_App_Point_DailyLiquidity_Error = 33004 // Get App Point DailyLiquidity DB Error
 	Result_Get_App_Coin_DailyLiquidity_Error  = 33005 // Get App Coin DailyLiquidity DB Error
+	Result_Get_App_Point_Liquidity_Error      = 33006 // Get App Point Liquidity DB Error
+	Result_Get_App_Coin_Liquidity_Error       = 33007 // Get App Coin Liquidity DB Error
 
 	Result_Get_Swap_ExchangeGoods_Scan_Error = 33100 // GetListAccountPoints DB Scan Error
 
@@ -91,8 +93,10 @@ var ResultCodeText = map[int]string{
 	Result_Get_App_AppID_Empty:                "AppID is empty",
 	Result_Get_App_PointID_Empty:              "PointID is empty",
 	Result_Get_App_CoinID_Empty:               "CoinID is empty",
-	Result_Get_App_Point_DailyLiquidity_Error: "Get app point liquidity db error",
-	Result_Get_App_Coin_DailyLiquidity_Error:  "Get app coin liquidity db error",
+	Result_Get_App_Point_DailyLiquidity_Error: "Get app point daily liquidity db error",
+	Result_Get_App_Coin_DailyLiquidity_Error:  "Get app coin daily liquidity db error",
+	Result_Get_App_Point_Liquidity_Error:      "Get app point liquidity db error",
+	Result_Get_App_Coin_Liquidity_Error:       "Get app coin liquidity db error",
 
 	Result_Get_Swap_ExchangeGoods_Scan_Error: "GetListAccountPoints DB Scan Error",
 

@@ -10,8 +10,8 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 )
 
-func MakeLogKeyOfPoint(pointID int64, candleType string) string {
-	return config.GetInstance().DBPrefix + ":LOG-POINT:" + strconv.FormatInt(pointID, 10) + "-" + candleType
+func MakeLogKeyOfPoint(appID, pointID int64, candleType string) string {
+	return config.GetInstance().DBPrefix + ":LOG-APP-POINT:" + strconv.FormatInt(appID, 10) + "-" + strconv.FormatInt(pointID, 10) + "-" + candleType
 }
 
 func (o *DB) HSetLogOfPoint(key string, field string, value interface{}) error {
@@ -24,6 +24,10 @@ func (o *DB) HGetLogOfPoint(key string, field string, value interface{}) error {
 
 func (o *DB) ZADDLogOfPoint(key string, score int64, value interface{}) error {
 	return o.Cache.ZAdd(key, basedb.Z{Score: float64(score), Member: value})
+}
+
+func (o *DB) ZRemRangeByScore(key, min, max string) (int64, error) {
+	return o.Cache.ZRemRangeByScore(key, min, max)
 }
 
 func (o *DB) ZRangeLogOfPoint(key string, start, stop int64) ([]*context.PointLiquidity, error) {

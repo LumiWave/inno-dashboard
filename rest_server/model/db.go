@@ -101,6 +101,9 @@ func LoadDBPoint() {
 	gDB.GetApps()
 	gDB.GetAppPoints()
 	gDB.GetScanExchangeGoods()
+
+	gDB.LoadFullPointLiquidity(1000)
+	gDB.UpdatePointLiquidity()
 }
 
 func MakeDbError(resp *base.BaseResponse, errCode int, err error) {
@@ -126,6 +129,60 @@ func ChangeTime(strTime string) *time.Time {
 	}
 	var baseDate *time.Time
 	t, err := time.Parse("2006-01-02T15:04:05Z", strTime)
+	if err != nil {
+		log.Errorf("time.Parse [err%v]", err)
+		return nil
+	} else {
+		baseDate = &t
+	}
+	if t.IsZero() {
+		baseDate = nil
+	}
+	return baseDate
+}
+
+func ChangeHourTime(strTime string) *time.Time {
+	if len(strTime) == 0 {
+		return nil
+	}
+	var baseDate *time.Time
+	t, err := time.Parse("Jan 02 2006  3:04PM", strTime)
+	if err != nil {
+		log.Errorf("time.Parse [err%v]", err)
+		return nil
+	} else {
+		baseDate = &t
+	}
+	if t.IsZero() {
+		baseDate = nil
+	}
+	return baseDate
+}
+
+func ChangeDayTime(strTime string) *time.Time {
+	if len(strTime) == 0 {
+		return nil
+	}
+	var baseDate *time.Time
+	t, err := time.Parse("2006-01-02", strTime)
+	if err != nil {
+		log.Errorf("time.Parse [err%v]", err)
+		return nil
+	} else {
+		baseDate = &t
+	}
+	if t.IsZero() {
+		baseDate = nil
+	}
+	return baseDate
+}
+
+func ChangeBaseTime(strTime string) *time.Time {
+	if len(strTime) == 0 {
+		return nil
+	}
+	var baseDate *time.Time
+	t, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", strTime)
 	if err != nil {
 		log.Errorf("time.Parse [err%v]", err)
 		return nil
