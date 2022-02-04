@@ -44,7 +44,7 @@ func (o *DB) GetListPointLiquidity(procedureType string, reqPointLiquidity *cont
 		pointLiquidity := new(context.PointLiquidity)
 		if err := rows.Scan(&pointLiquidity.BaseDate, &pointLiquidity.AcqQuantity, &pointLiquidity.AcqCount,
 			&pointLiquidity.CnsmQuantity, &pointLiquidity.CnsmCount, &pointLiquidity.AcqExchangeQuantity,
-			&pointLiquidity.PointsToCoinsCount, &pointLiquidity.CnsmExchangeQuantity, &pointLiquidity.CoinsToPointsCount); err != nil {
+			&pointLiquidity.CoinsToPointsCount, &pointLiquidity.CnsmExchangeQuantity, &pointLiquidity.PointsToCoinsCount); err != nil {
 			log.Errorf("%v Scan error : %v", procedureType, err)
 			return nil, err
 		} else {
