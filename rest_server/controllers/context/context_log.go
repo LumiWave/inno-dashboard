@@ -42,7 +42,7 @@ type CoinLiquidity struct {
 	BaseDateToNumber     int64     `json:"base_date_number" query:"base_date_number"`
 	AcqQuantity          float64   `json:"acq_quantity" query:"acq_quantity"`                     // 획득량
 	AcqCount             int64     `json:"acq_count" query:"acq_count"`                           // 획득 횟수
-	CnsmQuantity         float64   `json:"cnsm_quntity" query:"cnsm_quntity"`                     // 소모량
+	CnsmQuantity         float64   `json:"cnsm_quantity" query:"cnsm_quantity"`                   // 소모량
 	CnsmCount            int64     `json:"cnsm_count" query:"cnsm_count"`                         // 소모 횟수
 	AcqExchangeQuantity  float64   `json:"acq_exchange_quantity" query:"acq_exchange_quantity"`   // 획득 전환량
 	PointsToCoinsCount   int64     `json:"points_to_coins_count" query:"points_to_coins_count"`   // 획득 전환 횟수
@@ -51,8 +51,8 @@ type CoinLiquidity struct {
 }
 
 type ResCoinLiquidity struct {
-	Count          int              `json:"coinliquidity_count"`
-	CoinLiquiditys []*CoinLiquidity `json:"coinliquiditys"`
+	Count          int              `json:"coin_liquidity_count"`
+	CoinLiquiditys []*CoinLiquidity `json:"coin_liquiditys"`
 }
 
 ////////////////////////////////////////
@@ -95,7 +95,7 @@ type PointLiquidity struct {
 	BaseDateToNumber     int64     `json:"base_date_number" query:"base_date_number"`
 	AcqQuantity          int64     `json:"acq_quantity" query:"acq_quantity"`                     // 획득량
 	AcqCount             int64     `json:"acq_count" query:"acq_count"`                           // 획득 횟수
-	CnsmQuantity         int64     `json:"cnsm_quntity" query:"cnsm_quntity"`                     // 소모량
+	CnsmQuantity         int64     `json:"cnsm_quantity" query:"cnsm_quantity"`                   // 소모량
 	CnsmCount            int64     `json:"cnsm_count" query:"cnsm_count"`                         // 소모 횟수
 	AcqExchangeQuantity  int64     `json:"acq_exchange_quantity" query:"acq_exchange_quantity"`   // 획득 전환량
 	PointsToCoinsCount   int64     `json:"points_to_coins_count" query:"points_to_coins_count"`   // 획득 전환 횟수
@@ -104,8 +104,8 @@ type PointLiquidity struct {
 }
 
 type ResPointLiquidity struct {
-	Count           int               `json:"pointliquidity_count"`
-	PointLiquiditys []*PointLiquidity `json:"pointliquiditys"`
+	Count           int               `json:"point_liquidity_count"`
+	PointLiquiditys []*PointLiquidity `json:"point_liquiditys"`
 }
 
 ////////////////////////////////////////
