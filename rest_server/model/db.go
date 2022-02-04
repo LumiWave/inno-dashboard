@@ -84,11 +84,11 @@ func InitDB(conf *config.ServerConfig) (err error) {
 		return err
 	}
 
-	LoadDBPoint()
+	LoadDBPoint(conf)
 	return nil
 }
 
-func LoadDBPoint() {
+func LoadDBPoint(conf *config.ServerConfig) {
 	gDB.ScanPointsMap = make(map[int64]*context.PointInfo)
 	gDB.AppCoins = make(map[int64][]*AppCoin)
 	gDB.AppPointsMap = make(map[int64]*context.AppPointInfo)
@@ -102,8 +102,11 @@ func LoadDBPoint() {
 	gDB.GetAppPoints()
 	gDB.GetScanExchangeGoods()
 
-	gDB.LoadFullPointLiquidity(1000)
-	gDB.UpdatePointLiquidity()
+	if conf.App.LiquidityUpdate {
+		gDB.LoadFullPointLiquidity(1000)
+		gDB.LoadFullCoinLiquidity(1000)
+		gDB.UpdateLiquidity()
+	}
 }
 
 func MakeDbError(resp *base.BaseResponse, errCode int, err error) {

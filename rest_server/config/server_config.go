@@ -16,6 +16,7 @@ type App struct {
 	ApplicationName        string `json:"application_name" yaml:"application_name"`
 	APIDocs                bool   `json:"api_docs" yaml:"api_docs"`
 	CachePointExpiryPeriod int64  `json:"cache_point_expiry_period" yaml:"cache_point_expiry_period"`
+	LiquidityUpdate        bool   `json:"liquidity_update" yaml:"liquidity_update"`
 }
 
 type ApiAuth struct {

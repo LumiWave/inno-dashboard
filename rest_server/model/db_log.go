@@ -3,13 +3,13 @@ package model
 import (
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 )
 
+// 특정 개수만큼 포인트 유동량 history 정보 업데이트
 func (o *DB) LoadFullPointLiquidity(interval int64) {
 	start := time.Now()
 	// 포인트 별 hour, day, week, month 값을 가져와서 redis에 저장
@@ -18,7 +18,7 @@ func (o *DB) LoadFullPointLiquidity(interval int64) {
 		for _, point := range app.Points {
 			// candle type loop
 			req := &context.ReqPointLiquidity{}
-			for candleType, candleProcedure := range context.CandleType {
+			for candleType, candleProcedure := range context.CandleTypeOfPoint {
 				req.AppID = appId
 				req.PointID = point.PointId
 				req.Candle = candleType
@@ -35,19 +35,19 @@ func (o *DB) LoadFullPointLiquidity(interval int64) {
 						break
 					} else {
 						if len(pointLiqs) == 0 {
-							log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v", appId, point.PointId, candleType, loopCnt)
+							//log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v", appId, point.PointId, candleType, loopCnt)
 							break
 						} else {
 							// redis에 저장하고 다음 데이터 수집한다.
 							for _, pointLiq := range pointLiqs {
-								if strings.EqualFold(candleType, "hour") {
-									log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
-										appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
-								} else {
-									log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
-										appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
-								}
-								o.ZRemRangeByScore(key, strconv.FormatInt(pointLiq.BaseDateToNumber, 10), strconv.FormatInt(pointLiq.BaseDateToNumber, 10))
+								// if strings.EqualFold(candleType, "hour") {
+								// 	log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
+								// 		appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
+								// } else {
+								// 	log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
+								// 		appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
+								// }
+								o.ZRemRangeByScorePoint(key, strconv.FormatInt(pointLiq.BaseDateToNumber, 10), strconv.FormatInt(pointLiq.BaseDateToNumber, 10))
 								if err := o.ZADDLogOfPoint(key, pointLiq.BaseDateToNumber, pointLiq); err != nil {
 									log.Errorf("ZADDLogOfPoint error : %v", err)
 								}
@@ -63,59 +63,58 @@ func (o *DB) LoadFullPointLiquidity(interval int64) {
 	fmt.Printf("LoadFullPointLiquidity took %s \n", elapsed)
 }
 
-// 특정 candletype 의 최신 정보만 업데이트
-func (o *DB) LoadUnitPointLiquidity(candleType string) {
+// 특정 개수만큼 코인 유동량 history 정보 업데이트
+func (o *DB) LoadFullCoinLiquidity(interval int64) {
 	start := time.Now()
-	// 포인트 별 hour, day, week, month 값을 가져와서 redis에 저장
-	// point loop
-	for appId, app := range o.AppPointsMap {
-		for _, point := range app.Points {
-			// candle type loop
-			req := &context.ReqPointLiquidity{}
-			req.AppID = appId
-			req.PointID = point.PointId
+	// 코인 별 hour, day, week, month 값을 가져와서 redis에 저장
+	// coin loop
+	for coinID, _ := range o.CoinsMap {
+		// candle type loop
+		req := &context.ReqCoinLiquidity{}
+		for candleType, candleProcedure := range context.CandleTypeOfCoin {
+			req.CoinID = coinID
 			req.Candle = candleType
-			req.Interval = 0
+			req.Interval = interval
 			req.BaseDate = ""
 
-			key := MakeLogKeyOfPoint(appId, point.PointId, candleType)
+			key := MakeLogKeyOfCoin(coinID, candleType)
 
 			loopCnt := 0
 			for {
 				loopCnt++
-				if pointLiqs, err := o.GetListPointLiquidity(context.CandleType[candleType], req); err != nil {
-					log.Errorf("GetListPointLiquidity error : %v", err)
+				if coinLiqs, err := o.GetListCoinLiquidity(candleProcedure, req); err != nil {
+					log.Errorf("GetListCoinLiquidity error : %v", err)
 					break
 				} else {
-					if len(pointLiqs) == 0 {
-						log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v", appId, point.PointId, candleType, loopCnt)
+					if len(coinLiqs) == 0 {
+						//log.Debugf("coinID : %v, candleType : %v, loopCnt:%v", coinID, candleType, loopCnt)
 						break
 					} else {
 						// redis에 저장하고 다음 데이터 수집한다.
-						for _, pointLiq := range pointLiqs {
-							if strings.EqualFold(candleType, "hour") {
-								log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
-									appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
-							} else {
-								log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
-									appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
-							}
-							o.ZRemRangeByScore(key, strconv.FormatInt(pointLiq.BaseDateToNumber, 10), strconv.FormatInt(pointLiq.BaseDateToNumber, 10))
-							if err := o.ZADDLogOfPoint(key, pointLiq.BaseDateToNumber, pointLiq); err != nil {
+						for _, coinLiq := range coinLiqs {
+							// if strings.EqualFold(candleType, "hour") {
+							// 	log.Debugf("coinID : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
+							// 		coinID, candleType, loopCnt, coinLiq.BaseDate, coinLiq.BaseDateToNumber)
+							// } else {
+							// 	log.Debugf("appID : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
+							// 		coinID, candleType, loopCnt, coinLiq.BaseDate, coinLiq.BaseDateToNumber)
+							// }
+							o.ZRemRangeByScoreOfCoin(key, strconv.FormatInt(coinLiq.BaseDateToNumber, 10), strconv.FormatInt(coinLiq.BaseDateToNumber, 10))
+							if err := o.ZADDLogOfCoin(key, coinLiq.BaseDateToNumber, coinLiq); err != nil {
 								log.Errorf("ZADDLogOfPoint error : %v", err)
 							}
 						}
-						req.BaseDate = pointLiqs[len(pointLiqs)-1].BaseDate.String()
+						req.BaseDate = coinLiqs[len(coinLiqs)-1].BaseDate.String()
 					}
 				}
 			}
 		}
 	}
 	elapsed := time.Since(start)
-	fmt.Printf("LoadUnitPointLiquidity took %s \n", elapsed)
+	fmt.Printf("LoadFullCoinLiquidity took %s \n", elapsed)
 }
 
-func (o *DB) UpdatePointLiquidity() {
+func (o *DB) UpdateLiquidity() {
 	go func() {
 		for {
 			//timer := time.NewTimer(1 * time.Minute)
@@ -123,7 +122,8 @@ func (o *DB) UpdatePointLiquidity() {
 			<-timer.C
 			timer.Stop()
 
-			o.LoadFullPointLiquidity(0)
+			o.LoadFullPointLiquidity(1)
+			o.LoadFullCoinLiquidity(1)
 		}
 	}()
 }

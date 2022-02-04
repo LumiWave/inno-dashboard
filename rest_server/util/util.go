@@ -29,6 +29,11 @@ func SumString(data1, data2 string) string {
 	return strconv.FormatInt(ParseInt(data1)+ParseInt(data2), 10)
 }
 
+// string -> int로 변환해서 곱하기
+func MultiplyString(data1, data2 string) int64 {
+	return ParseInt(data1) * ParseInt(data2)
+}
+
 // string -> int로 변환해서 빼기
 func SubString(data1, data2 string) string {
 	return strconv.FormatInt(ParseInt(data1)-ParseInt(data2), 10)

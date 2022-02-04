@@ -26,7 +26,7 @@ func (o *DB) ZADDLogOfPoint(key string, score int64, value interface{}) error {
 	return o.Cache.ZAdd(key, basedb.Z{Score: float64(score), Member: value})
 }
 
-func (o *DB) ZRemRangeByScore(key, min, max string) (int64, error) {
+func (o *DB) ZRemRangeByScorePoint(key, min, max string) (int64, error) {
 	return o.Cache.ZRemRangeByScore(key, min, max)
 }
 
@@ -35,6 +35,19 @@ func (o *DB) ZRangeLogOfPoint(key string, start, stop int64) ([]*context.PointLi
 	pointLiqs := []*context.PointLiquidity{}
 
 	list, err := o.Cache.ZRange(key, start, stop)
+	for _, member := range list {
+		pointLiq := &context.PointLiquidity{}
+		json.Unmarshal([]byte(fmt.Sprintf("%v", member.Member)), pointLiq)
+		pointLiqs = append(pointLiqs, pointLiq)
+	}
+	return pointLiqs, err
+}
+
+func (o *DB) ZRevRangeLogOfPoint(key string, start, stop int64) ([]*context.PointLiquidity, error) {
+
+	pointLiqs := []*context.PointLiquidity{}
+
+	list, err := o.Cache.ZRevRange(key, start, stop)
 	for _, member := range list {
 		pointLiq := &context.PointLiquidity{}
 		json.Unmarshal([]byte(fmt.Sprintf("%v", member.Member)), pointLiq)
