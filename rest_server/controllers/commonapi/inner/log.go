@@ -42,7 +42,7 @@ func GetCoinHistory(req *context.ReqCoinLiquidity) *base.BaseResponse {
 		util.MultiplyString(req.PageOffset, req.PageSize),
 		util.MultiplyString(req.PageOffset, req.PageSize)+util.ParseInt(req.PageSize)-1); err != nil {
 		log.Errorf("ZRevRangeLogOfCoin error : %v", err)
-		resp.SetReturn(resultcode.Result_Get_App_Point_Liquidity_Error)
+		resp.SetReturn(resultcode.Result_Get_App_Coin_Liquidity_Error)
 	} else {
 		resp.Value = context.ResCoinLiquidity{
 			Count:          len(coinLiqs),
