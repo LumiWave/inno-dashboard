@@ -111,7 +111,7 @@ func (o *DB) GetCoins() error {
 
 	for rows.Next() {
 		coin := &context.CoinInfo{}
-		if err := rows.Scan(&coin.CoinId, &coin.CoinSymbol, &coin.ContractAddress, &coin.IconUrl, &coin.ExchangeFees); err == nil {
+		if err := rows.Scan(&coin.CoinId, &coin.CoinName, &coin.CoinSymbol, &coin.ContractAddress, &coin.IconUrl, &coin.ExchangeFees); err == nil {
 			o.Coins.Coins = append(o.Coins.Coins, coin)
 			o.CoinsMap[coin.CoinId] = coin
 		}
@@ -121,6 +121,7 @@ func (o *DB) GetCoins() error {
 		for _, appCoin := range appCoins {
 			for _, coin := range o.Coins.Coins {
 				if appCoin.CoinId == coin.CoinId {
+					appCoin.CoinName = coin.CoinName
 					appCoin.CoinSymbol = coin.CoinSymbol
 					appCoin.ContractAddress = coin.ContractAddress
 					appCoin.IconUrl = coin.IconUrl
