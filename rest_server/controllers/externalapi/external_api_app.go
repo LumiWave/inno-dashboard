@@ -41,7 +41,7 @@ func (o *ExternalAPI) GetAppPoint(c echo.Context) error {
 		return c.JSON(http.StatusOK, err)
 	}
 
-	return commonapi.GetAppPoint(c, reqAppPointDaily)
+	return commonapi.GetAppPointAll(c, reqAppPointDaily)
 }
 
 // 코인 별 당일 누적/전환량 조회
@@ -59,7 +59,7 @@ func (o *ExternalAPI) GetAppCoin(c echo.Context) error {
 		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
-	return commonapi.GetAppCoinDaily(c, reqAppCoinDaily)
+	return commonapi.GetAppCoinDailyAll(c, reqAppCoinDaily)
 }
 
 // App 포인트 별 유동량 history 조회

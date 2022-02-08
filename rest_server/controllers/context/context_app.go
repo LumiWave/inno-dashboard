@@ -2,7 +2,6 @@ package context
 
 import (
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 )
 
 ///////// Point Info
@@ -55,17 +54,18 @@ type ReqAppPointDaily struct {
 }
 
 func (o *ReqAppPointDaily) CheckValidate() *base.BaseResponse {
-	if o.AppID <= 0 {
-		return base.MakeBaseResponse(resultcode.Result_Invalid_AppID_Error)
-	}
 	return nil
 }
 
-type ResAppPointDaily struct {
-	AppID                    int64 `json:"app_id" query:"app_id"`
+type ResPointDaily struct {
 	PointID                  int64 `json:"point_id" query:"point_id"`
 	TodayAcqQuantity         int64 `json:"today_acq_quantity" query:"today_acq_quantity"`
 	TodayAcqExchangeQuantity int64 `json:"today_acq_exchange_quantity" query:"today_acq_exchange_quantity"`
+}
+
+type ResAppPointDaily struct {
+	AppID          int64            `json:"app_id" query:"app_id"`
+	ResPointDailys []*ResPointDaily `json:"point_dailys"`
 }
 
 ////////////////////////////////////////
@@ -76,9 +76,6 @@ type ReqAppCoinDaily struct {
 }
 
 func (o *ReqAppCoinDaily) CheckValidate() *base.BaseResponse {
-	if o.CoinID <= 0 {
-		return base.MakeBaseResponse(resultcode.Result_Get_App_CoinID_Empty)
-	}
 	return nil
 }
 
