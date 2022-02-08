@@ -85,3 +85,27 @@ func GetCoinTransferExistInProgress(ctx *context.InnoDashboardContext, params *c
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
+
+// 코인 외부 지갑 전송 중인 상태 정보 존재 하지 않는지 요청
+func GetCoinTransferNotExistInProgress(ctx *context.InnoDashboardContext, params *context.GetCoinTransferExistInProgress) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if res, err := point_manager_server.GetInstance().GetCoinTransferNotExistInProgress(params.AUID); err != nil {
+		resp.SetReturn(resultcode.ResultInternalServerError)
+	} else {
+		if res.Return == 0 {
+			// 존재 해서 에러 발생
+			resp.Return = 12200
+			resp.Message = "Transfer inprogress"
+			resp.Value = res.Value
+		} else if res.Return != 12201 {
+			resp.Return = res.Return
+			resp.Message = res.Message
+		} else if res.Return == 12202 {
+			// 존재 하지 않으면 성공 처리
+		}
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}

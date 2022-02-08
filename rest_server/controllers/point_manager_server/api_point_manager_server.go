@@ -61,3 +61,16 @@ func (o *PointManagerServerInfo) GetCoinTransferExistInProgress(auid int64) (*Re
 
 	return data.(*ResCoinTransfer), nil
 }
+
+func (o *PointManagerServerInfo) GetCoinTransferNotExistInProgress(auid int64) (*ResCoinTransfer, error) {
+	api := ApiList[Api_coin_transfer_exist_inprogress]
+	uri := fmt.Sprintf(api.Uri, auid)
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, uri)
+
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, bytes.NewBuffer(nil), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResCoinTransfer), nil
+}

@@ -34,7 +34,7 @@ func (o *ExternalAPI) PostTransfer(c echo.Context) error {
 	return commonapi.PostTransfer(ctx, params)
 }
 
-// 외부 지갑으로 코인 전송 중인 상태 정보 요청
+// 코인 외부 지갑으로 코인 전송 중인 상태 정보 요청
 func (o *ExternalAPI) GetCoinTransferExistInProgress(c echo.Context) error {
 	ctx := base.GetContext(c).(*context.InnoDashboardContext)
 	params := context.NewGetCoinTransferExistInProgress()
@@ -51,4 +51,23 @@ func (o *ExternalAPI) GetCoinTransferExistInProgress(c echo.Context) error {
 		return c.JSON(http.StatusOK, err)
 	}
 	return commonapi.GetCoinTransferExistInProgress(ctx, params)
+}
+
+// 코인 외부 지갑 전송 중인 상태 정보 존재 하지 않는지 요청
+func (o *ExternalAPI) GetCoinTransferNotExistInProgress(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	params := context.NewGetCoinTransferExistInProgress()
+
+	// Request json 파싱
+	if err := ctx.EchoContext.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+	return commonapi.GetCoinTransferNotExistInProgress(ctx, params)
 }
