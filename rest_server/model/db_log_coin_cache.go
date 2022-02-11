@@ -26,6 +26,17 @@ func (o *DB) ZADDLogOfCoin(key string, score int64, value interface{}) error {
 	return o.Cache.ZAdd(key, basedb.Z{Score: float64(score), Member: value})
 }
 
+func (o *DB) ZADDLogOfCoinSlice(key string, liqs []*context.CoinLiquidity) error {
+	z := []basedb.Z{}
+	for _, liq := range liqs {
+		z = append(z, basedb.Z{
+			Score:  float64(liq.BaseDateToNumber),
+			Member: liq,
+		})
+	}
+	return o.Cache.ZAdd(key, z...)
+}
+
 func (o *DB) ZRemRangeByScoreOfCoin(key, min, max string) (int64, error) {
 	return o.Cache.ZRemRangeByScore(key, min, max)
 }

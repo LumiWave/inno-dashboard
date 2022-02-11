@@ -38,20 +38,19 @@ func (o *DB) LoadFullPointLiquidity(interval int64, allLoad bool) {
 							//log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v", appId, point.PointId, candleType, loopCnt)
 							break
 						} else {
-							// redis에 저장하고 다음 데이터 수집한다.
-							for _, pointLiq := range pointLiqs {
-								// if strings.EqualFold(candleType, "hour") {
-								// 	log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
-								// 		appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
-								// } else {
-								// 	log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
-								// 		appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
-								// }
-								o.ZRemRangeByScorePoint(key, strconv.FormatInt(pointLiq.BaseDateToNumber, 10), strconv.FormatInt(pointLiq.BaseDateToNumber, 10))
-								if err := o.ZADDLogOfPoint(key, pointLiq.BaseDateToNumber, pointLiq); err != nil {
-									log.Errorf("ZADDLogOfPoint error : %v", err)
-								}
-							}
+							// 기존 데이터를 삭제하고, redis에 저장하고 다음 데이터 수집한다.
+							o.ZRemRangeByScorePoint(key, strconv.FormatInt(pointLiqs[len(pointLiqs)-1].BaseDateToNumber, 10), strconv.FormatInt(pointLiqs[0].BaseDateToNumber, 10))
+							o.ZADDLogOfPointSlice(key, pointLiqs)
+							// debug용
+							// for _, pointLiq := range pointLiqs {
+							// 	if strings.EqualFold(candleType, "hour") {
+							// 		log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
+							// 			appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
+							// 	} else {
+							// 		log.Debugf("appID : %v, pointid : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
+							// 			appId, point.PointId, candleType, loopCnt, pointLiq.BaseDate, pointLiq.BaseDateToNumber)
+							// 	}
+							// }
 							req.BaseDate = pointLiqs[len(pointLiqs)-1].BaseDate.String()
 							if !allLoad {
 								break
@@ -93,20 +92,19 @@ func (o *DB) LoadFullCoinLiquidity(interval int64, allLoad bool) {
 						//log.Debugf("coinID : %v, candleType : %v, loopCnt:%v", coinID, candleType, loopCnt)
 						break
 					} else {
-						// redis에 저장하고 다음 데이터 수집한다.
-						for _, coinLiq := range coinLiqs {
-							// if strings.EqualFold(candleType, "hour") {
-							// 	log.Debugf("coinID : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
-							// 		coinID, candleType, loopCnt, coinLiq.BaseDate, coinLiq.BaseDateToNumber)
-							// } else {
-							// 	log.Debugf("appID : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
-							// 		coinID, candleType, loopCnt, coinLiq.BaseDate, coinLiq.BaseDateToNumber)
-							// }
-							o.ZRemRangeByScoreOfCoin(key, strconv.FormatInt(coinLiq.BaseDateToNumber, 10), strconv.FormatInt(coinLiq.BaseDateToNumber, 10))
-							if err := o.ZADDLogOfCoin(key, coinLiq.BaseDateToNumber, coinLiq); err != nil {
-								log.Errorf("ZADDLogOfPoint error : %v", err)
-							}
-						}
+						// 기존 데이터를 삭제하고, redis에 저장하고 다음 데이터 수집한다.
+						o.ZRemRangeByScoreOfCoin(key, strconv.FormatInt(coinLiqs[len(coinLiqs)-1].BaseDateToNumber, 10), strconv.FormatInt(coinLiqs[0].BaseDateToNumber, 10))
+						o.ZADDLogOfCoinSlice(key, coinLiqs)
+						// debug용
+						// for _, coinLiq := range coinLiqs {
+						// 	if strings.EqualFold(candleType, "hour") {
+						// 		log.Debugf("coinID : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
+						// 			coinID, candleType, loopCnt, coinLiq.BaseDate, coinLiq.BaseDateToNumber)
+						// 	} else {
+						// 		log.Debugf("appID : %v, candleType : %v, loopCnt:%v, baseDate : %v %v",
+						// 			coinID, candleType, loopCnt, coinLiq.BaseDate, coinLiq.BaseDateToNumber)
+						// 	}
+						// }
 						req.BaseDate = coinLiqs[len(coinLiqs)-1].BaseDate.String()
 						if !allLoad {
 							break

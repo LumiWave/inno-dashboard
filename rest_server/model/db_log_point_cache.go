@@ -26,6 +26,17 @@ func (o *DB) ZADDLogOfPoint(key string, score int64, value interface{}) error {
 	return o.Cache.ZAdd(key, basedb.Z{Score: float64(score), Member: value})
 }
 
+func (o *DB) ZADDLogOfPointSlice(key string, liqs []*context.PointLiquidity) error {
+	z := []basedb.Z{}
+	for _, liq := range liqs {
+		z = append(z, basedb.Z{
+			Score:  float64(liq.BaseDateToNumber),
+			Member: liq,
+		})
+	}
+	return o.Cache.ZAdd(key, z...)
+}
+
 func (o *DB) ZRemRangeByScorePoint(key, min, max string) (int64, error) {
 	return o.Cache.ZRemRangeByScore(key, min, max)
 }
