@@ -123,8 +123,8 @@ func (o *DB) LoadFullCoinLiquidity(interval int64, allLoad bool) {
 func (o *DB) UpdateLiquidity() {
 	go func() {
 		for {
-			//timer := time.NewTimer(1 * time.Minute)
-			timer := time.NewTimer(5 * time.Second)
+			timer := time.NewTimer(1 * time.Minute)
+			//timer := time.NewTimer(5 * time.Second)
 			<-timer.C
 			timer.Stop()
 
