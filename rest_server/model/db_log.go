@@ -10,7 +10,7 @@ import (
 )
 
 // 특정 개수만큼 포인트 유동량 history 정보 업데이트
-func (o *DB) LoadFullPointLiquidity(interval int64) {
+func (o *DB) LoadFullPointLiquidity(interval int64, allLoad bool) {
 	start := time.Now()
 	// 포인트 별 hour, day, week, month 값을 가져와서 redis에 저장
 	// point loop
@@ -53,6 +53,9 @@ func (o *DB) LoadFullPointLiquidity(interval int64) {
 								}
 							}
 							req.BaseDate = pointLiqs[len(pointLiqs)-1].BaseDate.String()
+							if !allLoad {
+								break
+							}
 						}
 					}
 				}
@@ -64,7 +67,7 @@ func (o *DB) LoadFullPointLiquidity(interval int64) {
 }
 
 // 특정 개수만큼 코인 유동량 history 정보 업데이트
-func (o *DB) LoadFullCoinLiquidity(interval int64) {
+func (o *DB) LoadFullCoinLiquidity(interval int64, allLoad bool) {
 	start := time.Now()
 	// 코인 별 hour, day, week, month 값을 가져와서 redis에 저장
 	// coin loop
@@ -105,6 +108,9 @@ func (o *DB) LoadFullCoinLiquidity(interval int64) {
 							}
 						}
 						req.BaseDate = coinLiqs[len(coinLiqs)-1].BaseDate.String()
+						if !allLoad {
+							break
+						}
 					}
 				}
 			}
@@ -117,13 +123,13 @@ func (o *DB) LoadFullCoinLiquidity(interval int64) {
 func (o *DB) UpdateLiquidity() {
 	go func() {
 		for {
-			timer := time.NewTimer(1 * time.Minute)
-			//timer := time.NewTimer(5 * time.Second)
+			//timer := time.NewTimer(1 * time.Minute)
+			timer := time.NewTimer(5 * time.Second)
 			<-timer.C
 			timer.Stop()
 
-			o.LoadFullPointLiquidity(1)
-			o.LoadFullCoinLiquidity(1)
+			o.LoadFullPointLiquidity(1, false)
+			o.LoadFullCoinLiquidity(1, false)
 		}
 	}()
 }

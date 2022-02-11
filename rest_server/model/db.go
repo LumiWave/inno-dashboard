@@ -103,8 +103,8 @@ func LoadDBPoint(conf *config.ServerConfig) {
 	gDB.GetScanExchangeGoods()
 
 	if conf.App.LiquidityUpdate {
-		gDB.LoadFullPointLiquidity(1000)
-		gDB.LoadFullCoinLiquidity(1000)
+		gDB.LoadFullPointLiquidity(1000, true)
+		gDB.LoadFullCoinLiquidity(1000, true)
 		gDB.UpdateLiquidity()
 	}
 }
