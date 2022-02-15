@@ -109,6 +109,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	// 최소 변환 비율에 맞는지 체크
 	// 전환 비율 계산 후 타당성 확인
 	if resSwap, err := point_manager_server.GetInstance().PostPointCoinSwap(swapInfo); err != nil {
+		log.Errorf("PostPointCoinSwap error : %v", err)
 		resp.SetReturn(resultcode.Result_Unknown_Swap_Error)
 	} else {
 		if resSwap.Common.Return != 0 {
