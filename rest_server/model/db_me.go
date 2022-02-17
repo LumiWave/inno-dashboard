@@ -32,7 +32,14 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeCoin, error) {
 	meCoinList := []*context.MeCoin{}
 	for rows.Next() {
 		meCoin := &context.MeCoin{}
-		if err := rows.Scan(&meCoin.CoinID, &meCoin.WalletAddress, &meCoin.Quantity, &meCoin.TodayAcqQuantity, &meCoin.TodayCnsmQuantity, &meCoin.ResetDate); err != nil {
+		if err := rows.Scan(&meCoin.CoinID,
+			&meCoin.WalletAddress,
+			&meCoin.Quantity,
+			&meCoin.TodayAcqQuantity,
+			&meCoin.TodayCnsmQuantity,
+			&meCoin.TodayAcqExchangeQuantity,
+			&meCoin.TodayCnsmExchangeQuantity,
+			&meCoin.ResetDate); err != nil {
 			log.Errorf("USPAU_GetList_AccountCoins Scan error %v", err)
 			return nil, err
 		} else {
@@ -66,7 +73,13 @@ func (o *DB) GetListAccountPoints(auid, muid int64) ([]*context.MePoint, error) 
 
 	for rows.Next() {
 		mePoint := context.MePoint{}
-		if err := rows.Scan(&mePoint.AppID, &mePoint.PointID, &mePoint.TodayLimitedQuantity, &mePoint.TodayAcqQuantity, &mePoint.TodayCnsmQuantity, &mePoint.ResetDate); err != nil {
+		if err := rows.Scan(&mePoint.AppID,
+			&mePoint.PointID,
+			&mePoint.TodayAcqQuantity,
+			&mePoint.TodayCnsmQuantity,
+			&mePoint.TodayAcqExchangeQuantity,
+			&mePoint.TodayCnsmExchangeQuantity,
+			&mePoint.ResetDate); err != nil {
 			log.Errorf("USPAU_GetList_AccountPoints Scan error : %v", err)
 			return nil, err
 		} else {

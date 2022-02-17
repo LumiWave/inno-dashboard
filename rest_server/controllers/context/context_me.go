@@ -23,13 +23,14 @@ func (o *ReqMePoint) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse
 }
 
 type MePoint struct {
-	AppID                int64  `json:"app_id" query:"app_id"`
-	PointID              int64  `json:"point_id" query:"point_id"`
-	Quantity             int64  `json:"quantity"`
-	TodayLimitedQuantity int64  `json:"today_limited_quantity" query:"today_limited_quantity"`
-	TodayAcqQuantity     int64  `json:"today_acq_quantity" query:"today_acq_quantity"`
-	TodayCnsmQuantity    int64  `json:"today_cnsm_quantity" query:"today_cnsm_quantity"`
-	ResetDate            string `json:"reset_date" query:"reset_date"`
+	AppID                     int64  `json:"app_id" query:"app_id"`
+	PointID                   int64  `json:"point_id" query:"point_id"`
+	Quantity                  int64  `json:"quantity"`
+	TodayAcqQuantity          int64  `json:"today_acq_quantity" query:"today_acq_quantity"`
+	TodayCnsmQuantity         int64  `json:"today_cnsm_quantity" query:"today_cnsm_quantity"`
+	TodayAcqExchangeQuantity  int64  `json:"today_acq_exchange_quantity" query:"today_acq_exchange_quantity"`
+	TodayCnsmExchangeQuantity int64  `json:"today_cnsm_exchange_quantity" query:"today_cnsm_exchange_quantity"`
+	ResetDate                 string `json:"reset_date" query:"reset_date"`
 }
 
 ////////////////////////////////////////
@@ -47,13 +48,15 @@ func (o *ReqMeCoin) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse 
 }
 
 type MeCoin struct {
-	CoinID            int64     `json:"coin_id" query:"coin_id"`
-	CoinSymbol        string    `json:"coin_symbol" query:"coin_symbol"`
-	WalletAddress     string    `json:"wallet_address" query:"wallet_address"`
-	Quantity          float64   `json:"quantity" query:"quantity"`
-	TodayAcqQuantity  float64   `json:"today_acq_quantity" query:"today_acq_quantity"`
-	TodayCnsmQuantity float64   `json:"today_cnsm_quantity" query:"today_cnsm_quantity"`
-	ResetDate         time.Time `json:"reset_date" query:"reset_date"`
+	CoinID                    int64     `json:"coin_id" query:"coin_id"`
+	CoinSymbol                string    `json:"coin_symbol" query:"coin_symbol"`
+	WalletAddress             string    `json:"wallet_address" query:"wallet_address"`
+	Quantity                  float64   `json:"quantity" query:"quantity"`
+	TodayAcqQuantity          float64   `json:"today_acq_quantity" query:"today_acq_quantity"`
+	TodayCnsmQuantity         float64   `json:"today_cnsm_quantity" query:"today_cnsm_quantity"`
+	TodayAcqExchangeQuantity  float64   `json:"today_acq_exchange_quantity" query:"today_acq_exchange_quantity"`
+	TodayCnsmExchangeQuantity float64   `json:"today_cnsm_exchange_quantity" query:"today_cnsm_exchange_quantity"`
+	ResetDate                 time.Time `json:"reset_date" query:"reset_date"`
 }
 
 ////////////////////////////////////////

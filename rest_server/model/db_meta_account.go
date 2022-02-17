@@ -100,7 +100,7 @@ func (o *DB) GetCoins() error {
 	var rs orginMssql.ReturnStatus
 	rows, err := o.MssqlAccountRead.GetDB().QueryContext(originCtx.Background(), USPAU_Scan_Coins, &rs)
 	if err != nil {
-		log.Error("QueryContext err : ", err)
+		log.Error("USPAU_Scan_Coins QueryContext err : ", err)
 		return err
 	}
 
@@ -111,7 +111,13 @@ func (o *DB) GetCoins() error {
 
 	for rows.Next() {
 		coin := &context.CoinInfo{}
-		if err := rows.Scan(&coin.CoinId, &coin.CoinName, &coin.CoinSymbol, &coin.ContractAddress, &coin.IconUrl, &coin.ExchangeFees); err == nil {
+		if err := rows.Scan(&coin.CoinId,
+			&coin.CoinName,
+			&coin.CoinSymbol,
+			&coin.ContractAddress,
+			&coin.IconUrl,
+			&coin.DailyLimitedAcqExchangeQuantity,
+			&coin.ExchangeFees); err == nil {
 			o.Coins.Coins = append(o.Coins.Coins, coin)
 			o.CoinsMap[coin.CoinId] = coin
 		}
@@ -170,14 +176,15 @@ func (o *DB) GetAppPoints() error {
 
 	o.AppPoints.Apps = nil
 
-	var appId, pointId, minExchangeQuantity, daliyLimiteQuantity sql.NullInt64
+	var appId, pointId, minExchangeQuantity, daliyLimiteAcqQuantity, dailyLimitedAcqExchangeQuantity sql.NullInt64
 	var exchangeRatio sql.NullFloat64
 	for rows.Next() {
-		if err := rows.Scan(&appId, &pointId, &minExchangeQuantity, &exchangeRatio, &daliyLimiteQuantity); err == nil {
+		if err := rows.Scan(&appId, &pointId, &minExchangeQuantity, &exchangeRatio, &daliyLimiteAcqQuantity, &dailyLimitedAcqExchangeQuantity); err == nil {
 			temp := o.ScanPointsMap[pointId.Int64]
-			temp.DaliyLimitedQuantity = daliyLimiteQuantity.Int64
-			temp.MinExchangeQuantity = minExchangeQuantity.Int64
 			temp.ExchangeRatio = exchangeRatio.Float64
+			temp.MinExchangeQuantity = minExchangeQuantity.Int64
+			temp.DaliyLimitedAcqQuantity = daliyLimiteAcqQuantity.Int64
+			temp.DailyLimitedAcqExchangeQuantity = dailyLimitedAcqExchangeQuantity.Int64
 
 			o.AppPointsMap[appId.Int64].Points = append(o.AppPointsMap[appId.Int64].Points, temp)
 			o.AppPoints.Apps = append(o.AppPoints.Apps, o.AppPointsMap[appId.Int64])
