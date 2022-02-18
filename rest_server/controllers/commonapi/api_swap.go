@@ -39,6 +39,13 @@ func GetSwapEnable(c echo.Context, reqSwapEnable *context.ReqSwapEnable) error {
 
 // Swap 처리
 func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInfo) error {
+	Lockkey := model.MakeMemberSwapLockKey(ctx.GetValue().AUID)
+	unLock, err := model.AutoLock(Lockkey)
+	if err != nil {
+		return err
+	}
+	defer unLock()
+
 	resp := new(base.BaseResponse)
 	resp.Success()
 

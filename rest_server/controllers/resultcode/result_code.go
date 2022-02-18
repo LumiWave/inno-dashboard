@@ -49,9 +49,10 @@ const (
 	Result_CoinTransfer_Quantity_Empty   = 36003 // Amount is Empty
 	Result_CoinTransfer_NotEnough_Coin   = 36004 // 전송할 코인량이 충분하지 않다.
 
-	Result_DBError         = 19000 // db 에러
-	Result_Invalid_DBID    = 19001 // 유효하지 못한 database index
-	Result_DBError_Unknown = 19002 // 알려지지 않은 db 에러
+	Result_DBError              = 19000 // db 에러
+	Result_Invalid_DBID         = 19001 // 유효하지 못한 database index
+	Result_DBError_Unknown      = 19002 // 알려지지 않은 db 에러
+	Result_RedisError_Lock_fail = 19003 // redis lock error
 
 	Result_Auth_RequireMessage    = 20000
 	Result_Auth_RequireSign       = 20001
@@ -111,9 +112,10 @@ var ResultCodeText = map[int]string{
 	Result_CoinTransfer_Quantity_Empty:   "Quantity is empty",
 	Result_CoinTransfer_NotEnough_Coin:   "Not enough Coin Quantity",
 
-	Result_DBError:         "Internal DB error",
-	Result_Invalid_DBID:    "Invalid DB ID",
-	Result_DBError_Unknown: "Unknown DB error",
+	Result_DBError:              "Internal DB error",
+	Result_Invalid_DBID:         "Invalid DB ID",
+	Result_DBError_Unknown:      "Unknown DB error",
+	Result_RedisError_Lock_fail: "Redis lock error.",
 
 	Result_Auth_RequireMessage:    "Message is required",
 	Result_Auth_RequireSign:       "Sign info is required",
