@@ -43,6 +43,7 @@ const (
 	Result_Get_Me_PointList_Scan_Error  = 34003 // GetMePointList DB Scan Error
 	Result_Get_Me_CoinList_Scan_Error   = 34004 // GetMeCoinList DB Scan Error
 	Result_Get_MemberList_Scan_Error    = 34005 // GetListMembers DB Scan Error
+	Result_Get_Me_Verify_otp_Error      = 34006 // otp verify error
 
 	Result_CoinTransfer_CoinSymbol_Empty = 36001 // Coin Symbol is Empty
 	Result_CoinTransfer_ToAddress_Empty  = 36002 // To Address is Empty
@@ -106,6 +107,7 @@ var ResultCodeText = map[int]string{
 	Result_Get_Me_PointList_Scan_Error:  "GetMePointList DB Scan Error",
 	Result_Get_Me_CoinList_Scan_Error:   "GetMeCoinList DB Scan Error",
 	Result_Get_MemberList_Scan_Error:    "GetListMembers DB Scan Error",
+	Result_Get_Me_Verify_otp_Error:      "Otp Verify Error",
 
 	Result_CoinTransfer_CoinSymbol_Empty: "CoinSymbol is empty",
 	Result_CoinTransfer_ToAddress_Empty:  "ToAddress is empty",

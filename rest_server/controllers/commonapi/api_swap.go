@@ -5,6 +5,8 @@ import (
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
+	"github.com/ONBUFF-IP-TOKEN/baseutil/otp_google"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
@@ -39,15 +41,23 @@ func GetSwapEnable(c echo.Context, reqSwapEnable *context.ReqSwapEnable) error {
 
 // Swap 처리
 func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInfo) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	// otp check
+	if config.GetInstance().Otp.EnableSwap {
+		if !otp_google.VerifyTimebase(ctx.GetValue().InnoUID, reqSwapInfo.OtpCode) {
+			resp.SetReturn(resultcode.Result_Get_Me_Verify_otp_Error)
+			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		}
+	}
+
 	Lockkey := model.MakeMemberSwapLockKey(ctx.GetValue().AUID)
 	unLock, err := model.AutoLock(Lockkey)
 	if err != nil {
 		return err
 	}
 	defer unLock()
-
-	resp := new(base.BaseResponse)
-	resp.Success()
 
 	swapInfo := &point_manager_server.ReqSwapInfo{
 		AUID: ctx.GetValue().AUID,

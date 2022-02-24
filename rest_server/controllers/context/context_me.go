@@ -69,3 +69,25 @@ type Member struct {
 }
 
 ////////////////////////////////////////
+
+///////// otp : qrcode 용 uri 조회
+type MeOtpUri struct {
+	OtpUri string `json:"otp_uri"`
+}
+
+////////////////////////////////////////
+
+///////// otp : qrcode 용 uri 조회
+type MeOtpVerify struct {
+	OtpCode string `json:"otp_code" query:"otp_code"`
+}
+
+func NewMeOtpVerify() *MeOtpVerify {
+	return new(MeOtpVerify)
+}
+
+func (o *MeOtpVerify) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+	return nil
+}
+
+////////////////////////////////////////

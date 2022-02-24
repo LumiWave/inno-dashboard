@@ -5,6 +5,8 @@ import (
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
+	"github.com/ONBUFF-IP-TOKEN/baseutil/otp_google"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
@@ -77,4 +79,29 @@ func GetMeCoinList(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	}
 
 	return c.JSON(http.StatusOK, resp)
+}
+
+// google otp : qrcode용 uri 조회
+func GetOtpUri(ctx *context.InnoDashboardContext) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	conf := config.GetInstance().Otp
+
+	resp.Value = context.MeOtpUri{
+		OtpUri: otp_google.MakeTimebaseUri(ctx.GetValue().InnoUID, ctx.GetValue().InnoUID, conf.IssueName),
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
+
+func GetOtpVerify(ctx *context.InnoDashboardContext, params *context.MeOtpVerify) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if !otp_google.VerifyTimebase(ctx.GetValue().InnoUID, params.OtpCode) {
+		resp.SetReturn(resultcode.Result_Get_Me_Verify_otp_Error)
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }

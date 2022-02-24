@@ -6,7 +6,7 @@ require (
 	github.com/ONBUFF-IP-TOKEN/baseMarket v1.0.3
 	github.com/ONBUFF-IP-TOKEN/baseapp v1.0.9
 	github.com/ONBUFF-IP-TOKEN/basedb v1.1.5
-	github.com/ONBUFF-IP-TOKEN/baseutil v1.0.1
+	github.com/ONBUFF-IP-TOKEN/baseutil v1.0.5
 	github.com/denisenkom/go-mssqldb v0.11.0
 	github.com/google/go-querystring v1.1.0
 	github.com/gorilla/websocket v1.4.2
@@ -46,6 +46,7 @@ require (
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
+	github.com/xlzd/gotp v0.0.0-20220110052318-fab697c03c2c // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect

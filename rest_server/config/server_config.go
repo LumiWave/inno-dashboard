@@ -19,6 +19,11 @@ type App struct {
 	LiquidityUpdate        bool   `json:"liquidity_update" yaml:"liquidity_update"`
 }
 
+type Otp struct {
+	EnableSwap bool   `json:"enable_swap" yaml:"enable_swap"`
+	IssueName  string `json:"issue_name" yaml:"issue_name"`
+}
+
 type ApiAuth struct {
 	AuthEnable    bool   `yaml:"auth_enable"`
 	ApiAuthDomain string `json:"api_auth_domain" yaml:"api_auth_domain"`
@@ -36,6 +41,7 @@ type ServerConfig struct {
 	baseconf.Config `yaml:",inline"`
 
 	App                App                   `yaml:"app"`
+	Otp                Otp                   `yaml:"otp"`
 	MssqlDBAccountAll  baseconf.DBAuth       `yaml:"mssql_db_account"`
 	MssqlDBAccountRead baseconf.DBAuth       `yaml:"mssql_db_account_read"`
 	MssqlDBLogRead     baseconf.DBAuth       `yaml:"mssql_db_log_read"`

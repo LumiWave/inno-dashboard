@@ -63,3 +63,28 @@ func (o *ExternalAPI) GetMeCoinList(c echo.Context) error {
 
 	return commonapi.GetMeCoinList(c, params)
 }
+
+// google otp : qrcode용 uri 조회
+func (o *ExternalAPI) GetOtpUri(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	return commonapi.GetOtpUri(ctx)
+}
+
+func (o *ExternalAPI) GetOtpVerify(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+
+	params := context.NewMeOtpVerify()
+	// Request json 파싱
+	if err := ctx.EchoContext.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetOtpVerify(ctx, params)
+}
