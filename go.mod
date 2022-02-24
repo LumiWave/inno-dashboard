@@ -6,7 +6,7 @@ require (
 	github.com/ONBUFF-IP-TOKEN/baseMarket v1.0.3
 	github.com/ONBUFF-IP-TOKEN/baseapp v1.0.9
 	github.com/ONBUFF-IP-TOKEN/basedb v1.1.5
-	github.com/ONBUFF-IP-TOKEN/baseutil v1.0.5
+	github.com/ONBUFF-IP-TOKEN/baseutil v1.0.6
 	github.com/denisenkom/go-mssqldb v0.11.0
 	github.com/google/go-querystring v1.1.0
 	github.com/gorilla/websocket v1.4.2

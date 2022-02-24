@@ -9,8 +9,8 @@ github.com/ONBUFF-IP-TOKEN/basedb v1.1.5/go.mod h1:sPY0+SSxmjXaxuaM1QpZDiFkmaeB6
 github.com/ONBUFF-IP-TOKEN/basenet v1.0.2 h1:/nO+L7DzME+5qFI0Hdl//kW1flFCPAOuGZ3ihL5VNoU=
 github.com/ONBUFF-IP-TOKEN/basenet v1.0.2/go.mod h1:L8k1HAkOWi1h52NIVuhj/TIE7qyYFq7BAH5deIbmJbA=
 github.com/ONBUFF-IP-TOKEN/baseutil v1.0.1/go.mod h1:U+/EsU+Fd+n3dYqLG7RlpJsA/UkJUZ7YYpxH0M9ZtkE=
-github.com/ONBUFF-IP-TOKEN/baseutil v1.0.5 h1:JZRTNE6QlrD4kP9sWNda7xVh7RoAyaXxqGIZs19U+xs=
-github.com/ONBUFF-IP-TOKEN/baseutil v1.0.5/go.mod h1:FJUldNtfeoOwZedj4v5IgGJcbvbG7WoYA0PghdUGp2s=
+github.com/ONBUFF-IP-TOKEN/baseutil v1.0.6 h1:WYr3ZuaQ0cWvhv+Fo3+i4uFSX0JaaHR/Ow0JpSOpz5k=
+github.com/ONBUFF-IP-TOKEN/baseutil v1.0.6/go.mod h1:FJUldNtfeoOwZedj4v5IgGJcbvbG7WoYA0PghdUGp2s=
 github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 h1:5sXbqlSomvdjlRbWyNqkPsJ3Fg+tQZCbgeX1VGljbQY=
 github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
 github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cbYE=
