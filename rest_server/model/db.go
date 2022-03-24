@@ -53,6 +53,9 @@ type DB struct {
 	CoinsMap map[int64]*context.CoinInfo // 전체 coin 정보 1 : key CoinId
 	Coins    context.CoinList            // 전체 coin 정보 2
 
+	BaseCoinMapByCoinID map[int64]*context.BaseCoinInfo  // 전체 base coin 정보 : key coin symbol
+	BaseCoinMapBySymbol map[string]*context.BaseCoinInfo // 전체 base coin 정보 : key coin symbol
+
 	SwapAbleMap map[int64]*context.Swapable // 전체 스왑 가능한 정보 1 : key appID
 	SwapAble    []*context.Swapable         // 전체 스왑 가능한 정보 2
 }
@@ -94,8 +97,11 @@ func LoadDBPoint(conf *config.ServerConfig) {
 	gDB.AppPointsMap = make(map[int64]*context.AppPointInfo)
 	gDB.CoinsMap = make(map[int64]*context.CoinInfo)
 	gDB.SwapAbleMap = make(map[int64]*context.Swapable)
+	gDB.BaseCoinMapByCoinID = make(map[int64]*context.BaseCoinInfo)
+	gDB.BaseCoinMapBySymbol = make(map[string]*context.BaseCoinInfo)
 
 	gDB.GetPointList()
+	gDB.GetBaseCoins()
 	gDB.GetAppCoins()
 	gDB.GetCoins()
 	gDB.GetApps()

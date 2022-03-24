@@ -43,25 +43,54 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 		}
 	}
 
-	// 필요한 정보를 모아서 point-manager "외부 지갑으로 토큰 전송" 요청
-	req := &point_manager_server.ReqCoinTransfer{
-		AUID:          reqCoinTransfer.AUID,
-		CoinID:        reqCoinTransfer.CoinID,
-		CoinSymbol:    meCoin.CoinSymbol,
-		ToAddress:     reqCoinTransfer.ToAddress,
-		Quantity:      reqCoinTransfer.Quantity,
-		TransferFee:   coinInfo.ExchangeFees,
-		TotalQuantity: reqCoinTransfer.Quantity + coinInfo.ExchangeFees,
-	}
+	// 부모지갑에서 전송 해야 하는지 자식 지갑에서 전송 해야 하는지 체크
+	baseCoin := model.GetDB().BaseCoinMapByCoinID[meCoin.BaseCoinID]
 
-	if res, err := point_manager_server.GetInstance().PostCoinTransfer(req); err != nil {
-		resp.SetReturn(resultcode.ResultInternalServerError)
-	} else {
-		if res.Common.Return != 0 {
-			resp.Return = res.Return
-			resp.Message = res.Message
+	if baseCoin.IsUsedParentWallet {
+		// 필요한 정보를 모아서 point-manager 부모 지갑에서 전송 호출
+		req := &point_manager_server.ReqCoinTransferFromParentWallet{
+			AUID:          reqCoinTransfer.AUID,
+			CoinID:        reqCoinTransfer.CoinID,
+			CoinSymbol:    meCoin.CoinSymbol,
+			ToAddress:     reqCoinTransfer.ToAddress,
+			Quantity:      reqCoinTransfer.Quantity,
+			TransferFee:   coinInfo.ExchangeFees,
+			TotalQuantity: reqCoinTransfer.Quantity + coinInfo.ExchangeFees,
+		}
+
+		if res, err := point_manager_server.GetInstance().PostCoinTransferFromParentWallet(req); err != nil {
+			resp.SetReturn(resultcode.ResultInternalServerError)
 		} else {
-			resp.Value = res.Value
+			if res.Common.Return != 0 {
+				resp.Return = res.Return
+				resp.Message = res.Message
+			} else {
+				resp.Value = res.Value
+			}
+		}
+	} else {
+		// 필요한 정보를 모아서 point-manager 특정 지갑 전송 호출
+		req := &point_manager_server.ReqCoinTransferFromUserWallet{
+			AUID:           reqCoinTransfer.AUID,
+			CoinID:         reqCoinTransfer.CoinID,
+			CoinSymbol:     meCoin.CoinSymbol,
+			BaseCoinSymbol: baseCoin.BaseCoinSymbol,
+			FromAddress:    reqCoinTransfer.FromAddress,
+			ToAddress:      reqCoinTransfer.ToAddress,
+			Quantity:       reqCoinTransfer.Quantity,
+			TransferFee:    coinInfo.ExchangeFees,
+			TotalQuantity:  reqCoinTransfer.Quantity + coinInfo.ExchangeFees,
+		}
+
+		if res, err := point_manager_server.GetInstance().PostCoinTransferFromUserWallet(req); err != nil {
+			resp.SetReturn(resultcode.ResultInternalServerError)
+		} else {
+			if res.Common.Return != 0 {
+				resp.Return = res.Return
+				resp.Message = res.Message
+			} else {
+				resp.Value = res.Value
+			}
 		}
 	}
 

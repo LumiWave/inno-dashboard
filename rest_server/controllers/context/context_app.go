@@ -37,6 +37,7 @@ type AppPoints struct {
 
 ///////// Coin Info
 type CoinInfo struct {
+	BaseCoinID                      int64   `json:"base_coin_id"`
 	CoinId                          int64   `json:"coin_id,omitempty"`
 	CoinName                        string  `json:"coin_name"`
 	CoinSymbol                      string  `json:"coin_symbol,omitempty"`
@@ -48,6 +49,20 @@ type CoinInfo struct {
 
 type CoinList struct {
 	Coins []*CoinInfo `json:"coins"`
+}
+
+////////////////////////////////////////
+
+///////// BaseCoinInfo
+type BaseCoinInfo struct {
+	BaseCoinID         int64  `json:"base_coin_id"`
+	BaseCoinName       string `json:"base_coin_name"`
+	BaseCoinSymbol     string `json:"base_coin_symbol"`
+	IsUsedParentWallet bool   `json:"is_used_parent_wallet"`
+}
+
+type BaseCoinList struct {
+	Coins []*BaseCoinInfo `json:"base_coins"`
 }
 
 ////////////////////////////////////////

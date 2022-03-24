@@ -108,6 +108,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 			if coin.CoinID == swapInfo.CoinID {
 				swapInfo.PreviousCoinQuantity = coin.Quantity
 				swapInfo.WalletAddress = coin.WalletAddress
+				swapInfo.BaseCoinID = coin.BaseCoinID
 				swapInfo.CoinQuantity = swapInfo.PreviousCoinQuantity + swapInfo.AdjustCoinQuantity
 				break
 			}

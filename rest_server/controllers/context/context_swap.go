@@ -11,10 +11,11 @@ type SwapablePoint struct {
 }
 
 type Swapable struct {
-	AppID    int64            `json:"app_id"`
-	CoinID   int64            `json:"coin_id"`
-	IsEnable bool             `json:"is_enabled"`
-	Points   []*SwapablePoint `json:"points"`
+	AppID      int64            `json:"app_id"`
+	CoinID     int64            `json:"coin_id"`
+	BaseCoinID int64            `json:"base_coin_id"`
+	IsEnable   bool             `json:"is_enabled"`
+	Points     []*SwapablePoint `json:"points"`
 }
 
 type SwapList struct {
