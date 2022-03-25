@@ -55,6 +55,7 @@ type DB struct {
 
 	BaseCoinMapByCoinID map[int64]*context.BaseCoinInfo  // 전체 base coin 정보 : key coin symbol
 	BaseCoinMapBySymbol map[string]*context.BaseCoinInfo // 전체 base coin 정보 : key coin symbol
+	BaseCoins           context.BaseCoinList
 
 	SwapAbleMap map[int64]*context.Swapable // 전체 스왑 가능한 정보 1 : key appID
 	SwapAble    []*context.Swapable         // 전체 스왑 가능한 정보 2

@@ -156,11 +156,13 @@ func (o *DB) GetBaseCoins() error {
 
 	o.BaseCoinMapByCoinID = make(map[int64]*context.BaseCoinInfo)
 	o.BaseCoinMapBySymbol = make(map[string]*context.BaseCoinInfo)
+	o.BaseCoins.Coins = nil
 	for rows.Next() {
 		baseCoin := &context.BaseCoinInfo{}
 		if err := rows.Scan(&baseCoin.BaseCoinID, &baseCoin.BaseCoinName, &baseCoin.BaseCoinSymbol, &baseCoin.IsUsedParentWallet); err == nil {
 			o.BaseCoinMapByCoinID[baseCoin.BaseCoinID] = baseCoin
 			o.BaseCoinMapBySymbol[baseCoin.BaseCoinSymbol] = baseCoin
+			o.BaseCoins.Coins = append(o.BaseCoins.Coins, baseCoin)
 		}
 	}
 

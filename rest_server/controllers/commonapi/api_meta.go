@@ -14,10 +14,11 @@ func GetMeta(c echo.Context) error {
 	resp.Success()
 
 	swapList := context.Meta{
-		PointList: model.GetDB().ScanPoints,
-		AppPoints: model.GetDB().AppPoints,
-		CoinList:  model.GetDB().Coins,
-		Swapable:  model.GetDB().SwapAble,
+		PointList:    model.GetDB().ScanPoints,
+		AppPoints:    model.GetDB().AppPoints,
+		CoinList:     model.GetDB().Coins,
+		Swapable:     model.GetDB().SwapAble,
+		BaseCoinList: model.GetDB().BaseCoins,
 	}
 
 	resp.Value = swapList
