@@ -52,3 +52,28 @@ func (o *GetCoinTransferExistInProgress) CheckValidate(ctx *InnoDashboardContext
 }
 
 ////////////////////////////////////////
+
+///////// 코인 가스비 조회
+type GetCoinFee struct {
+	BaseCoinSymbol string `json:"base_coin_symbol" query:"base_coin_symbol"`
+}
+
+func NewGetCoinFee() *GetCoinFee {
+	return new(GetCoinFee)
+}
+
+func (o *GetCoinFee) CheckValidate() *base.BaseResponse {
+	if len(o.BaseCoinSymbol) == 0 {
+		return base.MakeBaseResponse(resultcode.Result_CoinFee_BaseSymbol_Empty)
+	}
+	return nil
+}
+
+type ResGetCoinFee struct {
+	BaseCoinID     int64   `json:"base_coin_id"`
+	BaseCoinSymbol string  `json:"base_coin_symbol"`
+	TransactionFee float64 `json:"transaction_fee"`
+	GasPrice       float64 `json:"gas_price"`
+}
+
+////////////////////////////////////////

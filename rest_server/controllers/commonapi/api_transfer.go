@@ -4,10 +4,12 @@ import (
 	"net/http"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
+	"github.com/labstack/echo"
 )
 
 // 외부 지갑으로 코인 전송
@@ -137,4 +139,19 @@ func GetCoinTransferNotExistInProgress(ctx *context.InnoDashboardContext, params
 	}
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
+
+func GetCoinTransferFee(c echo.Context, params *context.GetCoinFee) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	redisKey := model.MakeCoinFeeKey(params.BaseCoinSymbol)
+	if coinFee, err := model.GetDB().GetCacheCoinFee(redisKey); err != nil {
+		log.Errorf("GetCacheCoinFee err : %v", err)
+		resp.SetReturn(resultcode.Result_CoinFee_NotExist)
+	} else {
+		resp.Value = coinFee
+	}
+
+	return c.JSON(http.StatusOK, resp)
 }

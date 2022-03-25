@@ -112,6 +112,7 @@ func LoadDBPoint(conf *config.ServerConfig) {
 		gDB.LoadFullPointLiquidity(1000, true)
 		gDB.LoadFullCoinLiquidity(1000, true)
 		gDB.UpdateLiquidity()
+		gDB.UpdateCoinFee()
 	}
 }
 

@@ -89,3 +89,15 @@ func (o *PointManagerServerInfo) GetCoinTransferNotExistInProgress(auid int64) (
 
 	return data.(*ResCoinTransferFromUserWallet), nil
 }
+
+func (o *PointManagerServerInfo) GetCoinFee(req *ReqCoinFee) (*ResCoinFeeInfo, error) {
+	urlInfo := ApiList[Api_get_coin_fee]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, urlInfo.Uri)
+
+	data, err := HttpCall(callUrl, o.ApiKey, urlInfo.Method, urlInfo.ApiType, bytes.NewBuffer(nil), req, &ResCoinFeeInfo{})
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResCoinFeeInfo), nil
+}

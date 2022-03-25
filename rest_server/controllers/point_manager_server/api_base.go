@@ -20,6 +20,7 @@ const (
 	Api_coin_transfer_from_parentwallet = 2 // 외부 지갑 coin 전송  : PostCoinTransferFromParentWallet
 	Api_coin_transfer_from_userwallet   = 3 // 외부 지갑 coin 전송  : PostCoinTransferFromUserWallet
 	Api_coin_transfer_exist_inprogress  = 4 // 외부 지갑 coin 전송 중 체크 : GetCoinTransferExistInProgress
+	Api_get_coin_fee                    = 5 // 코인 가스비 정보 요청 : GetCoinFee
 )
 
 type ApiInfo struct {
@@ -35,6 +36,7 @@ var ApiList = map[api_kind]ApiInfo{
 	Api_coin_transfer_from_parentwallet: ApiInfo{ApiType: Api_coin_transfer_from_parentwallet, Uri: "/transfer/parent", Method: "POST", ResponseType: new(ResCoinTransferFromParentWallet)},
 	Api_coin_transfer_from_userwallet:   ApiInfo{ApiType: Api_coin_transfer_from_userwallet, Uri: "/transfer/user", Method: "POST", ResponseType: new(ResCoinTransferFromUserWallet)},
 	Api_coin_transfer_exist_inprogress:  ApiInfo{ApiType: Api_coin_transfer_exist_inprogress, Uri: "/transfer/existinprogress?au_id=%d", Method: "GET", ResponseType: new(ResCoinTransferFromUserWallet)},
+	Api_get_coin_fee:                    ApiInfo{ApiType: Api_get_coin_fee, Uri: "/coin/fee", Method: "GET", ResponseType: new(ResCoinFeeInfo)},
 }
 
 func MakeHttpClient(callUrl string, auth string, method string, body *bytes.Buffer, queryStr string) (*http.Client, *http.Request) {
