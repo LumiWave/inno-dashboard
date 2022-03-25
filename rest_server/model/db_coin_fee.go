@@ -12,7 +12,7 @@ import (
 )
 
 func MakeCoinFeeKey(baseSymbol string) string {
-	return config.GetInstance().DBPrefix + ":COIN-:" + baseSymbol
+	return config.GetInstance().DBPrefix + ":COIN-FEE:" + baseSymbol
 }
 
 func (o *DB) SetCacheCoinFee(key string, data *context.ResGetCoinFee) error {
