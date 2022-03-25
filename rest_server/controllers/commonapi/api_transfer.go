@@ -39,10 +39,19 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 			resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
 		}
-		if meCoin.Quantity < (reqCoinTransfer.Quantity + coinInfo.ExchangeFees) { // 보유량 부족
-			resp.SetReturn(resultcode.Result_CoinTransfer_NotEnough_Coin)
-			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		tempBaseCoin := model.GetDB().BaseCoinMapByCoinID[meCoin.BaseCoinID]
+		if tempBaseCoin.IsUsedParentWallet { // 부모지갑에서 출금은 수수료까지 보유량 체크를 해야함
+			if meCoin.Quantity < (reqCoinTransfer.Quantity + coinInfo.ExchangeFees) { // 보유량 부족
+				resp.SetReturn(resultcode.Result_CoinTransfer_NotEnough_Coin)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			}
+		} else { // 자식 지갑은 수수료를 따로 제외하지 않는다.
+			if meCoin.Quantity < reqCoinTransfer.Quantity { // 보유량 부족
+				resp.SetReturn(resultcode.Result_CoinTransfer_NotEnough_Coin)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			}
 		}
+
 	}
 
 	// 부모지갑에서 전송 해야 하는지 자식 지갑에서 전송 해야 하는지 체크
