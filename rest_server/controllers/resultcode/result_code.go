@@ -116,7 +116,7 @@ var ResultCodeText = map[int]string{
 	Result_CoinTransfer_Quantity_Empty:   "Quantity is empty",
 	Result_CoinTransfer_NotEnough_Coin:   "Not enough Coin Quantity",
 	Result_CoinFee_BaseSymbol_Empty:      "Base coin symbol information is empty",
-	Result_CoinFee_NotExist:              "not exit coin fee",
+	Result_CoinFee_NotExist:              "not exist coin fee",
 
 	Result_DBError:              "Internal DB error",
 	Result_Invalid_DBID:         "Invalid DB ID",
