@@ -26,6 +26,7 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 	}
 
 	meCoin := &context.MeCoin{}
+	meBaseCoin := &context.MeCoin{}
 	if walletList, err := model.GetDB().GetListAccountCoins(ctx.GetValue().AUID); walletList == nil || err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
@@ -33,6 +34,9 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 		for _, meWallet := range walletList {
 			if meWallet.CoinID == reqCoinTransfer.CoinID {
 				meCoin = meWallet
+			}
+			if meWallet.CoinSymbol == model.GetDB().BaseCoinMapByCoinID[meWallet.BaseCoinID].BaseCoinSymbol {
+				meBaseCoin = meWallet
 			}
 		}
 		if meCoin.CoinID == 0 { // 나에게 존재하지 않은 코인 전송을 요청
@@ -45,11 +49,24 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 				resp.SetReturn(resultcode.Result_CoinTransfer_NotEnough_Coin)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			}
-		} else { // 자식 지갑은 수수료를 따로 제외하지 않는다.
+		} else { // 자식 지갑은 수수료를 따로 제외하지 않는다. 대신 basecoin 지갑에 해당 가스비가 남아 있는지 확인 한다.
 			if meCoin.Quantity < reqCoinTransfer.Quantity { // 보유량 부족
 				resp.SetReturn(resultcode.Result_CoinTransfer_NotEnough_Coin)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			}
+			// 가스비 체크
+			key := model.MakeCoinFeeKey(tempBaseCoin.BaseCoinSymbol)
+			if coinFee, err := model.GetDB().GetCacheCoinFee(key); err != nil {
+				log.Errorf("GetCacheCoinFee err : %v", err)
+				resp.SetReturn(resultcode.Result_CoinFee_NotExist)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			} else {
+				if meBaseCoin.Quantity < coinFee.TransactionFee { // 가스비 부족
+					resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
+			}
+
 		}
 
 	}
