@@ -33,6 +33,11 @@ func (o *DB) GetListCoinLiquidity(procedureType string, reqCoinLiquidity *contex
 		sql.Named("CoinID", reqCoinLiquidity.CoinID),
 		sql.Named("Interval", reqCoinLiquidity.Interval),
 		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
 	if err != nil {
 		log.Errorf("%v QueryContext error : %v", procedureType, err)
 		return nil, err
@@ -52,8 +57,6 @@ func (o *DB) GetListCoinLiquidity(procedureType string, reqCoinLiquidity *contex
 		}
 	}
 
-	defer rows.Close()
-
 	if returnValue != 1 {
 		log.Errorf("%v returnvalue error : %v", procedureType, returnValue)
 		return nil, errors.New(procedureType + " returnvalue error " + strconv.Itoa(int(returnValue)))
@@ -72,6 +75,11 @@ func (o *DB) GetListDailyCoins(reqCoinLiquidity *context.ReqCoinLiquidity) ([]*c
 		sql.Named("CoinID", reqCoinLiquidity.CoinID),
 		sql.Named("Interval", reqCoinLiquidity.Interval),
 		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
 	if err != nil {
 		log.Errorf("USPW_GetList_DailyCoins QueryContext error : %v", err)
 		return nil, nil
@@ -89,7 +97,6 @@ func (o *DB) GetListDailyCoins(reqCoinLiquidity *context.ReqCoinLiquidity) ([]*c
 			coinLiquiditys = append(coinLiquiditys, coinLiquidity)
 		}
 	}
-	defer rows.Close()
 
 	if returnValue != 1 {
 		log.Errorf("USPW_GetList_DailyCoins returnvalue error : %v", returnValue)

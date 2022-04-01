@@ -105,7 +105,9 @@ func (o *DB) GetCoins() error {
 		return err
 	}
 
-	defer rows.Close()
+	if rows != nil {
+		defer rows.Close()
+	}
 
 	o.CoinsMap = make(map[int64]*context.CoinInfo)
 	o.Coins.Coins = nil
