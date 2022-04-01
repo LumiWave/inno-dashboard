@@ -19,11 +19,15 @@ func (o *DB) GetScanExchangeGoods() error {
 	var returnValue orginMssql.ReturnStatus
 	rows, err := o.MssqlAccountRead.GetDB().QueryContext(contextR.Background(), USPAU_Scan_ExchangeGoods,
 		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
 	if err != nil {
 		log.Errorf("USPAU_Scan_ExchangeGoods QueryContext error : %v", err)
 		return nil
 	}
-	defer rows.Close()
 
 	o.SwapAbleMap = make(map[int64]*context.Swapable)
 	o.SwapAble = nil
