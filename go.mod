@@ -4,9 +4,9 @@ go 1.17
 
 require (
 	github.com/ONBUFF-IP-TOKEN/baseMarket v1.0.3
-	github.com/ONBUFF-IP-TOKEN/baseapp v1.0.9
-	github.com/ONBUFF-IP-TOKEN/basedb v1.1.5
-	github.com/ONBUFF-IP-TOKEN/baseutil v1.0.6
+	github.com/ONBUFF-IP-TOKEN/baseapp v1.0.13
+	github.com/ONBUFF-IP-TOKEN/basedb v1.1.8
+	github.com/ONBUFF-IP-TOKEN/baseutil v1.0.7
 	github.com/denisenkom/go-mssqldb v0.11.0
 	github.com/google/go-querystring v1.1.0
 	github.com/gorilla/websocket v1.4.2
@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	github.com/ONBUFF-IP-TOKEN/basenet v1.0.2 // indirect
+	github.com/ONBUFF-IP-TOKEN/basenet v1.0.3 // indirect
 	github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/couchbase/gocb v1.6.0 // indirect

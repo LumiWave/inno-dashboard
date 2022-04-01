@@ -34,43 +34,70 @@ func (o *PointManagerServerInfo) PostPointCoinSwap(swapInfo *ReqSwapInfo) (*ResS
 	return data.(*ResSwapInfo), nil
 }
 
-func (o *PointManagerServerInfo) PostCoinTransfer(req *ReqCoinTransfer) (*ResCoinTransfer, error) {
-	api := ApiList[Api_coin_transfer]
+func (o *PointManagerServerInfo) PostCoinTransferFromParentWallet(req *ReqCoinTransferFromParentWallet) (*ResCoinTransferFromParentWallet, error) {
+	api := ApiList[Api_coin_transfer_from_parentwallet]
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
 
 	pbytes, _ := json.Marshal(req)
 	buff := bytes.NewBuffer(pbytes)
 
-	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, buff, nil, &ResCoinTransfer{})
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, buff, nil, &ResCoinTransferFromParentWallet{})
 	if err != nil {
 		return nil, err
 	}
 
-	return data.(*ResCoinTransfer), nil
+	return data.(*ResCoinTransferFromParentWallet), nil
 }
 
-func (o *PointManagerServerInfo) GetCoinTransferExistInProgress(auid int64) (*ResCoinTransfer, error) {
+func (o *PointManagerServerInfo) PostCoinTransferFromUserWallet(req *ReqCoinTransferFromUserWallet) (*ResCoinTransferFromUserWallet, error) {
+	api := ApiList[Api_coin_transfer_from_userwallet]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
+
+	pbytes, _ := json.Marshal(req)
+	buff := bytes.NewBuffer(pbytes)
+
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, buff, nil, &ResCoinTransferFromUserWallet{})
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResCoinTransferFromUserWallet), nil
+}
+
+func (o *PointManagerServerInfo) GetCoinTransferExistInProgress(auid int64) (*ResCoinTransferFromUserWallet, error) {
 	api := ApiList[Api_coin_transfer_exist_inprogress]
 	uri := fmt.Sprintf(api.Uri, auid)
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, uri)
 
-	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, bytes.NewBuffer(nil), nil, &ResCoinTransfer{})
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, bytes.NewBuffer(nil), nil, &ResCoinTransferFromUserWallet{})
 	if err != nil {
 		return nil, err
 	}
 
-	return data.(*ResCoinTransfer), nil
+	return data.(*ResCoinTransferFromUserWallet), nil
 }
 
-func (o *PointManagerServerInfo) GetCoinTransferNotExistInProgress(auid int64) (*ResCoinTransfer, error) {
+func (o *PointManagerServerInfo) GetCoinTransferNotExistInProgress(auid int64) (*ResCoinTransferFromUserWallet, error) {
 	api := ApiList[Api_coin_transfer_exist_inprogress]
 	uri := fmt.Sprintf(api.Uri, auid)
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, uri)
 
-	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, bytes.NewBuffer(nil), nil, &ResCoinTransfer{})
+	data, err := HttpCall(callUrl, o.ApiKey, api.Method, api.ApiType, bytes.NewBuffer(nil), nil, &ResCoinTransferFromUserWallet{})
 	if err != nil {
 		return nil, err
 	}
 
-	return data.(*ResCoinTransfer), nil
+	return data.(*ResCoinTransferFromUserWallet), nil
+}
+
+func (o *PointManagerServerInfo) GetCoinFee(req *ReqCoinFee) (*ResCoinFeeInfo, error) {
+	urlInfo := ApiList[Api_get_coin_fee]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, urlInfo.Uri)
+
+	data, err := HttpCall(callUrl, o.ApiKey, urlInfo.Method, urlInfo.ApiType, bytes.NewBuffer(nil), req, &ResCoinFeeInfo{})
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResCoinFeeInfo), nil
 }

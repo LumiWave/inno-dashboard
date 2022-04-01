@@ -49,6 +49,9 @@ const (
 	Result_CoinTransfer_ToAddress_Empty  = 36002 // To Address is Empty
 	Result_CoinTransfer_Quantity_Empty   = 36003 // Amount is Empty
 	Result_CoinTransfer_NotEnough_Coin   = 36004 // 전송할 코인량이 충분하지 않다.
+	Result_CoinFee_BaseSymbol_Empty      = 36005 // base coin symbol 정보가 필요하다.
+	Result_CoinFee_NotExist              = 36006 // GetCacheCoinFee Error
+	Result_CoinFee_LackOfGas             = 36007 // loack of gas
 
 	Result_DBError              = 19000 // db 에러
 	Result_Invalid_DBID         = 19001 // 유효하지 못한 database index
@@ -113,6 +116,9 @@ var ResultCodeText = map[int]string{
 	Result_CoinTransfer_ToAddress_Empty:  "ToAddress is empty",
 	Result_CoinTransfer_Quantity_Empty:   "Quantity is empty",
 	Result_CoinTransfer_NotEnough_Coin:   "Not enough Coin Quantity",
+	Result_CoinFee_BaseSymbol_Empty:      "Base coin symbol information is empty",
+	Result_CoinFee_NotExist:              "not exist coin fee",
+	Result_CoinFee_LackOfGas:             "lack of gas",
 
 	Result_DBError:              "Internal DB error",
 	Result_Invalid_DBID:         "Invalid DB ID",

@@ -24,6 +24,10 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeCoin, error) {
 		sql.Named("AUID", auid),
 		&returnValue)
 
+	if rows != nil {
+		defer rows.Close()
+	}
+
 	if err != nil {
 		log.Error("USPAU_GetList_AccountCoins QueryContext err : ", err)
 		return nil, err
@@ -33,6 +37,7 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeCoin, error) {
 	for rows.Next() {
 		meCoin := &context.MeCoin{}
 		if err := rows.Scan(&meCoin.CoinID,
+			&meCoin.BaseCoinID,
 			&meCoin.WalletAddress,
 			&meCoin.Quantity,
 			&meCoin.TodayAcqQuantity,
@@ -47,7 +52,6 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeCoin, error) {
 			meCoinList = append(meCoinList, meCoin)
 		}
 	}
-	defer rows.Close()
 
 	if returnValue != 1 {
 		log.Errorf("USPAU_GetList_AccountCoins returnvalue error : %v", returnValue)
@@ -63,6 +67,10 @@ func (o *DB) GetListAccountPoints(auid, muid int64) ([]*context.MePoint, error) 
 		sql.Named("AUID", auid),
 		sql.Named("MUID", muid),
 		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
 
 	if err != nil {
 		log.Error("USPAU_GetList_AccountPoints QueryContext err : %v", err)
@@ -86,7 +94,6 @@ func (o *DB) GetListAccountPoints(auid, muid int64) ([]*context.MePoint, error) 
 			mePointList = append(mePointList, &mePoint)
 		}
 	}
-	defer rows.Close()
 
 	if returnValue != 1 {
 		log.Errorf("USPAU_GetList_AccountPoints returnvalue error : %v", returnValue)
@@ -101,6 +108,10 @@ func (o *DB) GetListMembers(auid int64) ([]*context.Member, map[int64]*context.M
 	rows, err := o.MssqlAccountRead.GetDB().QueryContext(contextR.Background(), USPAU_GetList_Members,
 		sql.Named("AUID", auid),
 		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
 
 	if err != nil {
 		log.Error("USPAU_GetList_Members QueryContext err : %v", err)
@@ -120,7 +131,6 @@ func (o *DB) GetListMembers(auid int64) ([]*context.Member, map[int64]*context.M
 			memberList = append(memberList, &member)
 		}
 	}
-	defer rows.Close()
 
 	if returnValue != 1 {
 		log.Errorf("USPAU_GetList_Members returnvalue error : %v", returnValue)

@@ -49,6 +49,7 @@ func (o *ReqMeCoin) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse 
 
 type MeCoin struct {
 	CoinID                    int64     `json:"coin_id" query:"coin_id"`
+	BaseCoinID                int64     `json:"base_coin_id" query:"base_coin_id"`
 	CoinSymbol                string    `json:"coin_symbol" query:"coin_symbol"`
 	WalletAddress             string    `json:"wallet_address" query:"wallet_address"`
 	Quantity                  float64   `json:"quantity" query:"quantity"`

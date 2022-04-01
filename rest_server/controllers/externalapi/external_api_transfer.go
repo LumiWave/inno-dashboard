@@ -71,3 +71,20 @@ func (o *ExternalAPI) GetCoinTransferNotExistInProgress(c echo.Context) error {
 	}
 	return commonapi.GetCoinTransferNotExistInProgress(ctx, params)
 }
+
+func (o *ExternalAPI) GetCoinTransferFee(c echo.Context) error {
+	params := context.NewGetCoinFee()
+	// Request json 파싱
+	if err := c.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetCoinTransferFee(c, params)
+}

@@ -15,10 +15,12 @@ import (
 type api_kind int
 
 const (
-	Api_get_point_list                 = 0 // 포인트 리스트 조회 : GetPointAppList
-	Api_post_swap                      = 1 // swap 요청 : PostPointCoinSwap
-	Api_coin_transfer                  = 2 // 외부 지갑 coin 전송  : PostCoinTransfer
-	Api_coin_transfer_exist_inprogress = 3 // 외부 지갑 coin 전송 중 체크 : GetCoinTransferExistInProgress
+	Api_get_point_list                  = 0 // 포인트 리스트 조회 : GetPointAppList
+	Api_post_swap                       = 1 // swap 요청 : PostPointCoinSwap
+	Api_coin_transfer_from_parentwallet = 2 // 외부 지갑 coin 전송  : PostCoinTransferFromParentWallet
+	Api_coin_transfer_from_userwallet   = 3 // 외부 지갑 coin 전송  : PostCoinTransferFromUserWallet
+	Api_coin_transfer_exist_inprogress  = 4 // 외부 지갑 coin 전송 중 체크 : GetCoinTransferExistInProgress
+	Api_get_coin_fee                    = 5 // 코인 가스비 정보 요청 : GetCoinFee
 )
 
 type ApiInfo struct {
@@ -29,10 +31,12 @@ type ApiInfo struct {
 }
 
 var ApiList = map[api_kind]ApiInfo{
-	Api_get_point_list:                 ApiInfo{ApiType: Api_get_point_list, Uri: "/point/app?mu_id=%d&database_id=%d", Method: "GET", ResponseType: new(MePointInfo)},
-	Api_post_swap:                      ApiInfo{ApiType: Api_post_swap, Uri: "/swap", Method: "POST", ResponseType: new(ResSwapInfo)},
-	Api_coin_transfer:                  ApiInfo{ApiType: Api_coin_transfer, Uri: "/transfer", Method: "POST", ResponseType: new(ResCoinTransfer)},
-	Api_coin_transfer_exist_inprogress: ApiInfo{ApiType: Api_coin_transfer_exist_inprogress, Uri: "/transfer/existinprogress?au_id=%d", Method: "GET", ResponseType: new(ResCoinTransfer)},
+	Api_get_point_list:                  ApiInfo{ApiType: Api_get_point_list, Uri: "/point/app?mu_id=%d&database_id=%d", Method: "GET", ResponseType: new(MePointInfo)},
+	Api_post_swap:                       ApiInfo{ApiType: Api_post_swap, Uri: "/swap", Method: "POST", ResponseType: new(ResSwapInfo)},
+	Api_coin_transfer_from_parentwallet: ApiInfo{ApiType: Api_coin_transfer_from_parentwallet, Uri: "/transfer/parent", Method: "POST", ResponseType: new(ResCoinTransferFromParentWallet)},
+	Api_coin_transfer_from_userwallet:   ApiInfo{ApiType: Api_coin_transfer_from_userwallet, Uri: "/transfer/user", Method: "POST", ResponseType: new(ResCoinTransferFromUserWallet)},
+	Api_coin_transfer_exist_inprogress:  ApiInfo{ApiType: Api_coin_transfer_exist_inprogress, Uri: "/transfer/existinprogress?au_id=%d", Method: "GET", ResponseType: new(ResCoinTransferFromUserWallet)},
+	Api_get_coin_fee:                    ApiInfo{ApiType: Api_get_coin_fee, Uri: "/coin/fee", Method: "GET", ResponseType: new(ResCoinFeeInfo)},
 }
 
 func MakeHttpClient(callUrl string, auth string, method string, body *bytes.Buffer, queryStr string) (*http.Client, *http.Request) {

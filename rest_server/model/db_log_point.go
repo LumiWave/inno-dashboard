@@ -34,6 +34,11 @@ func (o *DB) GetListPointLiquidity(procedureType string, reqPointLiquidity *cont
 		sql.Named("PointID", reqPointLiquidity.PointID),
 		sql.Named("Interval", reqPointLiquidity.Interval),
 		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
 	if err != nil {
 		log.Errorf("%v QueryContext error : %v", procedureType, err)
 		return nil, err
@@ -52,8 +57,6 @@ func (o *DB) GetListPointLiquidity(procedureType string, reqPointLiquidity *cont
 			pointLiquiditys = append(pointLiquiditys, pointLiquidity)
 		}
 	}
-
-	defer rows.Close()
 
 	if returnValue != 1 {
 		log.Errorf("%v returnvalue error : %v", procedureType, returnValue)
@@ -74,6 +77,11 @@ func (o *DB) GetListDailyPoints(reqPointLiquidity *context.ReqPointLiquidity) ([
 		sql.Named("PointID", reqPointLiquidity.PointID),
 		sql.Named("Interval", reqPointLiquidity.Interval),
 		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
 	if err != nil {
 		log.Errorf("USPW_GetList_DailyPoints QueryContext error : %v", err)
 		return nil, nil
@@ -91,7 +99,6 @@ func (o *DB) GetListDailyPoints(reqPointLiquidity *context.ReqPointLiquidity) ([
 			pointLiquiditys = append(pointLiquiditys, pointLiquidity)
 		}
 	}
-	defer rows.Close()
 
 	if returnValue != 1 {
 		log.Errorf("USPW_GetList_DailyPoints returnvalue error : %v", returnValue)

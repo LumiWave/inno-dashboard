@@ -41,6 +41,7 @@ type SwapPoint struct {
 
 type SwapCoin struct {
 	CoinID               int64   `json:"coin_id"`                // 요청 인자
+	BaseCoinID           int64   `json:"base_coin_id"`           // 요청 인자
 	WalletAddress        string  `json:"walletaddress"`          // 검색
 	PreviousCoinQuantity float64 `json:"previous_coin_quantity"` // 검색
 	AdjustCoinQuantity   float64 `json:"adjust_coin_quantity"`   // 요청 인자
@@ -64,8 +65,8 @@ type ResSwapInfo struct {
 
 ////////////////////////////////////////
 
-///////// coin 전송 요청
-type ReqCoinTransfer struct {
+///////// 부모지갑에서 coin 전송 요청
+type ReqCoinTransferFromParentWallet struct {
 	AUID       int64   `json:"au_id" url:"au_id"`             // 계정의 UID (Access Token에서 가져옴)
 	CoinID     int64   `json:"coin_id" url:"coin_id"`         // 코인 ID
 	CoinSymbol string  `json:"coin_symbol" url:"coin_symbol"` // 코인 심볼
@@ -79,9 +80,52 @@ type ReqCoinTransfer struct {
 	TransactionId string  `json:"transaction_id"`
 }
 
-type ResCoinTransfer struct {
+type ResCoinTransferFromParentWallet struct {
 	Common
-	Value ReqCoinTransfer `json:"value"`
+	Value ReqCoinTransferFromParentWallet `json:"value"`
+}
+
+////////////////////////////////////////
+
+///////// 특정지갑에서 coin 전송 요청
+type ReqCoinTransferFromUserWallet struct {
+	AUID           int64   `json:"au_id" url:"au_id"`                       // 계정의 UID (Access Token에서 가져옴)
+	CoinID         int64   `json:"coin_id" url:"coin_id"`                   // 코인 ID
+	CoinSymbol     string  `json:"coin_symbol" url:"coin_symbol"`           // 코인 심볼
+	BaseCoinSymbol string  `json:"base_coin_symbol" url:"base_coin_symbol"` // base 코인 심볼
+	FromAddress    string  `json:"from_address" url:"from_address"`         // 보내는 지갑 주소
+	ToAddress      string  `json:"to_address" url:"to_address"`             // 보낼 지갑 주소
+	Quantity       float64 `json:"quantity" url:"quantity"`                 // 보낼 코인량
+
+	// internal used
+	TransferFee   float64 `json:"transfer_fee" url:"transfer_fee"`     // 전송 수수료
+	TotalQuantity float64 `json:"total_quantity" url:"total_quantity"` // 보낼 코인량 + 전송 수수료
+	ReqId         string  `json:"reqid"`
+	TransactionId string  `json:"transaction_id"`
+}
+type ResCoinTransferFromUserWallet struct {
+	Common
+	Value ReqCoinTransferFromUserWallet `json:"value"`
+}
+
+////////////////////////////////////////
+
+///////// 코인 가스비 요청
+type ReqCoinFee struct {
+	Symbol string `query:"symbol"`
+}
+
+type ResCoinFeeInfoValue struct {
+	Fast    string `json:"fast"`
+	Slow    string `json:"slow"`
+	Average string `json:"average"`
+	BaseFee string `json:"basefee"`
+	Fastest string `json:"fastest"`
+}
+
+type ResCoinFeeInfo struct {
+	Common
+	ResCoinFeeInfoValue `json:"value"`
 }
 
 ////////////////////////////////////////
