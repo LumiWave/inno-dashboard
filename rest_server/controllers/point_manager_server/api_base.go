@@ -61,10 +61,10 @@ func NewClient() *http.Client {
 	return client
 }
 
-func MakeHttpClient(callUrl string, auth string, method string, body *bytes.Buffer, queryStr string) (*http.Client, *http.Request) {
+func MakeHttpClient(callUrl string, auth string, method string, body *bytes.Buffer, queryStr string) *http.Request {
 	req, err := http.NewRequest(method, callUrl, body)
 	if err != nil {
-		return nil, nil
+		return nil
 	}
 
 	req.Header.Add("Accept", "application/json")
@@ -76,16 +76,10 @@ func MakeHttpClient(callUrl string, auth string, method string, body *bytes.Buff
 		req.URL.RawQuery = queryStr
 	}
 
-	client := &http.Client{
-		Timeout: 60 * time.Second,
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-	}
-	return client, req
+	return req
 }
 
-func HttpCall(callUrl string, auth string, method string, kind api_kind, body *bytes.Buffer, queryStruct interface{}, response interface{}) (interface{}, error) {
+func HttpCall(client *http.Client, callUrl string, auth string, method string, kind api_kind, body *bytes.Buffer, queryStruct interface{}, response interface{}) (interface{}, error) {
 
 	var v url.Values
 	var queryStr string
@@ -94,7 +88,7 @@ func HttpCall(callUrl string, auth string, method string, kind api_kind, body *b
 		queryStr = v.Encode()
 	}
 
-	client, req := MakeHttpClient(callUrl, auth, method, body, queryStr)
+	req := MakeHttpClient(callUrl, auth, method, body, queryStr)
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
