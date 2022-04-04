@@ -24,19 +24,41 @@ const (
 )
 
 type ApiInfo struct {
-	ApiType      api_kind
-	Uri          string
-	Method       string
-	ResponseType interface{}
+	ApiType          api_kind
+	Uri              string
+	Method           string
+	ResponseFuncType func() interface{}
+	client           *http.Client
 }
 
 var ApiList = map[api_kind]ApiInfo{
-	Api_get_point_list:                  ApiInfo{ApiType: Api_get_point_list, Uri: "/point/app?mu_id=%d&database_id=%d", Method: "GET", ResponseType: new(MePointInfo)},
-	Api_post_swap:                       ApiInfo{ApiType: Api_post_swap, Uri: "/swap", Method: "POST", ResponseType: new(ResSwapInfo)},
-	Api_coin_transfer_from_parentwallet: ApiInfo{ApiType: Api_coin_transfer_from_parentwallet, Uri: "/transfer/parent", Method: "POST", ResponseType: new(ResCoinTransferFromParentWallet)},
-	Api_coin_transfer_from_userwallet:   ApiInfo{ApiType: Api_coin_transfer_from_userwallet, Uri: "/transfer/user", Method: "POST", ResponseType: new(ResCoinTransferFromUserWallet)},
-	Api_coin_transfer_exist_inprogress:  ApiInfo{ApiType: Api_coin_transfer_exist_inprogress, Uri: "/transfer/existinprogress?au_id=%d", Method: "GET", ResponseType: new(ResCoinTransferFromUserWallet)},
-	Api_get_coin_fee:                    ApiInfo{ApiType: Api_get_coin_fee, Uri: "/coin/fee", Method: "GET", ResponseType: new(ResCoinFeeInfo)},
+	Api_get_point_list: ApiInfo{ApiType: Api_get_point_list, Uri: "/point/app?mu_id=%d&database_id=%d", Method: "GET",
+		ResponseFuncType: func() interface{} { return new(MePointInfo) }, client: NewClient()},
+	Api_post_swap: ApiInfo{ApiType: Api_post_swap, Uri: "/swap", Method: "POST",
+		ResponseFuncType: func() interface{} { return new(ResSwapInfo) }, client: NewClient()},
+	Api_coin_transfer_from_parentwallet: ApiInfo{ApiType: Api_coin_transfer_from_parentwallet, Uri: "/transfer/parent", Method: "POST",
+		ResponseFuncType: func() interface{} { return new(ResCoinTransferFromParentWallet) }, client: NewClient()},
+	Api_coin_transfer_from_userwallet: ApiInfo{ApiType: Api_coin_transfer_from_userwallet, Uri: "/transfer/user", Method: "POST",
+		ResponseFuncType: func() interface{} { return new(ResCoinTransferFromUserWallet) }, client: NewClient()},
+	Api_coin_transfer_exist_inprogress: ApiInfo{ApiType: Api_coin_transfer_exist_inprogress, Uri: "/transfer/existinprogress?au_id=%d", Method: "GET",
+		ResponseFuncType: func() interface{} { return new(ResCoinTransferFromUserWallet) }, client: NewClient()},
+	Api_get_coin_fee: ApiInfo{ApiType: Api_get_coin_fee, Uri: "/coin/fee", Method: "GET",
+		ResponseFuncType: func() interface{} { return new(ResCoinFeeInfo) }, client: NewClient()},
+}
+
+func NewClient() *http.Client {
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.MaxIdleConns = 100
+	t.MaxIdleConnsPerHost = 100
+	t.IdleConnTimeout = 30 * time.Second
+	t.DisableKeepAlives = false
+	t.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	client := &http.Client{
+		Timeout:   10 * time.Second,
+		Transport: t,
+	}
+	return client
 }
 
 func MakeHttpClient(callUrl string, auth string, method string, body *bytes.Buffer, queryStr string) (*http.Client, *http.Request) {
