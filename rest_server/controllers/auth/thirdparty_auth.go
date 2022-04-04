@@ -28,6 +28,19 @@ type AuthResponse struct {
 	Value   VerifyAuthToken `json:"value"`
 }
 
+var gTransport http.Transport
+var gClient http.Client
+
+func InitHttpClient() {
+	gTransport.MaxIdleConns = 100
+	gTransport.MaxIdleConnsPerHost = 100
+	gTransport.IdleConnTimeout = 30 * time.Second
+	gTransport.DisableKeepAlives = false
+
+	gClient.Timeout = 10 * time.Second
+	gClient.Transport = &gTransport
+}
+
 /////////////////////////
 func CheckAuthToken(authToken string) (bool, *VerifyAuthToken, error) {
 	conf := config.GetInstance()
@@ -42,8 +55,7 @@ func CheckAuthToken(authToken string) (bool, *VerifyAuthToken, error) {
 
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Bearer "+authToken)
-	client := &http.Client{Timeout: 60 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := gClient.Do(req)
 
 	if err != nil {
 		log.Errorf("membership resp: %v, err: %v", resp, err)
