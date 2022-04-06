@@ -53,11 +53,19 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	}
 
 	Lockkey := model.MakeMemberSwapLockKey(ctx.GetValue().AUID)
-	unLock, err := model.AutoLock(Lockkey)
-	if err != nil {
+	mutex := model.GetDB().RedSync.NewMutex(Lockkey)
+	if err := mutex.Lock(); err != nil {
+		log.Error(err)
 		return err
 	}
-	defer unLock()
+
+	defer func() {
+		if ok, err := mutex.Unlock(); !ok || err != nil {
+			if err != nil {
+				log.Errorf("unlock err : %v", err)
+			}
+		}
+	}()
 
 	swapInfo := &point_manager_server.ReqSwapInfo{
 		AUID: ctx.GetValue().AUID,
