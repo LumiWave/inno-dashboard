@@ -55,7 +55,7 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			}
 			// 가스비 체크
-			key := model.MakeCoinFeeKey(tempBaseCoin.BaseCoinSymbol)
+			key := model.MakeCoinFeeKey(meCoin.CoinSymbol)
 			if coinFee, err := model.GetDB().GetCacheCoinFee(key); err != nil {
 				log.Errorf("GetCacheCoinFee err : %v", err)
 				resp.SetReturn(resultcode.Result_CoinFee_NotExist)

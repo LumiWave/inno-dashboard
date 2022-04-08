@@ -55,7 +55,7 @@ func (o *GetCoinTransferExistInProgress) CheckValidate(ctx *InnoDashboardContext
 
 ///////// 코인 가스비 조회
 type GetCoinFee struct {
-	BaseCoinSymbol string `json:"base_coin_symbol" query:"base_coin_symbol"`
+	BaseCoinSymbol string `json:"coin_symbol" query:"coin_symbol"`
 }
 
 func NewGetCoinFee() *GetCoinFee {
@@ -72,6 +72,8 @@ func (o *GetCoinFee) CheckValidate() *base.BaseResponse {
 type ResGetCoinFee struct {
 	BaseCoinID     int64   `json:"base_coin_id"`
 	BaseCoinSymbol string  `json:"base_coin_symbol"`
+	CoinID         int64   `json:"coin_id"`
+	ConiSymbol     string  `json:"coin_symbol"`
 	TransactionFee float64 `json:"transaction_fee"`
 	GasPrice       float64 `json:"gas_price"`
 }

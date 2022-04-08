@@ -46,18 +46,65 @@ func (o *DB) UpdateCoinFee() {
 				} else {
 					gasPrice, _ := strconv.ParseFloat(fee.ResCoinFeeInfoValue.Fast, 64)
 					gasPrice = toFixed(gasPrice*0.000000001, 18)
-					transactionFee := gasPrice * 52346
-					newFee := &context.ResGetCoinFee{
-						BaseCoinID:     baseCoin.BaseCoinID,
-						BaseCoinSymbol: baseCoin.BaseCoinSymbol,
-						GasPrice:       gasPrice,
-						TransactionFee: transactionFee,
+
+					for _, coin := range o.Coins.Coins {
+						if coin.BaseCoinID != baseCoin.BaseCoinID {
+							continue
+						}
+
+						if baseCoin.BaseCoinSymbol == coin.CoinSymbol { // coin 수수료 계산
+							transactionFee := gasPrice * 21000
+							newFee := &context.ResGetCoinFee{
+								BaseCoinID:     baseCoin.BaseCoinID,
+								BaseCoinSymbol: baseCoin.BaseCoinSymbol,
+								CoinID:         coin.CoinId,
+								ConiSymbol:     coin.CoinSymbol,
+								GasPrice:       gasPrice,
+								TransactionFee: transactionFee,
+							}
+
+							key := MakeCoinFeeKey(coin.CoinSymbol)
+							o.SetCacheCoinFee(key, newFee)
+						} else { // 토큰 수수료 계산
+							transactionFee := gasPrice * 100000
+							newFee := &context.ResGetCoinFee{
+								BaseCoinID:     baseCoin.BaseCoinID,
+								BaseCoinSymbol: baseCoin.BaseCoinSymbol,
+								CoinID:         coin.CoinId,
+								ConiSymbol:     coin.CoinSymbol,
+								GasPrice:       gasPrice,
+								TransactionFee: transactionFee,
+							}
+
+							key := MakeCoinFeeKey(coin.CoinSymbol)
+							o.SetCacheCoinFee(key, newFee)
+						}
+
 					}
 
-					key := MakeCoinFeeKey(baseCoin.BaseCoinSymbol)
-					o.SetCacheCoinFee(key, newFee)
 				}
 			}
+			// for _, baseCoin := range o.BaseCoinMapByCoinID {
+			// 	req := &point_manager_server.ReqCoinFee{
+			// 		Symbol: baseCoin.BaseCoinSymbol,
+			// 	}
+			// 	if fee, err := point_manager_server.GetInstance().GetCoinFee(req); err != nil {
+			// 		log.Errorf("GetCoinFee err : %v", err)
+			// 	} else {
+			// 		gasPrice, _ := strconv.ParseFloat(fee.ResCoinFeeInfoValue.Fast, 64)
+			// 		gasPrice = toFixed(gasPrice*0.000000001, 18)
+			// 		transactionFee := gasPrice * 52346
+			// 		newFee := &context.ResGetCoinFee{
+			// 			BaseCoinID:     baseCoin.BaseCoinID,
+			// 			BaseCoinSymbol: baseCoin.BaseCoinSymbol,
+			// 			GasPrice:       gasPrice,
+			// 			TransactionFee: transactionFee,
+			// 		}
+
+			// 		key := MakeCoinFeeKey(baseCoin.BaseCoinSymbol)
+			// 		o.SetCacheCoinFee(key, newFee)
+			// 	}
+			// }
 
 			timer := time.NewTimer(15 * time.Second)
 			//timer := time.NewTimer(5 * time.Second)
