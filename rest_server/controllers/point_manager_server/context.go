@@ -40,8 +40,10 @@ type SwapPoint struct {
 }
 
 type SwapCoin struct {
-	CoinID               int64   `json:"coin_id"`                // 요청 인자
-	BaseCoinID           int64   `json:"base_coin_id"`           // 요청 인자
+	CoinID               int64   `json:"coin_id"` // 요청 인자
+	CoinSymbol           string  `json:"coin_symbol"`
+	BaseCoinID           int64   `json:"base_coin_id"` // 요청 인자
+	BaseCoinSymbol       string  `json:"base_coin_symbol"`
 	WalletAddress        string  `json:"walletaddress"`          // 검색
 	PreviousCoinQuantity float64 `json:"previous_coin_quantity"` // 검색
 	AdjustCoinQuantity   float64 `json:"adjust_coin_quantity"`   // 요청 인자
@@ -56,6 +58,8 @@ type ReqSwapInfo struct {
 
 	LogID   int64 `json:"log_id"`   // 2: 전환
 	EventID int64 `json:"event_id"` // 3: point->coin,  4: coin->point
+
+	SwapFee float64 `json:"swap_fee"` // point->coin 시 전환시 부모지갑에 전송될 코인량 coin->point는 0 고정
 }
 
 type ResSwapInfo struct {
@@ -74,10 +78,8 @@ type ReqCoinTransferFromParentWallet struct {
 	Quantity   float64 `json:"quantity" url:"quantity"`       // 보낼 코인량
 
 	// internal used
-	TransferFee   float64 `json:"transfer_fee" url:"transfer_fee"`     // 전송 수수료
-	TotalQuantity float64 `json:"total_quantity" url:"total_quantity"` // 보낼 코인량 + 전송 수수료
-	ReqId         string  `json:"reqid"`
-	TransactionId string  `json:"transaction_id"`
+	ReqId         string `json:"reqid"`
+	TransactionId string `json:"transaction_id"`
 }
 
 type ResCoinTransferFromParentWallet struct {
@@ -98,10 +100,8 @@ type ReqCoinTransferFromUserWallet struct {
 	Quantity       float64 `json:"quantity" url:"quantity"`                 // 보낼 코인량
 
 	// internal used
-	TransferFee   float64 `json:"transfer_fee" url:"transfer_fee"`     // 전송 수수료
-	TotalQuantity float64 `json:"total_quantity" url:"total_quantity"` // 보낼 코인량 + 전송 수수료
-	ReqId         string  `json:"reqid"`
-	TransactionId string  `json:"transaction_id"`
+	ReqId         string `json:"reqid"`
+	TransactionId string `json:"transaction_id"`
 }
 type ResCoinTransferFromUserWallet struct {
 	Common

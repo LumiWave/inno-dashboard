@@ -107,6 +107,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	}
 
 	// SwapCoin 정보 추가
+	baseMeCoin := &context.MeCoin{}
 	if coinList, err := model.GetDB().GetListAccountCoins(swapInfo.AUID); err != nil {
 		log.Errorf("GetListAccountCoins error : %v", err)
 		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Scan_Error)
@@ -116,9 +117,17 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 			if coin.CoinID == swapInfo.CoinID {
 				swapInfo.PreviousCoinQuantity = coin.Quantity
 				swapInfo.WalletAddress = coin.WalletAddress
+				swapInfo.CoinSymbol = coin.CoinSymbol
 				swapInfo.BaseCoinID = coin.BaseCoinID
 				swapInfo.CoinQuantity = swapInfo.PreviousCoinQuantity + swapInfo.AdjustCoinQuantity
 				break
+			}
+		}
+		for _, coin := range coinList {
+			if coin.CoinSymbol == model.GetDB().BaseCoinMapByCoinID[swapInfo.BaseCoinID].BaseCoinSymbol {
+				baseMeCoin = coin
+
+				swapInfo.BaseCoinSymbol = model.GetDB().BaseCoinMapByCoinID[swapInfo.BaseCoinID].BaseCoinSymbol
 			}
 		}
 		// 내 코인 정보 존재 확인 체크
@@ -126,6 +135,29 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Invalid_CoinID_Error])
 			resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		}
+	}
+
+	// 스왑에 필요한 가스비 가지고 있는지 체크
+	coinInfo := model.GetDB().CoinsMap[swapInfo.CoinID]
+	redisKey := model.MakeCoinFeeKey(coinInfo.CoinSymbol)
+	if coinFee, err := model.GetDB().GetCacheCoinFee(redisKey); err != nil {
+		log.Errorf("GetCacheCoinFee err : %v", err)
+		resp.SetReturn(resultcode.Result_CoinFee_NotExist)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	} else {
+		if swapInfo.EventID == context.EventID_toCoin {
+			if baseMeCoin.Quantity <= coinFee.TransactionFee*2 { // 부모지갑에 보낼 전송 수수료 + 부모가 보내줄 수수료만큼 있어야함
+				resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			}
+			swapInfo.SwapFee = coinFee.TransactionFee
+		} else if swapInfo.EventID == context.EventID_toPoint {
+			if baseMeCoin.Quantity <= coinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료만 있으면 됨
+				resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			}
+			swapInfo.SwapFee = 0
 		}
 	}
 
