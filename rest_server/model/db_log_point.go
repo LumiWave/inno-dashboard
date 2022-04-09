@@ -28,7 +28,7 @@ func (o *DB) GetListPointLiquidity(procedureType string, reqPointLiquidity *cont
 		baseDateStr = "BaseSDT"
 	}
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), procedureType,
+	rows, err := o.MssqlLogRead.QueryContext(contextR.Background(), procedureType,
 		sql.Named(baseDateStr, baseDate),
 		sql.Named("AppID", reqPointLiquidity.AppID),
 		sql.Named("PointID", reqPointLiquidity.PointID),
@@ -71,7 +71,7 @@ func (o *DB) GetListDailyPoints(reqPointLiquidity *context.ReqPointLiquidity) ([
 	baseDate := ChangeTime(reqPointLiquidity.BaseDate)
 
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), USPW_GetList_DailyPoints,
+	rows, err := o.MssqlLogRead.QueryContext(contextR.Background(), USPW_GetList_DailyPoints,
 		sql.Named("BaseDate", baseDate),
 		sql.Named("AppID", reqPointLiquidity.AppID),
 		sql.Named("PointID", reqPointLiquidity.PointID),

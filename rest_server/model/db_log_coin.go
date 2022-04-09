@@ -28,7 +28,7 @@ func (o *DB) GetListCoinLiquidity(procedureType string, reqCoinLiquidity *contex
 		baseDateStr = "BaseSDT"
 	}
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), procedureType,
+	rows, err := o.MssqlLogRead.QueryContext(contextR.Background(), procedureType,
 		sql.Named(baseDateStr, baseDate),
 		sql.Named("CoinID", reqCoinLiquidity.CoinID),
 		sql.Named("Interval", reqCoinLiquidity.Interval),
@@ -70,7 +70,7 @@ func (o *DB) GetListDailyCoins(reqCoinLiquidity *context.ReqCoinLiquidity) ([]*c
 	baseDate := ChangeTime(reqCoinLiquidity.BaseDate)
 
 	var returnValue orginMssql.ReturnStatus
-	rows, err := o.MssqlLogRead.GetDB().QueryContext(contextR.Background(), USPW_GetList_DailyCoins,
+	rows, err := o.MssqlLogRead.QueryContext(contextR.Background(), USPW_GetList_DailyCoins,
 		sql.Named("BaseDate", baseDate),
 		sql.Named("CoinID", reqCoinLiquidity.CoinID),
 		sql.Named("Interval", reqCoinLiquidity.Interval),
