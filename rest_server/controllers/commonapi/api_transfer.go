@@ -35,7 +35,12 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 			if meWallet.CoinID == reqCoinTransfer.CoinID {
 				meCoin = meWallet
 			}
-			if meWallet.CoinSymbol == model.GetDB().BaseCoinMapByCoinID[meWallet.BaseCoinID].BaseCoinSymbol {
+			// if meWallet.CoinSymbol == model.GetDB().BaseCoinMapByCoinID[meWallet.BaseCoinID].BaseCoinSymbol {
+			// 	meBaseCoin = meWallet
+			// }
+		}
+		for _, meWallet := range walletList {
+			if meWallet.CoinSymbol == model.GetDB().BaseCoinMapByCoinID[meCoin.BaseCoinID].BaseCoinSymbol {
 				meBaseCoin = meWallet
 			}
 		}
@@ -77,13 +82,11 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 	if baseCoin.IsUsedParentWallet {
 		// 필요한 정보를 모아서 point-manager 부모 지갑에서 전송 호출
 		req := &point_manager_server.ReqCoinTransferFromParentWallet{
-			AUID:          reqCoinTransfer.AUID,
-			CoinID:        reqCoinTransfer.CoinID,
-			CoinSymbol:    meCoin.CoinSymbol,
-			ToAddress:     reqCoinTransfer.ToAddress,
-			Quantity:      reqCoinTransfer.Quantity,
-			TransferFee:   coinInfo.ExchangeFees,
-			TotalQuantity: reqCoinTransfer.Quantity + coinInfo.ExchangeFees,
+			AUID:       reqCoinTransfer.AUID,
+			CoinID:     reqCoinTransfer.CoinID,
+			CoinSymbol: meCoin.CoinSymbol,
+			ToAddress:  reqCoinTransfer.ToAddress,
+			Quantity:   reqCoinTransfer.Quantity,
 		}
 
 		if res, err := point_manager_server.GetInstance().PostCoinTransferFromParentWallet(req); err != nil {
@@ -106,8 +109,6 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 			FromAddress:    reqCoinTransfer.FromAddress,
 			ToAddress:      reqCoinTransfer.ToAddress,
 			Quantity:       reqCoinTransfer.Quantity,
-			TransferFee:    coinInfo.ExchangeFees,
-			TotalQuantity:  reqCoinTransfer.Quantity + coinInfo.ExchangeFees,
 		}
 
 		if res, err := point_manager_server.GetInstance().PostCoinTransferFromUserWallet(req); err != nil {
