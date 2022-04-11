@@ -66,7 +66,7 @@ func (o *DB) UpdateCoinFee() {
 							key := MakeCoinFeeKey(coin.CoinSymbol)
 							o.SetCacheCoinFee(key, newFee)
 						} else { // 토큰 수수료 계산
-							transactionFee := gasPrice * 100000 * 1.2
+							transactionFee := gasPrice * 100000 * 1.5
 							newFee := &context.ResGetCoinFee{
 								BaseCoinID:     baseCoin.BaseCoinID,
 								BaseCoinSymbol: baseCoin.BaseCoinSymbol,
