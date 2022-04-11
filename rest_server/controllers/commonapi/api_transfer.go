@@ -66,7 +66,7 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 				resp.SetReturn(resultcode.Result_CoinFee_NotExist)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			} else {
-				if meBaseCoin.Quantity < coinFee.TransactionFee { // 가스비 부족
+				if meBaseCoin.Quantity < coinFee.TransactionFee*1.2 { // 가스비 부족
 					resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
 					return ctx.EchoContext.JSON(http.StatusOK, resp)
 				}
