@@ -77,7 +77,7 @@ func CheckAuthToken(authToken string) (bool, *VerifyAuthToken, error) {
 
 	if baseResp.Message != "success" {
 		err := errors.New(baseResp.Message)
-		log.Errorf("resp: %v, body close err: %v", resp, err)
+		//log.Errorf("resp: %v, body close err: %v", resp, err)
 		return false, nil, err
 	}
 
