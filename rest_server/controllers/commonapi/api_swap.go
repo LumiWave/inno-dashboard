@@ -44,6 +44,13 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	resp := new(base.BaseResponse)
 	resp.Success()
 
+	if reqSwapInfo.EventID == context.EventID_toPoint {
+		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Invalid_CoinID_Error])
+		resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
+		resp.Message = "This swap is not currently supported."
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	}
+
 	// otp check
 	if config.GetInstance().Otp.EnableSwap {
 		if !otp_google.VerifyTimebase(ctx.GetValue().InnoUID, reqSwapInfo.OtpCode) {
