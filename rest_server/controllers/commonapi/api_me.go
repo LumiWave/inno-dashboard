@@ -118,6 +118,7 @@ func PostCoinReload(ctx *context.InnoDashboardContext, params *context.CoinReloa
 		resp.Value = res.Value
 	} else {
 		log.Errorf("point_manager_server GetPointAppList error : %v", err)
+		resp.SetReturn(resultcode.ResultInternalServerError)
 	}
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
