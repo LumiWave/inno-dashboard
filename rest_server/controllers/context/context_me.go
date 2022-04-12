@@ -92,3 +92,21 @@ func (o *MeOtpVerify) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespons
 }
 
 ////////////////////////////////////////
+
+///////// coin mainnet 보정
+type CoinReload struct {
+	AUID int64 `json:"au_id" query:"au_id"`
+}
+
+func NewCoinReload() *CoinReload {
+	return new(CoinReload)
+}
+
+func (o *CoinReload) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+	if ctx.GetValue() != nil {
+		o.AUID = ctx.GetValue().AUID
+	}
+	return nil
+}
+
+////////////////////////////////////////

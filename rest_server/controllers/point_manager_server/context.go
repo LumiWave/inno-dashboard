@@ -1,5 +1,7 @@
 package point_manager_server
 
+import "time"
+
 type Common struct {
 	Return  int    `json:"return"`
 	Message string `json:"message"`
@@ -126,6 +128,30 @@ type ResCoinFeeInfoValue struct {
 type ResCoinFeeInfo struct {
 	Common
 	ResCoinFeeInfoValue `json:"value"`
+}
+
+////////////////////////////////////////
+
+///////// 코인 코인 mainnet reload
+type CoinReload struct {
+	AUID int64 `json:"au_id" query:"au_id"`
+}
+
+type ResCoinReloadValue struct {
+	CoinID                    int64     `json:"coin_id"`
+	BaseCoinID                int64     `json:"base_coin_id"`
+	WalletAddress             string    `json:"wallet_address"`
+	Quantity                  float64   `json:"quantity"`
+	TodayAcqQuantity          float64   `json:"today_acq_quantity" query:"today_acq_quantity"`
+	TodayCnsmQuantity         float64   `json:"today_cnsm_quantity" query:"today_cnsm_quantity"`
+	TodayAcqExchangeQuantity  float64   `json:"today_acq_exchange_quantity" query:"today_acq_exchange_quantity"`
+	TodayCnsmExchangeQuantity float64   `json:"today_cnsm_exchange_quantity" query:"today_cnsm_exchange_quantity"`
+	ResetDate                 time.Time `json:"reset_date" query:"reset_date"`
+}
+
+type ResCoinReload struct {
+	Common
+	Value []ResCoinReloadValue `json:"value"`
 }
 
 ////////////////////////////////////////

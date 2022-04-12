@@ -101,3 +101,17 @@ func (o *PointManagerServerInfo) GetCoinFee(req *ReqCoinFee) (*ResCoinFeeInfo, e
 
 	return data.(*ResCoinFeeInfo), nil
 }
+func (o *PointManagerServerInfo) PostCoinReload(req *CoinReload) (*ResCoinReload, error) {
+	api := ApiList[Api_post_coin_reload]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
+
+	pbytes, _ := json.Marshal(req)
+	buff := bytes.NewBuffer(pbytes)
+
+	data, err := HttpCall(api.client, callUrl, o.ApiKey, api.Method, api.ApiType, buff, req, api.ResponseFuncType())
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResCoinReload), nil
+}
