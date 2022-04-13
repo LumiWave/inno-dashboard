@@ -165,7 +165,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 				resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			}
-			swapInfo.SwapFee = coinFee.TransactionFee + basecoinFee.TransactionFee
+			swapInfo.SwapFee = coinFee.TransactionFee
 		} else if swapInfo.EventID == context.EventID_toPoint {
 			if baseMeCoin.Quantity <= coinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료만 있으면 됨
 				resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
