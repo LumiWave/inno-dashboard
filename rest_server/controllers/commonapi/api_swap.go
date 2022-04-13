@@ -154,7 +154,14 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
 	} else {
 		if swapInfo.EventID == context.EventID_toCoin {
-			if baseMeCoin.Quantity <= coinFee.TransactionFee*2 { // 부모지갑에 보낼 전송 수수료 + 부모가 보내줄 수수료만큼 있어야함
+			basecoinRedisKey := model.MakeCoinFeeKey(baseMeCoin.CoinSymbol)
+			basecoinFee, err := model.GetDB().GetCacheCoinFee(basecoinRedisKey)
+			if err != nil {
+				log.Errorf("GetCacheCoinFee err : %v", err)
+				resp.SetReturn(resultcode.Result_CoinFee_NotExist)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			}
+			if baseMeCoin.Quantity <= coinFee.TransactionFee+basecoinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료 + 부모가 보내줄 수수료만큼 있어야함
 				resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			}
