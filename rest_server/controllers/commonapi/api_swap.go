@@ -176,6 +176,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	}
 
 	swapInfo.LogID = context.LogID_exchange
+	swapInfo.InnoUID = ctx.GetValue().InnoUID
 
 	// 아래 체크 사항은 point manager server에서 처리한다.
 	// 최소 변환 비율에 맞는지 체크
