@@ -44,7 +44,16 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if reqSwapInfo.EventID == context.EventID_toPoint {
+	isToCoinEnable, isToPointEnable := model.GetSwapEnable()
+
+	if reqSwapInfo.EventID == context.EventID_toPoint && !isToPointEnable {
+		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Invalid_CoinID_Error])
+		resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
+		resp.Message = "This swap is not currently supported."
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	}
+
+	if reqSwapInfo.EventID == context.EventID_toCoin && !isToCoinEnable {
 		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Invalid_CoinID_Error])
 		resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
 		resp.Message = "This swap is not currently supported."

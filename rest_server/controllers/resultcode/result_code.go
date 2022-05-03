@@ -53,6 +53,11 @@ const (
 	Result_CoinFee_NotExist              = 36006 // GetCacheCoinFee Error
 	Result_CoinFee_LackOfGas             = 36007 // loack of gas
 
+	Result_PubSub_InternalErr                      = 36100 // pubsub error
+	Result_Error_IsMaintenance                     = 36101 // 정검 중
+	Result_Error_IsSwapMaintenance                 = 36102 // swap 정검중
+	Result_Error_IsCoinTransferExternalMaintenance = 36103 // 외부 코인 전송 정검중
+
 	Result_DBError              = 19000 // db 에러
 	Result_Invalid_DBID         = 19001 // 유효하지 못한 database index
 	Result_DBError_Unknown      = 19002 // 알려지지 않은 db 에러
@@ -119,6 +124,11 @@ var ResultCodeText = map[int]string{
 	Result_CoinFee_BaseSymbol_Empty:      "Base coin symbol information is empty",
 	Result_CoinFee_NotExist:              "not exist coin fee",
 	Result_CoinFee_LackOfGas:             "lack of gas",
+
+	Result_PubSub_InternalErr:                      "Internal pubsub error",
+	Result_Error_IsMaintenance:                     "It is under maintainence",
+	Result_Error_IsSwapMaintenance:                 "Swap is under maintainence",
+	Result_Error_IsCoinTransferExternalMaintenance: "External coin transfer is under maintenance",
 
 	Result_DBError:              "Internal DB error",
 	Result_Invalid_DBID:         "Invalid DB ID",

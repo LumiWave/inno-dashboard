@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/ONBUFF-IP-TOKEN/baseMarket v1.0.3
 	github.com/ONBUFF-IP-TOKEN/baseapp v1.0.13
-	github.com/ONBUFF-IP-TOKEN/basedb v1.1.14
+	github.com/ONBUFF-IP-TOKEN/basedb v1.1.17
 	github.com/ONBUFF-IP-TOKEN/baseutil v1.0.7
 	github.com/denisenkom/go-mssqldb v0.11.0
 	github.com/go-redsync/redsync/v4 v4.4.2

@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/schedule"
 
 	"github.com/labstack/echo"
 )
@@ -22,14 +20,4 @@ func GetVersion(c echo.Context, maxVersion string) error {
 	resp.Success()
 
 	return c.JSON(http.StatusOK, resp)
-}
-
-func GetNodeMetric(ctx *context.InnoDashboardContext) error {
-	resp := new(base.BaseResponse)
-	resp.Success()
-
-	node := schedule.GetSystemMonitor().GetMetricInfo()
-	resp.Value = node
-
-	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }

@@ -17,6 +17,11 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 	resp := new(base.BaseResponse)
 	resp.Success()
 
+	if !model.GetExternalTransferEnable() {
+		resp.SetReturn(resultcode.Result_Error_IsCoinTransferExternalMaintenance)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	}
+
 	// 전송 코인량 검증, 수수료 계산 검증
 	// 전송 할만큼의 코인 보유량 검증 (전송량 + 수수료)
 	coinInfo, ok := model.GetDB().CoinsMap[reqCoinTransfer.CoinID]
