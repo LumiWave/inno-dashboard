@@ -110,16 +110,16 @@ func PostCoinReload(ctx *context.InnoDashboardContext, params *context.CoinReloa
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	req := &point_manager_server.CoinReload{
-		AUID: params.AUID,
-	}
+	// req := &point_manager_server.CoinReload{
+	// 	AUID: params.AUID,
+	// }
 
-	if res, err := point_manager_server.GetInstance().PostCoinReload(req); err == nil {
-		resp.Value = res.Value
-	} else {
-		log.Errorf("point_manager_server GetPointAppList error : %v", err)
-		resp.SetReturn(resultcode.ResultInternalServerError)
-	}
+	// if res, err := point_manager_server.GetInstance().PostCoinReload(req); err == nil {
+	// 	resp.Value = res.Value
+	// } else {
+	// 	log.Errorf("point_manager_server GetPointAppList error : %v", err)
+	// 	resp.SetReturn(resultcode.ResultInternalServerError)
+	// }
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
