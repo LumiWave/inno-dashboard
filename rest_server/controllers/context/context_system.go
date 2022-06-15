@@ -46,3 +46,9 @@ type PSCoinTransferExternal struct {
 func NewPSCoinTransferExternal() *PSCoinTransferExternal {
 	return new(PSCoinTransferExternal)
 }
+
+type PubsubInfo struct {
+	Maintenance          *PSMaintenance          `json:"maintenance"`
+	Swap                 *PSSwap                 `json:"swap"`
+	CoinTransferExternal *PSCoinTransferExternal `json:"coin_transfer_external"`
+}

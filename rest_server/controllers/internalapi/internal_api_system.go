@@ -48,3 +48,8 @@ func (o *InternalAPI) PostPSMetaRefresh(c echo.Context) error {
 	ctx := base.GetContext(c).(*context.InnoDashboardContext)
 	return commonapi.PostPSMetaRefresh(ctx)
 }
+
+func (o *InternalAPI) GetPubsub(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	return commonapi.GetPubsub(ctx)
+}

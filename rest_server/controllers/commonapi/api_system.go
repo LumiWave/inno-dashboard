@@ -93,3 +93,25 @@ func PostPSMetaRefresh(ctx *context.InnoDashboardContext) error {
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
+
+func GetPubsub(ctx *context.InnoDashboardContext) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	isToCoinEnable, isToPointEnable := model.GetSwapEnable()
+
+	resp.Value = &context.PubsubInfo{
+		Maintenance: &context.PSMaintenance{
+			Enable: model.GetMaintenance(),
+		},
+		Swap: &context.PSSwap{
+			ToCoinEnable:  isToCoinEnable,
+			ToPointEnable: isToPointEnable,
+		},
+		CoinTransferExternal: &context.PSCoinTransferExternal{
+			Enable: model.GetExternalTransferEnable(),
+		},
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
