@@ -181,6 +181,9 @@ func GetAppCoinDailyAll(c echo.Context, reqAppCoinDaily *context.ReqAppCoinDaily
 			log.Errorf("ZRevRangeLogOfCoin error : %v", err)
 			resp.SetReturn(resultcode.Result_Get_App_Coin_Liquidity_Error)
 		} else {
+			if len(coinLiqs) == 0 {
+				continue
+			}
 			if coinLiqs[0].CnsmExchangeQuantity < 0 {
 				coinLiqs[0].CnsmExchangeQuantity = -coinLiqs[0].CnsmExchangeQuantity
 			}
