@@ -107,7 +107,7 @@ func InitDB(conf *config.ServerConfig) error {
 
 	LoadDBPoint(conf)
 
-	go gDB.ListenSubscribeEvent()
+	go gDB.ListenSubscribeEvent(50)
 
 	return nil
 }

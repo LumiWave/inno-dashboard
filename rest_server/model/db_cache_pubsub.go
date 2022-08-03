@@ -3,9 +3,12 @@ package model
 import (
 	"encoding/json"
 	"strings"
+	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/basedb"
+	"github.com/ONBUFF-IP-TOKEN/baseutil/datetime"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
 )
 
 func (o *DB) PublishEvent(channel string, val interface{}) error {
@@ -13,26 +16,57 @@ func (o *DB) PublishEvent(channel string, val interface{}) error {
 	return o.Cache.GetDB().Publish(MakePubSubKey(channel), string(msg))
 }
 
-func (o *DB) ListenSubscribeEvent() error {
-	defer func() {
-		if recver := recover(); recver != nil {
-			log.Error("Recoverd in listenPubSubEvent()", recver)
-			go o.ListenSubscribeEvent()
-		}
-	}()
-
-	log.Info("ListenSubscribeEvent() has been started")
-
+func (o *DB) ListenSubscribeEvent(termSec int64) error {
 	receiveCh := make(chan basedb.PubSubMessageV8)
 	defer close(receiveCh)
 
 	channel := MakePubSubKey(InternalCmd)
 	rch, err := o.Cache.GetDB().Subscribe(receiveCh, channel)
 	if err != nil {
-		log.Error(err)
+		log.Errorf("pubsub Subscribe err:%v", err)
 		return err
 	}
-	defer o.Cache.GetDB().ClosePubSub()
+
+	log.Info("ListenSubscribeEvent() has been started")
+
+	conf := config.GetInstance()
+	bKeepAlive := func() bool {
+		if conf.App.LiquidityUpdate {
+			return true
+		} else {
+			return false
+		}
+	}
+
+	defer func(ch string, termSec int64) {
+		o.Cache.GetDB().Unsubscribe(ch)
+		o.Cache.GetDB().ClosePubSub()
+		if recver := recover(); recver != nil {
+			log.Error("Recoverd in listenPubSubEvent()", recver)
+		}
+		go o.ListenSubscribeEvent(termSec)
+	}(channel, termSec)
+
+	if bKeepAlive() {
+		go func() {
+			ticker := time.NewTicker(time.Duration(termSec) * time.Second)
+
+			for {
+				msg := &PSHealthCheck{
+					PSHeader: PSHeader{
+						Type: PubSub_cmd_healthcheck,
+					},
+				}
+				msg.Value.Timestamp = datetime.GetTS2MilliSec()
+
+				if err := o.PublishEvent(InternalCmd, msg); err != nil {
+					log.Errorf("pubsub health check err : %v", err)
+				}
+				<-ticker.C
+			}
+
+		}()
+	}
 
 	for {
 		msg, ok := <-rch
