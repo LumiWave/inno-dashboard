@@ -51,35 +51,32 @@ func (o *DB) UpdateCoinFee() {
 						if coin.BaseCoinID != baseCoin.BaseCoinID {
 							continue
 						}
-
-						if baseCoin.BaseCoinSymbol == coin.CoinSymbol { // coin 수수료 계산
-							transactionFee := gasPrice * 21000 * 1.2
-							newFee := &context.ResGetCoinFee{
-								BaseCoinID:     baseCoin.BaseCoinID,
-								BaseCoinSymbol: baseCoin.BaseCoinSymbol,
-								CoinID:         coin.CoinId,
-								ConiSymbol:     coin.CoinSymbol,
-								GasPrice:       gasPrice,
-								TransactionFee: transactionFee,
-							}
-
-							key := MakeCoinFeeKey(coin.CoinSymbol)
-							o.SetCacheCoinFee(key, newFee)
-						} else { // 토큰 수수료 계산
-							transactionFee := gasPrice * 100000
-							newFee := &context.ResGetCoinFee{
-								BaseCoinID:     baseCoin.BaseCoinID,
-								BaseCoinSymbol: baseCoin.BaseCoinSymbol,
-								CoinID:         coin.CoinId,
-								ConiSymbol:     coin.CoinSymbol,
-								GasPrice:       gasPrice,
-								TransactionFee: transactionFee,
-							}
-
-							key := MakeCoinFeeKey(coin.CoinSymbol)
-							o.SetCacheCoinFee(key, newFee)
+						var transactionFee float64
+						if baseCoin.BaseCoinSymbol == coin.CoinSymbol {
+							// coin 수수료 계산
+							transactionFee = gasPrice * 21000 * 1.2
+						} else {
+							// 토큰 수수료 계산
+							transactionFee = gasPrice * 100000
 						}
 
+						newFee := &context.ResGetCoinFee{
+							BaseCoinID:     baseCoin.BaseCoinID,
+							BaseCoinSymbol: baseCoin.BaseCoinSymbol,
+							CoinID:         coin.CoinId,
+							ConiSymbol:     coin.CoinSymbol,
+							GasPrice:       gasPrice,
+							TransactionFee: transactionFee,
+						}
+
+						// 부모지갑을 사용하는 코인은 수수료를 0으로 처리한다.
+						if o.BaseCoinMapByCoinID[coin.BaseCoinID].IsUsedParentWallet {
+							newFee.GasPrice = 0
+							newFee.TransactionFee = 0
+						}
+
+						key := MakeCoinFeeKey(coin.CoinSymbol)
+						o.SetCacheCoinFee(key, newFee)
 					}
 
 				}
