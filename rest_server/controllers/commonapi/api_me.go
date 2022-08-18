@@ -23,16 +23,16 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 	} else {
 
-		tmpWalletList := []*context.MeCoin{}
+		// tmpWalletList := []*context.MeCoin{}
 
-		for _, wallet := range walletList {
-			if wallet.CoinSymbol == "MATIC" {
-				continue
-			}
-			tmpWalletList = append(tmpWalletList, wallet)
-		}
-		//resp.Value = walletList
-		resp.Value = tmpWalletList
+		// for _, wallet := range walletList {
+		// 	if wallet.CoinSymbol == "MATIC" {
+		// 		continue
+		// 	}
+		// 	tmpWalletList = append(tmpWalletList, wallet)
+		// }
+		resp.Value = walletList
+		//resp.Value = tmpWalletList
 	}
 
 	return c.JSON(http.StatusOK, resp)
