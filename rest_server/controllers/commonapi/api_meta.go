@@ -14,7 +14,6 @@ func GetMeta(c echo.Context) error {
 	resp.Success()
 
 	// tmpCoinList := context.CoinList{}
-
 	// for _, coin := range model.GetDB().Coins.Coins {
 	// 	if coin.CoinSymbol == "MATIC" {
 	// 		continue

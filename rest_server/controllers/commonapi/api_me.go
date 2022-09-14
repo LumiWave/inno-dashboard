@@ -22,16 +22,14 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	if walletList, err := model.GetDB().GetListAccountCoins(reqMeCoin.AUID); err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 	} else {
-
+		resp.Value = walletList
 		// tmpWalletList := []*context.MeCoin{}
-
 		// for _, wallet := range walletList {
 		// 	if wallet.CoinSymbol == "MATIC" {
 		// 		continue
 		// 	}
 		// 	tmpWalletList = append(tmpWalletList, wallet)
 		// }
-		resp.Value = walletList
 		//resp.Value = tmpWalletList
 	}
 
