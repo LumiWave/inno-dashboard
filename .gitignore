@@ -15,3 +15,6 @@ etc/conf/config.live.yml
 etc/conf/external_api.yml
 etc/conf/internal_api.yml
 
+.vscode/targets.log
+.vscode/dryrun.log
+.vscode/configurationCache.log
