@@ -1,8 +1,9 @@
 package model
 
 import (
+	"fmt"
 	"math"
-	"strconv"
+	"math/big"
 	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
@@ -44,8 +45,10 @@ func (o *DB) UpdateCoinFee() {
 				if fee, err := point_manager_server.GetInstance().GetCoinFee(req); err != nil {
 					log.Errorf("GetCoinFee err : %v", err)
 				} else {
-					gasPrice, _ := strconv.ParseFloat(fee.ResCoinFeeInfoValue.Fast, 64)
-					gasPrice = toFixed(gasPrice*0.000000001, 18)
+					gasPrice, _ := new(big.Float).SetString(fee.ResCoinFeeInfoValue.GasPrice)
+					scale := new(big.Float).SetFloat64(1)
+					scale.SetString("1e" + fmt.Sprintf("%d", fee.ResCoinFeeInfoValue.Decimal))
+					gasPrice = new(big.Float).Quo(gasPrice, scale)
 
 					for _, coin := range o.Coins.Coins {
 						if coin.BaseCoinID != baseCoin.BaseCoinID {
@@ -54,18 +57,19 @@ func (o *DB) UpdateCoinFee() {
 						var transactionFee float64
 						if baseCoin.BaseCoinSymbol == coin.CoinSymbol {
 							// coin 수수료 계산
-							transactionFee = gasPrice * 21000 * 1.2
+							transactionFee, _ = new(big.Float).Mul(gasPrice, new(big.Float).SetInt64(21000*1.2)).Float64()
 						} else {
 							// 토큰 수수료 계산
-							transactionFee = gasPrice * 100000
+							transactionFee, _ = new(big.Float).Mul(gasPrice, new(big.Float).SetInt64(100000)).Float64()
 						}
 
+						fgasPrice, _ := gasPrice.Float64()
 						newFee := &context.ResGetCoinFee{
 							BaseCoinID:     baseCoin.BaseCoinID,
 							BaseCoinSymbol: baseCoin.BaseCoinSymbol,
 							CoinID:         coin.CoinId,
 							ConiSymbol:     coin.CoinSymbol,
-							GasPrice:       gasPrice,
+							GasPrice:       fgasPrice,
 							TransactionFee: transactionFee,
 						}
 

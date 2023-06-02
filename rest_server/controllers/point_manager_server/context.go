@@ -7,7 +7,7 @@ type Common struct {
 	Message string `json:"message"`
 }
 
-///////// point list 응답
+// /////// point list 응답
 type Point struct {
 	PointID          int64  `json:"point_id"`
 	Quantity         int64  `json:"quantity"`
@@ -30,7 +30,7 @@ type MePointInfo struct {
 
 ////////////////////////////////////////
 
-///////// swap 요청
+// /////// swap 요청
 type SwapPoint struct {
 	MUID                  int64 `json:"mu_id"`                   // 검색
 	AppID                 int64 `json:"app_id"`                  // 요청 인자
@@ -72,7 +72,7 @@ type ResSwapInfo struct {
 
 ////////////////////////////////////////
 
-///////// 부모지갑에서 coin 전송 요청
+// /////// 부모지갑에서 coin 전송 요청
 type ReqCoinTransferFromParentWallet struct {
 	AUID       int64   `json:"au_id" url:"au_id"`             // 계정의 UID (Access Token에서 가져옴)
 	CoinID     int64   `json:"coin_id" url:"coin_id"`         // 코인 ID
@@ -92,7 +92,7 @@ type ResCoinTransferFromParentWallet struct {
 
 ////////////////////////////////////////
 
-///////// 특정지갑에서 coin 전송 요청
+// /////// 특정지갑에서 coin 전송 요청
 type ReqCoinTransferFromUserWallet struct {
 	AUID           int64   `json:"au_id" url:"au_id"`                       // 계정의 UID (Access Token에서 가져옴)
 	CoinID         int64   `json:"coin_id" url:"coin_id"`                   // 코인 ID
@@ -113,17 +113,14 @@ type ResCoinTransferFromUserWallet struct {
 
 ////////////////////////////////////////
 
-///////// 코인 가스비 요청
+// /////// 코인 가스비 요청
 type ReqCoinFee struct {
 	Symbol string `query:"symbol"`
 }
 
 type ResCoinFeeInfoValue struct {
-	Fast    string `json:"fast"`
-	Slow    string `json:"slow"`
-	Average string `json:"average"`
-	BaseFee string `json:"basefee"`
-	Fastest string `json:"fastest"`
+	GasPrice string `json:"gas_price"`
+	Decimal  int64  `json:"decimal"`
 }
 
 type ResCoinFeeInfo struct {
@@ -133,7 +130,7 @@ type ResCoinFeeInfo struct {
 
 ////////////////////////////////////////
 
-///////// 코인 코인 mainnet reload
+// /////// 코인 코인 mainnet reload
 type CoinReload struct {
 	AUID int64 `json:"au_id" query:"au_id"`
 }
