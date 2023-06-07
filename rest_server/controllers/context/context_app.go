@@ -4,7 +4,7 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 )
 
-///////// Point Info
+// /////// Point Info
 type PointInfo struct {
 	PointId                         int64   `json:"point_id,omitempty"`
 	PointName                       string  `json:"point_name,omitempty"`
@@ -35,13 +35,14 @@ type AppPoints struct {
 
 ////////////////////////////////////////
 
-///////// Coin Info
+// /////// Coin Info
 type CoinInfo struct {
 	BaseCoinID                      int64   `json:"base_coin_id"`
 	CoinId                          int64   `json:"coin_id,omitempty"`
 	CoinName                        string  `json:"coin_name"`
 	CoinSymbol                      string  `json:"coin_symbol,omitempty"`
 	ContractAddress                 string  `json:"contract_address,omitempty"`
+	Decimal                         int64   `json:"dicimal"`
 	ExplorePath                     string  `json:"explore_path"`
 	IconUrl                         string  `json:"icon_url,omitempty"`
 	DailyLimitedAcqExchangeQuantity float64 `json:"daily_limited_acq_exchange_quantity"`
@@ -55,7 +56,7 @@ type CoinList struct {
 
 ////////////////////////////////////////
 
-///////// BaseCoinInfo
+// /////// BaseCoinInfo
 type BaseCoinInfo struct {
 	BaseCoinID         int64  `json:"base_coin_id"`
 	BaseCoinName       string `json:"base_coin_name"`
@@ -69,7 +70,7 @@ type BaseCoinList struct {
 
 ////////////////////////////////////////
 
-///////// AppPointDailyInfo
+// /////// AppPointDailyInfo
 type ReqAppPointDaily struct {
 	AppID   int64 `json:"app_id" query:"app_id"`
 	PointID int64 `json:"point_id" query:"point_id"`
@@ -92,7 +93,7 @@ type ResAppPointDaily struct {
 
 ////////////////////////////////////////
 
-///////// AppCoinDailyInfo
+// /////// AppCoinDailyInfo
 type ReqAppCoinDaily struct {
 	CoinID int64 `json:"coin_id" query:"coin_id"`
 }
