@@ -45,10 +45,15 @@ func (o *DB) UpdateCoinFee() {
 				if fee, err := point_manager_server.GetInstance().GetCoinFee(req); err != nil {
 					log.Errorf("GetCoinFee err : %v", err)
 				} else {
-					gasPrice, _ := new(big.Float).SetString(fee.ResCoinFeeInfoValue.GasPrice)
-					scale := new(big.Float).SetFloat64(1)
-					scale.SetString("1e" + fmt.Sprintf("%d", fee.ResCoinFeeInfoValue.Decimal))
-					gasPrice = new(big.Float).Quo(gasPrice, scale)
+					gasPrice, bSuccess := new(big.Float).SetString(fee.ResCoinFeeInfoValue.GasPrice)
+					if bSuccess {
+						scale := new(big.Float).SetFloat64(1)
+						if _, bSuccess := scale.SetString("1e" + fmt.Sprintf("%d", fee.ResCoinFeeInfoValue.Decimal)); bSuccess {
+							gasPrice = new(big.Float).Quo(gasPrice, scale)
+						}
+					} else {
+						continue
+					}
 
 					for _, coin := range o.Coins.Coins {
 						if coin.BaseCoinID != baseCoin.BaseCoinID {
