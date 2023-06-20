@@ -113,7 +113,7 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 			CoinID:         reqCoinTransfer.CoinID,
 			CoinSymbol:     meCoin.CoinSymbol,
 			BaseCoinSymbol: baseCoin.BaseCoinSymbol,
-			FromAddress:    reqCoinTransfer.FromAddress,
+			FromAddress:    meCoin.WalletAddress,
 			ToAddress:      reqCoinTransfer.ToAddress,
 			Quantity:       reqCoinTransfer.Quantity,
 		}
