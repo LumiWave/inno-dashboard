@@ -17,7 +17,7 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	log.Debugf("PostTransfer : %v", reqCoinTransfer)
+	//log.Debugf("PostTransfer : %v", reqCoinTransfer)
 
 	if !model.GetExternalTransferEnable() {
 		resp.SetReturn(resultcode.Result_Error_IsCoinTransferExternalMaintenance)
