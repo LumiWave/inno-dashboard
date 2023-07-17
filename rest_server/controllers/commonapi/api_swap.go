@@ -116,7 +116,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 			swapInfo.DatabaseID = member.DatabaseID
 		} else {
 			// swap 하려는 app point 정보가 없다.
-			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+			log.Errorf("err : %v, auid:%v, appID:%v", resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error], swapInfo.AUID, swapInfo.AppID)
 			resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
 		}
