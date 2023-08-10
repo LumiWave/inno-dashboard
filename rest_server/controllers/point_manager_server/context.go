@@ -153,3 +153,42 @@ type ResCoinReload struct {
 }
 
 ////////////////////////////////////////
+
+// /////// 지갑 잔액
+type ReqBalance struct {
+	Symbol  string `query:"symbol"`
+	Address string `query:"address"`
+}
+
+type ResBalance struct {
+	Common
+	Value struct {
+		Balance string `json:"balance"`
+		Address string `json:"address"`
+		Decimal int64  `json:"decimal"`
+	} `json:"value"`
+}
+
+////////////////////////////////////////
+
+// /////// 전체 지갑 잔액
+type ReqBalanceAll struct {
+	AUID int64 `query:"au_id"`
+}
+
+type Balance struct {
+	CoinID     int64  `json:"coin_id"`
+	BaseCoinID int64  `json:"base_coin_id"`
+	Symbol     string `json:"symbol"`
+	Balance    string `json:"balance"`
+	Address    string `json:"address"`
+	Decimal    int64  `json:"dicimal"`
+}
+type ResBalanceAll struct {
+	Common
+	Value struct {
+		Balances []*Balance `json:"balances"`
+	} `json:"value"`
+}
+
+////////////////////////////////////////

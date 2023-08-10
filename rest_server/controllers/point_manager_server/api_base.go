@@ -22,6 +22,8 @@ const (
 	Api_coin_transfer_exist_inprogress  = 4 // 외부 지갑 coin 전송 중 체크 : GetCoinTransferExistInProgress
 	Api_get_coin_fee                    = 5 // 코인 가스비 정보 요청 : GetCoinFee
 	Api_post_coin_reload                = 6 // 코인 mainnet reload : PostCoinReload
+	Api_get_balance                     = 7 // 단일 코인 balance 조회 : GetBalance
+	Api_get_balances                    = 8 // 유저의 전체 코인 balance 조회 : GetBalanceAll
 )
 
 type ApiInfo struct {
@@ -47,6 +49,10 @@ var ApiList = map[api_kind]ApiInfo{
 		ResponseFuncType: func() interface{} { return new(ResCoinFeeInfo) }, client: NewClient()},
 	Api_post_coin_reload: ApiInfo{ApiType: Api_post_coin_reload, Uri: "/coin/reload", Method: "POST",
 		ResponseFuncType: func() interface{} { return new(ResCoinReload) }, client: NewClient()},
+	Api_get_balance: ApiInfo{ApiType: Api_get_balance, Uri: "/coin/address/balance", Method: "GET",
+		ResponseFuncType: func() interface{} { return new(ResBalance) }, client: NewClient()},
+	Api_get_balances: ApiInfo{ApiType: Api_get_balances, Uri: "/coin/address/balance/all", Method: "GET",
+		ResponseFuncType: func() interface{} { return new(ResBalanceAll) }, client: NewClient()},
 }
 
 func NewClient() *http.Client {

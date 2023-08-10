@@ -115,3 +115,33 @@ func (o *PointManagerServerInfo) PostCoinReload(req *CoinReload) (*ResCoinReload
 
 	return data.(*ResCoinReload), nil
 }
+
+func (o *PointManagerServerInfo) GetBalance(req *ReqBalance) (*ResBalance, error) {
+	api := ApiList[Api_get_balance]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
+
+	pbytes, _ := json.Marshal(req)
+	buff := bytes.NewBuffer(pbytes)
+
+	data, err := HttpCall(api.client, callUrl, o.ApiKey, api.Method, api.ApiType, buff, req, api.ResponseFuncType())
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResBalance), nil
+}
+
+func (o *PointManagerServerInfo) GetBalanceAll(req *ReqBalanceAll) (*ResBalanceAll, error) {
+	api := ApiList[Api_get_balances]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
+
+	pbytes, _ := json.Marshal(req)
+	buff := bytes.NewBuffer(pbytes)
+
+	data, err := HttpCall(api.client, callUrl, o.ApiKey, api.Method, api.ApiType, buff, req, api.ResponseFuncType())
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResBalanceAll), nil
+}
