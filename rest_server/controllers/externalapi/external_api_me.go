@@ -101,3 +101,22 @@ func (o *ExternalAPI) PostCoinReload(c echo.Context) error {
 
 	return commonapi.PostCoinReload(ctx, params)
 }
+
+func (o *ExternalAPI) GetWalletRegist(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	params := new(context.ReqWalletRegist)
+
+	// Request json 파싱
+	if err := ctx.EchoContext.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetWalletRegist(ctx, params)
+}

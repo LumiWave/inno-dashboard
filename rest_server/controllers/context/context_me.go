@@ -8,7 +8,7 @@ import (
 
 ////////////////////////////////////////
 
-///////// Me Point List
+// /////// Me Point List
 type ReqMePoint struct {
 	AUID int64 `json:"au_id" query:"au_id"`
 	MUID int64 `json:"mu_id" query:"mu_id"`
@@ -35,7 +35,7 @@ type MePoint struct {
 
 ////////////////////////////////////////
 
-///////// Me Coin List
+// /////// Me Coin List
 type ReqMeCoin struct {
 	AUID int64 `json:"au_id" query:"au_id"`
 }
@@ -62,7 +62,7 @@ type MeCoin struct {
 
 ////////////////////////////////////////
 
-///////// Member
+// /////// Member
 type Member struct {
 	MUID       int64 `json:"mu_id"`
 	AppID      int64 `json:"app_id"`
@@ -71,14 +71,14 @@ type Member struct {
 
 ////////////////////////////////////////
 
-///////// otp : qrcode 용 uri 조회
+// /////// otp : qrcode 용 uri 조회
 type MeOtpUri struct {
 	OtpUri string `json:"otp_uri"`
 }
 
 ////////////////////////////////////////
 
-///////// otp : qrcode 용 uri 조회
+// /////// otp : qrcode 용 uri 조회
 type MeOtpVerify struct {
 	OtpCode string `json:"otp_code" query:"otp_code"`
 }
@@ -93,7 +93,7 @@ func (o *MeOtpVerify) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespons
 
 ////////////////////////////////////////
 
-///////// coin mainnet 보정
+// /////// coin mainnet 보정
 type CoinReload struct {
 	AUID int64 `json:"au_id" query:"au_id"`
 }
@@ -110,3 +110,30 @@ func (o *CoinReload) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse
 }
 
 ////////////////////////////////////////
+
+// /////// 등록된 지갑정보요청
+type ReqWalletRegist struct {
+	AUID int64 `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
+}
+
+func (o *ReqWalletRegist) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+	if ctx.GetValue() != nil {
+		o.AUID = ctx.GetValue().AUID
+	}
+	return nil
+}
+
+type ResWalletRegist struct {
+	IsRegistered bool   `json:"is_registered"` //등록여부 true:등록되어있음, false:등록안됨
+	RegistDT     string `json:"regist_dt"`     //등록시간(실시간 24시간체크용)
+	UserType     int    `json:"user_type"`     //1:구유저(바로등록), 2:신유저(필요할떄등록)
+}
+
+type DBWalletRegist struct {
+	BaseCoinID                int64
+	WalletID                  int64
+	WalletAddress             string
+	DisconnectedWalletAddress string
+	DisconnectedDT            string
+	ModifiedDT                string
+}
