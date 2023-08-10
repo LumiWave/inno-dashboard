@@ -136,16 +136,12 @@ func GetWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqWalle
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if walletRegistMap, err := model.GetDB().USPAU_GetList_AccountWallets(5); err != nil {
+	if _, err := model.GetDB().USPAU_GetList_AccountWallets(5); err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_AUID_Empty)
 	} else {
 		resp.Value = &context.ResWalletRegist{}
 		//체크로직
-		if len(walletRegistMap) > 0 {
-			// for _, wallet := range walletRegistMap {
 
-			// }
-		}
 	}
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)

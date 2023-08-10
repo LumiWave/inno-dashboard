@@ -172,9 +172,11 @@ func (o *DB) GetBaseCoins() error {
 	}
 
 	o.BaseCoinListMapByWallet = make(map[string][]*context.BaseCoinInfo)
+	o.RegistWalletNames = make([]string, 0)
 	for _, basecoin := range o.BaseCoins.Coins {
 		if _, ok := o.BaseCoinListMapByWallet[basecoin.WalletPlatform]; !ok {
 			o.BaseCoinListMapByWallet[basecoin.WalletPlatform] = make([]*context.BaseCoinInfo, 0)
+			o.RegistWalletNames = append(o.RegistWalletNames, basecoin.WalletPlatform)
 		}
 		o.BaseCoinListMapByWallet[basecoin.WalletPlatform] = append(o.BaseCoinListMapByWallet[basecoin.WalletPlatform], basecoin)
 	}

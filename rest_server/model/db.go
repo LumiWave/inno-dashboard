@@ -59,6 +59,7 @@ type DB struct {
 	BaseCoinMapBySymbol     map[string]*context.BaseCoinInfo // 전체 base coin 정보 : key coin symbol
 	BaseCoins               context.BaseCoinList
 	BaseCoinListMapByWallet map[string][]*context.BaseCoinInfo // 베이스코인 리스트 : key walletname
+	RegistWalletNames       []string                           //등록할 지갑 이름.. 위 맵의 KEY 리스트
 
 	SwapAbleMap map[int64]*context.Swapable // 전체 스왑 가능한 정보 1 : key appID
 	SwapAble    []*context.Swapable         // 전체 스왑 가능한 정보 2
