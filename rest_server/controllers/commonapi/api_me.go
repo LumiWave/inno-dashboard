@@ -131,3 +131,18 @@ func PostCoinReload(ctx *context.InnoDashboardContext, params *context.CoinReloa
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
+
+func GetWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqWalletRegist) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if walletRegist, err := model.GetDB().USPAU_GetList_AccountWallets(params.AUID); err != nil {
+		resp.SetReturn(resultcode.Result_Get_Me_AUID_Empty)
+	} else {
+		resp.Value = &context.ResWalletRegist{}
+		//체크로직
+		log.Debugf("%v", walletRegist)
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
