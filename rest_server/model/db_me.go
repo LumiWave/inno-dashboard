@@ -161,7 +161,7 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) (map[int64]*context.DBWall
 
 	for rows.Next() {
 		data := &context.DBWalletRegist{}
-		if err := rows.Scan(&data.BaseCoinID, &data.WalletID, &data.WalletAddress, &data.DisconnectedWalletAddress, &data.DisconnectedDT, &data.ModifiedDT); err != nil {
+		if err := rows.Scan(&data.BaseCoinID, &data.WalletAddress, &data.ConnectionStatus, &data.ModifiedDT); err != nil {
 			log.Errorf("%s Scan error : %v", proc, err)
 			return nil, err
 		} else {

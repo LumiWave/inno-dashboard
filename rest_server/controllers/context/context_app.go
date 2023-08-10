@@ -62,6 +62,7 @@ type BaseCoinInfo struct {
 	BaseCoinName       string `json:"base_coin_name"`
 	BaseCoinSymbol     string `json:"base_coin_symbol"`
 	IsUsedParentWallet bool   `json:"is_used_parent_wallet"`
+	WalletPlatform     string `json:"wallet_platform"`
 }
 
 type BaseCoinList struct {

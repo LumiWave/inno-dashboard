@@ -6,6 +6,9 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 )
 
+// 지갑 등록 후 해제 가능시간
+const DeleteWalletHour = 24
+
 ////////////////////////////////////////
 
 // /////// Me Point List
@@ -130,10 +133,8 @@ type ResWalletRegist struct {
 }
 
 type DBWalletRegist struct {
-	BaseCoinID                int64
-	WalletID                  int64
-	WalletAddress             string
-	DisconnectedWalletAddress string
-	DisconnectedDT            string
-	ModifiedDT                string
+	BaseCoinID       int64
+	WalletAddress    string
+	ConnectionStatus int64
+	ModifiedDT       string
 }
