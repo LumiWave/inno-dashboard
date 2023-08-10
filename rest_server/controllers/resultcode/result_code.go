@@ -36,14 +36,16 @@ const (
 	Result_Get_App_Point_Liquidity_Error      = 33006 // Get App Point Liquidity DB Error
 	Result_Get_App_Coin_Liquidity_Error       = 33007 // Get App Coin Liquidity DB Error
 
-	Result_Get_Swap_ExchangeGoods_Scan_Error = 33100 // GetListAccountPoints DB Scan Error
+	Result_Get_Swap_ExchangeGoods_Scan_Error = 33100 // USPAU_GetList_AccountPoints DB Scan Error
 
 	Result_Get_Me_AUID_Empty            = 34001 // GetMeWallets AUID Empty
 	Result_Get_Me_WalletList_Scan_Error = 34002 // GetMeWalletList DB Scan Error
 	Result_Get_Me_PointList_Scan_Error  = 34003 // GetMePointList DB Scan Error
 	Result_Get_Me_CoinList_Scan_Error   = 34004 // GetMeCoinList DB Scan Error
-	Result_Get_MemberList_Scan_Error    = 34005 // GetListMembers DB Scan Error
+	Result_Get_MemberList_Scan_Error    = 34005 // USPAU_GetList_Members DB Scan Error
 	Result_Get_Me_Verify_otp_Error      = 34006 // otp verify error
+	Result_Error_Db_GetAccountWallets   = 34007 // db 지갑 리스트 조회 에러
+	Result_Error_Db_NotExistWallets     = 34008 // db 보유한 지갑 없음 에러
 
 	Result_CoinTransfer_CoinSymbol_Empty = 36001 // Coin Symbol is Empty
 	Result_CoinTransfer_ToAddress_Empty  = 36002 // To Address is Empty
@@ -108,14 +110,16 @@ var ResultCodeText = map[int]string{
 	Result_Get_App_Point_Liquidity_Error:      "Get app point liquidity db error",
 	Result_Get_App_Coin_Liquidity_Error:       "Get app coin liquidity db error",
 
-	Result_Get_Swap_ExchangeGoods_Scan_Error: "GetListAccountPoints DB Scan Error",
+	Result_Get_Swap_ExchangeGoods_Scan_Error: "USPAU_GetList_AccountPoints DB Scan Error",
 
 	Result_Get_Me_AUID_Empty:            "AUID is empty",
 	Result_Get_Me_WalletList_Scan_Error: "GetMeWalletList DB Scan Error",
 	Result_Get_Me_PointList_Scan_Error:  "GetMePointList DB Scan Error",
 	Result_Get_Me_CoinList_Scan_Error:   "GetMeCoinList DB Scan Error",
-	Result_Get_MemberList_Scan_Error:    "GetListMembers DB Scan Error",
+	Result_Get_MemberList_Scan_Error:    "USPAU_GetList_Members DB Scan Error",
 	Result_Get_Me_Verify_otp_Error:      "Otp Verify Error",
+	Result_Error_Db_GetAccountWallets:   "db get account wallet list error",
+	Result_Error_Db_NotExistWallets:     "db not exist wallet",
 
 	Result_CoinTransfer_CoinSymbol_Empty: "CoinSymbol is empty",
 	Result_CoinTransfer_ToAddress_Empty:  "ToAddress is empty",
