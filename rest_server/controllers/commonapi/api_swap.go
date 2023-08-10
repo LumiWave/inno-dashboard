@@ -106,7 +106,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	}
 
 	// SwapPoint 정보 추가
-	if _, membersMap, err := model.GetDB().GetListMembers(swapInfo.AUID); err != nil {
+	if _, membersMap, err := model.GetDB().USPAU_GetList_Members(swapInfo.AUID); err != nil {
 		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
 		resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
@@ -123,9 +123,24 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	}
 
 	// SwapCoin 정보 추가
+	// 내가 보유하고 있는 지갑이 있는지 검증한다.
+	if wallets, err := model.GetDB().USPAU_GetList_AccountWallets(ctx.GetValue().AUID); err != nil {
+		log.Errorf("USPAU_GetList_AccountWallets err : %v, auid:%v", err, ctx.GetValue().AUID)
+		resp.SetReturn(resultcode.Result_Error_Db_GetAccountWallets)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	} else if len(wallets) == 0 {
+		log.Errorf("USPAU_GetList_AccountWallets not exist wallet by auid : %v", ctx.GetValue().AUID)
+		resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	} else {
+		// for _, wallet := range wallets {
+		// 	if wallet
+		// }
+	}
+
 	baseMeCoin := &context.MeCoin{}
-	if coinList, err := model.GetDB().GetListAccountCoins(swapInfo.AUID); err != nil {
-		log.Errorf("GetListAccountCoins error : %v", err)
+	if coinList, err := model.GetDB().USPAU_GetList_AccountCoins(swapInfo.AUID); err != nil {
+		log.Errorf("USPAU_GetList_AccountCoins error : %v", err)
 		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Scan_Error)
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
 	} else {
@@ -170,6 +185,8 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 				resp.SetReturn(resultcode.Result_CoinFee_NotExist)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			}
+			// 수수료로 사용될 코인 balance를 가져와서 보유량 확인
+
 			if baseMeCoin.Quantity <= coinFee.TransactionFee+basecoinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료 + 부모가 보내줄 수수료만큼 있어야함
 				resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)

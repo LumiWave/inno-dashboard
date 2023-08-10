@@ -8,7 +8,7 @@ import (
 
 ////////////////////////////////////////
 
-///////// Me Point List
+// /////// Me Point List
 type ReqMePoint struct {
 	AUID int64 `json:"au_id" query:"au_id"`
 	MUID int64 `json:"mu_id" query:"mu_id"`
@@ -35,7 +35,7 @@ type MePoint struct {
 
 ////////////////////////////////////////
 
-///////// Me Coin List
+// /////// Me Coin List
 type ReqMeCoin struct {
 	AUID int64 `json:"au_id" query:"au_id"`
 }
@@ -62,7 +62,7 @@ type MeCoin struct {
 
 ////////////////////////////////////////
 
-///////// Member
+// /////// Member
 type Member struct {
 	MUID       int64 `json:"mu_id"`
 	AppID      int64 `json:"app_id"`
@@ -71,14 +71,14 @@ type Member struct {
 
 ////////////////////////////////////////
 
-///////// otp : qrcode 용 uri 조회
+// /////// otp : qrcode 용 uri 조회
 type MeOtpUri struct {
 	OtpUri string `json:"otp_uri"`
 }
 
 ////////////////////////////////////////
 
-///////// otp : qrcode 용 uri 조회
+// /////// otp : qrcode 용 uri 조회
 type MeOtpVerify struct {
 	OtpCode string `json:"otp_code" query:"otp_code"`
 }
@@ -93,7 +93,7 @@ func (o *MeOtpVerify) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespons
 
 ////////////////////////////////////////
 
-///////// coin mainnet 보정
+// /////// coin mainnet 보정
 type CoinReload struct {
 	AUID int64 `json:"au_id" query:"au_id"`
 }

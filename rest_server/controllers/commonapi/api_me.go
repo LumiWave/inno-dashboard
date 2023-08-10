@@ -19,7 +19,7 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if walletList, err := model.GetDB().GetListAccountCoins(reqMeCoin.AUID); err != nil {
+	if walletList, err := model.GetDB().USPAU_GetList_AccountCoins(reqMeCoin.AUID); err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 	} else {
 		resp.Value = walletList
@@ -41,10 +41,10 @@ func GetMePointList(c echo.Context, reqMePoint *context.ReqMePoint) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if pointList, err := model.GetDB().GetListAccountPoints(reqMePoint.AUID, 0); err != nil {
+	if pointList, err := model.GetDB().USPAU_GetList_AccountPoints(reqMePoint.AUID, 0); err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_PointList_Scan_Error)
 	} else {
-		if _, membersMap, err := model.GetDB().GetListMembers(reqMePoint.AUID); err != nil {
+		if _, membersMap, err := model.GetDB().USPAU_GetList_Members(reqMePoint.AUID); err != nil {
 			resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
 		} else {
 			for _, member := range membersMap {
@@ -77,7 +77,7 @@ func GetMeCoinList(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if coinList, err := model.GetDB().GetListAccountCoins(reqMeCoin.AUID); err != nil {
+	if coinList, err := model.GetDB().USPAU_GetList_AccountCoins(reqMeCoin.AUID); err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_CoinList_Scan_Error)
 	} else {
 		resp.Value = []*context.MeCoin{}

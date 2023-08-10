@@ -18,7 +18,7 @@ const (
 )
 
 // 계정 코인 조회
-func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeCoin, error) {
+func (o *DB) USPAU_GetList_AccountCoins(auid int64) ([]*context.MeCoin, error) {
 	var returnValue orginMssql.ReturnStatus
 	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), USPAU_GetList_AccountCoins,
 		sql.Named("AUID", auid),
@@ -61,7 +61,7 @@ func (o *DB) GetListAccountCoins(auid int64) ([]*context.MeCoin, error) {
 }
 
 // 계정 포인트 조회
-func (o *DB) GetListAccountPoints(auid, muid int64) ([]*context.MePoint, error) {
+func (o *DB) USPAU_GetList_AccountPoints(auid, muid int64) ([]*context.MePoint, error) {
 	var returnValue orginMssql.ReturnStatus
 	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), USPAU_GetList_AccountPoints,
 		sql.Named("AUID", auid),
@@ -103,7 +103,7 @@ func (o *DB) GetListAccountPoints(auid, muid int64) ([]*context.MePoint, error) 
 }
 
 // 계정 앱 회원 조회
-func (o *DB) GetListMembers(auid int64) ([]*context.Member, map[int64]*context.Member, error) {
+func (o *DB) USPAU_GetList_Members(auid int64) ([]*context.Member, map[int64]*context.Member, error) {
 	var returnValue orginMssql.ReturnStatus
 	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), USPAU_GetList_Members,
 		sql.Named("AUID", auid),

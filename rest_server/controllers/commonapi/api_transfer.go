@@ -34,7 +34,7 @@ func PostTransfer(ctx *context.InnoDashboardContext, reqCoinTransfer *context.Re
 
 	meCoin := &context.MeCoin{}
 	meBaseCoin := &context.MeCoin{}
-	if walletList, err := model.GetDB().GetListAccountCoins(ctx.GetValue().AUID); walletList == nil || err != nil {
+	if walletList, err := model.GetDB().USPAU_GetList_AccountCoins(ctx.GetValue().AUID); walletList == nil || err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
 	} else {
