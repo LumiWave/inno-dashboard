@@ -1,6 +1,8 @@
 package commonapi
 
 import (
+	"fmt"
+	"math/big"
 	"net/http"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
@@ -145,10 +147,63 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 				break
 			}
 		}
-		if !bFind {
+		if !bFind { // 수수료 지불한 지갑이 존재하지 않다면 에러
 			log.Errorf("Not Find swap fee wallet / auid : %v", ctx.GetValue().AUID)
 			resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		}
+		// 지갑에 수수료 확인을 위해서 보유량 가져오기
+		req := &point_manager_server.ReqBalance{
+			Symbol:  swapInfo.BaseCoinSymbol,
+			Address: swapInfo.WalletAddress,
+		}
+		res, err := point_manager_server.GetInstance().GetBalance(req)
+		if err != nil {
+			log.Errorf("GetBalance err : %v, wallet:%v", swapInfo.WalletAddress)
+			resp.SetReturn(resultcode.ResultInternalServerError)
+			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		} else if res.Return != 0 {
+			log.Errorf("GetBalance return : %v, msg:%v", res.Return, res.Message)
+			resp.SetReturn(resultcode.ResultInternalServerError)
+			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		} else {
+			log.Debugf("GetBalance symbol:%v, addr:%v, bal:%v", req.Symbol, res.Value.Address, res.Value.Balance)
+			// 스왑에 필요한 가스비 가지고 있는지 체크
+			coinInfo := model.GetDB().CoinsMap[swapInfo.CoinID]
+			redisKey := model.MakeCoinFeeKey(coinInfo.CoinSymbol)
+			if coinFee, err := model.GetDB().GetCacheCoinFee(redisKey); err != nil {
+				log.Errorf("GetCacheCoinFee err : %v", err)
+				resp.SetReturn(resultcode.Result_CoinFee_NotExist)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			} else {
+				scale := new(big.Float).SetFloat64(1)
+				scale.SetString("1e" + fmt.Sprintf("%d", res.Value.Decimal))
+				myBalance, _ := new(big.Float).SetString(res.Value.Balance)
+				myBalance = new(big.Float).Quo(myBalance, scale)
+				balance, _ := myBalance.Float64()
+
+				if swapInfo.EventID == context.EventID_toCoin {
+					basecoinRedisKey := model.MakeCoinFeeKey(swapInfo.BaseCoinSymbol)
+					basecoinFee, err := model.GetDB().GetCacheCoinFee(basecoinRedisKey)
+					if err != nil {
+						log.Errorf("GetCacheCoinFee err : %v", err)
+						resp.SetReturn(resultcode.Result_CoinFee_NotExist)
+						return ctx.EchoContext.JSON(http.StatusOK, resp)
+					}
+					//// 수수료로 사용될 코인 balance를 가져와서 보유량 확인
+					if balance <= coinFee.TransactionFee+basecoinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료 + 부모가 보내줄 수수료만큼 있어야함
+						resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
+						return ctx.EchoContext.JSON(http.StatusOK, resp)
+					}
+					swapInfo.SwapFee = coinFee.TransactionFee
+				} else if swapInfo.EventID == context.EventID_toPoint {
+					if balance <= coinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료만 있으면 됨
+						resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
+						return ctx.EchoContext.JSON(http.StatusOK, resp)
+					}
+					swapInfo.SwapFee = 0
+				}
+			}
 		}
 	}
 
@@ -182,38 +237,6 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	// 		return ctx.EchoContext.JSON(http.StatusOK, resp)
 	// 	}
 	// }
-
-	// 스왑에 필요한 가스비 가지고 있는지 체크
-	coinInfo := model.GetDB().CoinsMap[swapInfo.CoinID]
-	redisKey := model.MakeCoinFeeKey(coinInfo.CoinSymbol)
-	if coinFee, err := model.GetDB().GetCacheCoinFee(redisKey); err != nil {
-		log.Errorf("GetCacheCoinFee err : %v", err)
-		resp.SetReturn(resultcode.Result_CoinFee_NotExist)
-		return ctx.EchoContext.JSON(http.StatusOK, resp)
-	} else {
-		if swapInfo.EventID == context.EventID_toCoin {
-			//basecoinRedisKey := model.MakeCoinFeeKey(swapInfo.BaseCoinSymbol)
-			//basecoinFee, err := model.GetDB().GetCacheCoinFee(basecoinRedisKey)
-			// if err != nil {
-			// 	log.Errorf("GetCacheCoinFee err : %v", err)
-			// 	resp.SetReturn(resultcode.Result_CoinFee_NotExist)
-			// 	return ctx.EchoContext.JSON(http.StatusOK, resp)
-			// }
-			//// 수수료로 사용될 코인 balance를 가져와서 보유량 확인
-
-			// if baseMeCoin.Quantity <= coinFee.TransactionFee+basecoinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료 + 부모가 보내줄 수수료만큼 있어야함
-			// 	resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
-			// 	return ctx.EchoContext.JSON(http.StatusOK, resp)
-			// }
-			swapInfo.SwapFee = coinFee.TransactionFee
-		} else if swapInfo.EventID == context.EventID_toPoint {
-			// if baseMeCoin.Quantity <= coinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료만 있으면 됨
-			// 	resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
-			// 	return ctx.EchoContext.JSON(http.StatusOK, resp)
-			// }
-			swapInfo.SwapFee = 0
-		}
-	}
 
 	swapInfo.LogID = context.LogID_exchange
 	swapInfo.InnoUID = ctx.GetValue().InnoUID

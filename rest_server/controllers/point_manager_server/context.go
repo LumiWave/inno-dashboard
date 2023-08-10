@@ -161,8 +161,12 @@ type ReqBalance struct {
 }
 
 type ResBalance struct {
-	Balance string `json:"balance"`
-	Address string `json:"address"`
+	Common
+	Value struct {
+		Balance string `json:"balance"`
+		Address string `json:"address"`
+		Decimal int64  `json:"decimal"`
+	} `json:"value"`
 }
 
 ////////////////////////////////////////
@@ -181,7 +185,10 @@ type Balance struct {
 	Decimal    int64  `json:"dicimal"`
 }
 type ResBalanceAll struct {
-	Balances []*Balance `json:"balances"`
+	Common
+	Value struct {
+		Balances []*Balance `json:"balances"`
+	} `json:"value"`
 }
 
 ////////////////////////////////////////
