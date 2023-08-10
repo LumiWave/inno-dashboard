@@ -104,7 +104,7 @@ func (o *ExternalAPI) PostCoinReload(c echo.Context) error {
 
 func (o *ExternalAPI) GetWalletRegist(c echo.Context) error {
 	ctx := base.GetContext(c).(*context.InnoDashboardContext)
-	params := new(context.ReqWalletRegist)
+	params := new(context.ReqGetWalletRegist)
 
 	// Request json 파싱
 	if err := ctx.EchoContext.Bind(params); err != nil {
@@ -119,4 +119,42 @@ func (o *ExternalAPI) GetWalletRegist(c echo.Context) error {
 	}
 
 	return commonapi.GetWalletRegist(ctx, params)
+}
+
+func (o *ExternalAPI) PostWalletRegist(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	params := new(context.ReqPostWalletRegist)
+
+	// Request json 파싱
+	if err := ctx.EchoContext.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.PostWalletRegist(ctx, params)
+}
+
+func (o *ExternalAPI) DeleteWalletRegist(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	params := new(context.ReqDeleteWalletRegist)
+
+	// Request json 파싱
+	if err := ctx.EchoContext.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.DeleteWalletRegist(ctx, params)
 }

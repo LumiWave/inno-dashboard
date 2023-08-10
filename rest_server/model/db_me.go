@@ -16,6 +16,8 @@ const (
 	USPAU_GetList_AccountPoints  = "[dbo].[USPAU_GetList_AccountPoints]"
 	USPAU_GetList_Members        = "[dbo].[USPAU_GetList_Members]"
 	USPAU_GetList_AccountWallets = "[dbo].[USPAU_GetList_AccountWallets]"
+	USPAU_Cnct_AccountWallets    = "[dbo].[USPAU_Cnct_AccountWallets]"
+	USPAU_Dscnct_AccountWallets  = "[dbo].[USPAU_Dscnct_AccountWallets]"
 )
 
 // 계정 코인 조회
@@ -175,4 +177,67 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) ([]*context.DBWalletRegist
 	}
 
 	return walletRegists, nil
+}
+
+// 지갑등록
+func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string) (int, error) {
+	var returnValue orginMssql.ReturnStatus
+	proc := USPAU_Cnct_AccountWallets
+	rows, err := o.MssqlAccountAll.QueryContext(contextR.Background(), proc,
+		sql.Named("AUID", auid),
+		sql.Named("BaseCoinID", baseCoinID),
+		sql.Named("WalletAddress", walletAddress),
+		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
+	if err != nil {
+		log.Errorf("%s QueryContext error : %v", proc, err)
+		return 1, err
+	}
+
+	if returnValue != 1 {
+		log.Errorf("%s returnvalue error : %v", proc, returnValue)
+		switch returnValue {
+		case 50106:
+			//이미 다른지갑에 연결된 지갑주소
+			return 2, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+		case 50107:
+			//다른 사용자에 의해 연결된 지갑주소
+			return 3, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+		default:
+			return 1, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+		}
+	}
+
+	return 0, nil
+}
+
+// 지갑삭제
+func (o *DB) USPAU_Dscnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string) error {
+	var returnValue orginMssql.ReturnStatus
+	proc := USPAU_Dscnct_AccountWallets
+	rows, err := o.MssqlAccountAll.QueryContext(contextR.Background(), proc,
+		sql.Named("AUID", auid),
+		sql.Named("BaseCoinID", baseCoinID),
+		sql.Named("WalletAddress", walletAddress),
+		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
+	if err != nil {
+		log.Errorf("%s QueryContext error : %v", proc, err)
+		return err
+	}
+
+	if returnValue != 1 {
+		log.Errorf("%s returnvalue error : %v", proc, returnValue)
+		return errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+	}
+
+	return nil
 }

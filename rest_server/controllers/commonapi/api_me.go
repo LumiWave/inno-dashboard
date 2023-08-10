@@ -2,6 +2,7 @@ package commonapi
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
@@ -132,17 +133,135 @@ func PostCoinReload(ctx *context.InnoDashboardContext, params *context.CoinReloa
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
 
-func GetWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqWalletRegist) error {
+func GetWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqGetWalletRegist) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if _, err := model.GetDB().USPAU_GetList_AccountWallets(5); err != nil {
-		resp.SetReturn(resultcode.Result_Get_Me_AUID_Empty)
+	if res, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
+		resp.SetReturn(errCode)
 	} else {
-		resp.Value = &context.ResWalletRegist{}
-		//체크로직
-
+		resp.Value = res
 	}
 
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
+
+func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPostWalletRegist) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if res, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
+		resp.SetReturn(errCode)
+	} else {
+		if walletData, ok := res.WalletData[params.WalletPlatform]; !ok {
+			resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_UnsupportWallet_Error)
+		} else {
+			if walletData.IsRegistered {
+				resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegistered_Error)
+			} else {
+				for _, basecoin := range model.GetDB().BaseCoins.Coins {
+					if basecoin.WalletPlatform == params.WalletPlatform {
+						if errType, err := model.GetDB().USPAU_Cnct_AccountWallets(params.AUID, basecoin.BaseCoinID, params.WalletAddress); err != nil {
+							switch errType {
+							case 2:
+								resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegisteredDB_Error)
+							case 3:
+								resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegistered_AnotherAccount_Error)
+							default:
+								resp.SetReturn(resultcode.Result_DBError)
+							}
+							resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegistered_Error)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
+
+func DeleteWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqDeleteWalletRegist) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if res, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
+		resp.SetReturn(errCode)
+	} else {
+		if walletData, ok := res.WalletData[params.WalletPlatform]; !ok {
+			resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_UnsupportWallet_Error)
+		} else {
+			if walletData.IsRegistered {
+				if registDT, err := time.Parse("2006-01-02 15:04:05.000", walletData.RegistDT); err != nil {
+					log.Errorf("wallet registDT parse error : %v", err)
+					resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_System_Error)
+				} else {
+					limitDT := registDT.Add(time.Hour * context.DeleteWalletHour)
+					cmp := limitDT.Compare(time.Now())
+					if cmp < 0 {
+						resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_DeleteTime_Error) //24시간이 안됨
+					} else {
+						if walletData.WalletAddress != params.WalletAddress {
+							resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_Diffrent_Wallet_Error) //현재 등록되어있는 지갑주소와 다름
+						} else {
+							for _, basecoin := range model.GetDB().BaseCoins.Coins {
+								if basecoin.WalletPlatform == params.WalletPlatform {
+									if err := model.GetDB().USPAU_Dscnct_AccountWallets(params.AUID, basecoin.BaseCoinID, params.WalletAddress); err != nil {
+										resp.SetReturn(resultcode.Result_DBError)
+									}
+								}
+							}
+						}
+					}
+				}
+			} else {
+				resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_NoRegistered_Wallet_Error)
+			}
+		}
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
+
+func GetWalletRegistInfo(auid int64) (*context.ResGetWalletRegist, int) {
+	if UserWallets, err := model.GetDB().USPAU_GetList_AccountWallets(auid); err != nil {
+		return nil, resultcode.Result_Get_Me_AUID_Empty
+	} else {
+		res := &context.ResGetWalletRegist{
+			WalletData: make(map[string]*context.WalletRegistInfo),
+		}
+		for _, walletName := range model.GetDB().RegistWalletNames {
+			res.WalletData[walletName] = &context.WalletRegistInfo{}
+		}
+		for _, userWallet := range UserWallets {
+			if baseCoin, ok := model.GetDB().BaseCoinMapByCoinID[userWallet.BaseCoinID]; ok {
+				if _, ok := res.WalletData[baseCoin.WalletPlatform]; ok {
+					if auid > context.UserTypeLimit {
+						res.WalletData[baseCoin.WalletPlatform].UserType = 2
+					} else {
+						res.WalletData[baseCoin.WalletPlatform].UserType = 1
+					}
+					switch userWallet.ConnectionStatus {
+					case 1:
+						res.WalletData[baseCoin.WalletPlatform].IsRegistered = true
+						res.WalletData[baseCoin.WalletPlatform].WalletAddress = userWallet.WalletAddress
+						res.WalletData[baseCoin.WalletPlatform].RegistDT = userWallet.ModifiedDT
+					case 2:
+						res.WalletData[baseCoin.WalletPlatform].LastDeleteWalletAddress = userWallet.WalletAddress
+						res.WalletData[baseCoin.WalletPlatform].LastDeleteDT = userWallet.ModifiedDT
+					default:
+					}
+				}
+			}
+		}
+		//미등록상태이면 마지막 등록 주소는 내보내지않는다
+		for _, userWallet := range res.WalletData {
+			if !userWallet.IsRegistered {
+				userWallet.LastDeleteWalletAddress = ""
+				userWallet.LastDeleteDT = ""
+			}
+		}
+
+		return res, 0
+	}
 }
