@@ -6,6 +6,9 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 )
 
+// 지갑 등록 후 해제 가능시간
+const DeleteWalletHour = 24
+
 ////////////////////////////////////////
 
 // /////// Me Point List
@@ -124,16 +127,15 @@ func (o *ReqWalletRegist) CheckValidate(ctx *InnoDashboardContext) *base.BaseRes
 }
 
 type ResWalletRegist struct {
-	IsRegistered bool   `json:"is_registered"` //등록여부 true:등록되어있음, false:등록안됨
-	RegistDT     string `json:"regist_dt"`     //등록시간(실시간 24시간체크용)
-	UserType     int    `json:"user_type"`     //1:구유저(바로등록), 2:신유저(필요할떄등록)
+	IsRegistered      bool   `json:"is_registered"` //등록여부 true:등록되어있음, false:등록안됨
+	RegistDT          string `json:"regist_dt"`     //등록시간(실시간 24시간체크용)
+	LastWalletAddress string `json:"last_wallet_address"`
+	UserType          int    `json:"user_type"` //1:구유저(바로등록), 2:신유저(필요할떄등록)
 }
 
 type DBWalletRegist struct {
-	BaseCoinID                int64
-	WalletID                  int64
-	WalletAddress             string
-	DisconnectedWalletAddress string
-	DisconnectedDT            string
-	ModifiedDT                string
+	BaseCoinID       int64
+	WalletAddress    string
+	ConnectionStatus int64
+	ModifiedDT       string
 }

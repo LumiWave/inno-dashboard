@@ -141,7 +141,7 @@ func (o *DB) USPAU_GetList_Members(auid int64) ([]*context.Member, map[int64]*co
 }
 
 // 등록된 지갑정보
-func (o *DB) USPAU_GetList_AccountWallets(auid int64) (map[int64]*context.DBWalletRegist, error) {
+func (o *DB) USPAU_GetList_AccountWallets(auid int64) ([]*context.DBWalletRegist, error) {
 	var returnValue orginMssql.ReturnStatus
 	proc := USPAU_GetList_AccountWallets
 	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), proc,
@@ -157,17 +157,15 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) (map[int64]*context.DBWall
 		return nil, err
 	}
 
-	DBWalletRegistMap := make(map[int64]*context.DBWalletRegist)
+	walletRegists := make([]*context.DBWalletRegist, 0)
 
 	for rows.Next() {
 		data := &context.DBWalletRegist{}
-		if err := rows.Scan(&data.BaseCoinID, &data.WalletID, &data.WalletAddress, &data.DisconnectedWalletAddress, &data.DisconnectedDT, &data.ModifiedDT); err != nil {
+		if err := rows.Scan(&data.BaseCoinID, &data.WalletAddress, &data.ConnectionStatus, &data.ModifiedDT); err != nil {
 			log.Errorf("%s Scan error : %v", proc, err)
 			return nil, err
 		} else {
-			if _, ok := DBWalletRegistMap[data.BaseCoinID]; !ok {
-				DBWalletRegistMap[data.BaseCoinID] = data
-			}
+			walletRegists = append(walletRegists, data)
 		}
 	}
 
@@ -176,5 +174,5 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) (map[int64]*context.DBWall
 		return nil, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
 	}
 
-	return DBWalletRegistMap, nil
+	return walletRegists, nil
 }

@@ -164,11 +164,21 @@ func (o *DB) GetBaseCoins() error {
 	o.BaseCoins.Coins = nil
 	for rows.Next() {
 		baseCoin := &context.BaseCoinInfo{}
-		if err := rows.Scan(&baseCoin.BaseCoinID, &baseCoin.BaseCoinName, &baseCoin.BaseCoinSymbol, &baseCoin.IsUsedParentWallet); err == nil {
+		if err := rows.Scan(&baseCoin.BaseCoinID, &baseCoin.BaseCoinName, &baseCoin.BaseCoinSymbol, &baseCoin.IsUsedParentWallet, &baseCoin.WalletPlatform); err == nil {
 			o.BaseCoinMapByCoinID[baseCoin.BaseCoinID] = baseCoin
 			o.BaseCoinMapBySymbol[baseCoin.BaseCoinSymbol] = baseCoin
 			o.BaseCoins.Coins = append(o.BaseCoins.Coins, baseCoin)
 		}
+	}
+
+	o.BaseCoinListMapByWallet = make(map[string][]*context.BaseCoinInfo)
+	o.RegistWalletNames = make([]string, 0)
+	for _, basecoin := range o.BaseCoins.Coins {
+		if _, ok := o.BaseCoinListMapByWallet[basecoin.WalletPlatform]; !ok {
+			o.BaseCoinListMapByWallet[basecoin.WalletPlatform] = make([]*context.BaseCoinInfo, 0)
+			o.RegistWalletNames = append(o.RegistWalletNames, basecoin.WalletPlatform)
+		}
+		o.BaseCoinListMapByWallet[basecoin.WalletPlatform] = append(o.BaseCoinListMapByWallet[basecoin.WalletPlatform], basecoin)
 	}
 
 	return nil
