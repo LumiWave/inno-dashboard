@@ -24,6 +24,8 @@ const (
 	Result_Invalid_CoinID_Error         = 32104 // coinid 유효성 에러
 	Result_Invalid_CoinQuantity_Error   = 32105 // coin 수량 유효성 에러
 	Result_Invalid_AdjustQuantity_Error = 32106 // adjust 수량 유효성 에러
+	Result_Invalid_WalletPlatform_Error = 32107 // wallet platform 이름
+	Result_Invalid_WalletAddress_Error  = 32108 // wallet address
 
 	Result_Not_Exist_AppPointInfo_Error = 32201 // 앱 포인트 정보가 존재하지 않는다.
 	Result_Unknown_Swap_Error           = 32202 // unknown swap 에러
@@ -107,6 +109,8 @@ var ResultCodeText = map[int]string{
 	Result_Invalid_CoinID_Error:         "CoinID is invalid",
 	Result_Invalid_CoinQuantity_Error:   "Coin quantity is invalid",
 	Result_Invalid_AdjustQuantity_Error: "Adjust quantity is invalid",
+	Result_Invalid_WalletPlatform_Error: "Wallet Platform is invalid",
+	Result_Invalid_WalletAddress_Error:  "Wallet Address is invalid",
 
 	Result_Not_Exist_AppPointInfo_Error: "App point information does not exist",
 	Result_Unknown_Swap_Error:           "Unknown swap error",
@@ -121,23 +125,23 @@ var ResultCodeText = map[int]string{
 
 	Result_Get_Swap_ExchangeGoods_Scan_Error: "USPAU_GetList_AccountPoints DB Scan Error",
 
-	Result_Get_Me_AUID_Empty:                          "AUID is empty",
-	Result_Get_Me_WalletList_Scan_Error:               "GetMeWalletList DB Scan Error",
-	Result_Get_Me_PointList_Scan_Error:                "GetMePointList DB Scan Error",
-	Result_Get_Me_CoinList_Scan_Error:                 "GetMeCoinList DB Scan Error",
-	Result_Get_MemberList_Scan_Error:                  "USPAU_GetList_Members DB Scan Error",
-	Result_Get_Me_Verify_otp_Error:                    "Otp Verify Error",
-	Result_Error_Db_GetAccountWallets:                 "db get account wallet list error",
-	Result_Error_Db_NotExistWallets:                   "db not exist wallet",
-	Result_Post_Me_WalletRegist_System_Error:          "system error.",
-	Result_Post_Me_WalletRegist_DeleteTime_Error:      "can delete wallet in 24 hours.",
-	Result_Post_Me_WalletRegist_Diffrent_Wallet_Error: "Not a registered wallet address",
+	Result_Get_Me_AUID_Empty:            "AUID is empty",
+	Result_Get_Me_WalletList_Scan_Error: "GetMeWalletList DB Scan Error",
+	Result_Get_Me_PointList_Scan_Error:  "GetMePointList DB Scan Error",
+	Result_Get_Me_CoinList_Scan_Error:   "GetMeCoinList DB Scan Error",
+	Result_Get_MemberList_Scan_Error:    "USPAU_GetList_Members DB Scan Error",
+	Result_Get_Me_Verify_otp_Error:      "Otp Verify Error",
+	Result_Error_Db_GetAccountWallets:   "db get account wallet list error",
+	Result_Error_Db_NotExistWallets:     "db not exist wallet",
 
 	Result_Post_Me_WalletRegist_UnsupportWallet_Error:                 "Unsupported wallet.",
 	Result_Post_Me_WalletRegist_AreadyRegistered_Error:                "already have a registered wallet",
 	Result_Post_Me_WalletRegist_AreadyRegisteredDB_Error:              "already have a registered wallet",
 	Result_Post_Me_WalletRegist_AreadyRegistered_AnotherAccount_Error: "Wallet already registered on another account",
 	Result_Post_Me_WalletRegist_NoRegistered_Wallet_Error:             "No registered wallet",
+	Result_Post_Me_WalletRegist_System_Error:                          "system error.",
+	Result_Post_Me_WalletRegist_DeleteTime_Error:                      "can delete wallet in 24 hours.",
+	Result_Post_Me_WalletRegist_Diffrent_Wallet_Error:                 "Not a registered wallet address",
 
 	Result_CoinTransfer_CoinSymbol_Empty: "CoinSymbol is empty",
 	Result_CoinTransfer_ToAddress_Empty:  "ToAddress is empty",

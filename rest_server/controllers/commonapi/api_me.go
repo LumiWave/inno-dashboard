@@ -170,7 +170,6 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 							default:
 								resp.SetReturn(resultcode.Result_DBError)
 							}
-							resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegistered_Error)
 						}
 					}
 				}
@@ -192,13 +191,13 @@ func DeleteWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqDe
 			resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_UnsupportWallet_Error)
 		} else {
 			if walletData.IsRegistered {
-				if registDT, err := time.Parse("2006-01-02 15:04:05.000", walletData.RegistDT); err != nil {
+				if registDT, err := time.Parse(time.RFC3339, walletData.RegistDT); err != nil {
 					log.Errorf("wallet registDT parse error : %v", err)
 					resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_System_Error)
 				} else {
 					limitDT := registDT.Add(time.Hour * context.DeleteWalletHour)
 					cmp := limitDT.Compare(time.Now())
-					if cmp < 0 {
+					if cmp > 0 {
 						resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_DeleteTime_Error) //24시간이 안됨
 					} else {
 						if walletData.WalletAddress != params.WalletAddress {

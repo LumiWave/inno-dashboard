@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 )
 
 // 지갑 등록 후 해제 가능시간
@@ -158,19 +159,31 @@ func (o *ReqPostWalletRegist) CheckValidate(ctx *InnoDashboardContext) *base.Bas
 	if ctx.GetValue() != nil {
 		o.AUID = ctx.GetValue().AUID
 	}
+	if o.WalletPlatform == "" {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletPlatform_Error)
+	}
+	if o.WalletAddress == "" {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletAddress_Error)
+	}
 	return nil
 }
 
 // //// 지갑삭제요청
 type ReqDeleteWalletRegist struct {
 	AUID           int64  `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
-	WalletPlatform string `json:"wallet_platform"`
-	WalletAddress  string `json:"wallet_address"`
+	WalletPlatform string `json:"wallet_platform" query:"wallet_platform"`
+	WalletAddress  string `json:"wallet_address" query:"wallet_address"`
 }
 
 func (o *ReqDeleteWalletRegist) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
 	if ctx.GetValue() != nil {
 		o.AUID = ctx.GetValue().AUID
+	}
+	if o.WalletPlatform == "" {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletPlatform_Error)
+	}
+	if o.WalletAddress == "" {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletAddress_Error)
 	}
 	return nil
 }
