@@ -60,6 +60,8 @@ func (o *DB) UpdateCoinFee() {
 							transactionFee = gasPrice * 100000
 						}
 
+						transactionFee = toFixed(transactionFee, 18)
+
 						newFee := &context.ResGetCoinFee{
 							BaseCoinID:     baseCoin.BaseCoinID,
 							BaseCoinSymbol: baseCoin.BaseCoinSymbol,
