@@ -137,9 +137,15 @@ func GetWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqGetWa
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if res, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
+	if walletRegistMap, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
 		resp.SetReturn(errCode)
 	} else {
+		res := &context.ResGetWalletRegist{
+			Wallets: make([]*context.WalletRegistInfo, 0),
+		}
+		for _, walletRegist := range walletRegistMap {
+			res.Wallets = append(res.Wallets, walletRegist)
+		}
 		resp.Value = res
 	}
 
@@ -150,10 +156,10 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if res, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
+	if walletRegistMap, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
 		resp.SetReturn(errCode)
 	} else {
-		if walletData, ok := res.WalletData[params.WalletPlatform]; !ok {
+		if walletData, ok := walletRegistMap[params.WalletPlatform]; !ok {
 			resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_UnsupportWallet_Error)
 		} else {
 			if walletData.IsRegistered {
@@ -184,10 +190,10 @@ func DeleteWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqDe
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if res, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
+	if walletRegistMap, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
 		resp.SetReturn(errCode)
 	} else {
-		if walletData, ok := res.WalletData[params.WalletPlatform]; !ok {
+		if walletData, ok := walletRegistMap[params.WalletPlatform]; !ok {
 			resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_UnsupportWallet_Error)
 		} else {
 			if walletData.IsRegistered {
@@ -222,39 +228,40 @@ func DeleteWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqDe
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
 
-func GetWalletRegistInfo(auid int64) (*context.ResGetWalletRegist, int) {
+func GetWalletRegistInfo(auid int64) (map[string]*context.WalletRegistInfo, int) {
 	if UserWallets, err := model.GetDB().USPAU_GetList_AccountWallets(auid); err != nil {
 		return nil, resultcode.Result_Get_Me_AUID_Empty
 	} else {
-		res := &context.ResGetWalletRegist{
-			WalletData: make(map[string]*context.WalletRegistInfo),
-		}
+		res := make(map[string]*context.WalletRegistInfo)
+
 		for _, walletName := range model.GetDB().RegistWalletNames {
-			res.WalletData[walletName] = &context.WalletRegistInfo{}
+			res[walletName] = &context.WalletRegistInfo{
+				WalletName: walletName,
+			}
 		}
 		for _, userWallet := range UserWallets {
 			if baseCoin, ok := model.GetDB().BaseCoinMapByCoinID[userWallet.BaseCoinID]; ok {
-				if _, ok := res.WalletData[baseCoin.WalletPlatform]; ok {
+				if _, ok := res[baseCoin.WalletPlatform]; ok {
 					if auid > context.UserTypeLimit {
-						res.WalletData[baseCoin.WalletPlatform].UserType = 2
+						res[baseCoin.WalletPlatform].UserType = 2
 					} else {
-						res.WalletData[baseCoin.WalletPlatform].UserType = 1
+						res[baseCoin.WalletPlatform].UserType = 1
 					}
 					switch userWallet.ConnectionStatus {
 					case 1:
-						res.WalletData[baseCoin.WalletPlatform].IsRegistered = true
-						res.WalletData[baseCoin.WalletPlatform].WalletAddress = userWallet.WalletAddress
-						res.WalletData[baseCoin.WalletPlatform].RegistDT = userWallet.ModifiedDT
+						res[baseCoin.WalletPlatform].IsRegistered = true
+						res[baseCoin.WalletPlatform].WalletAddress = userWallet.WalletAddress
+						res[baseCoin.WalletPlatform].RegistDT = userWallet.ModifiedDT
 					case 2:
-						res.WalletData[baseCoin.WalletPlatform].LastDeleteWalletAddress = userWallet.WalletAddress
-						res.WalletData[baseCoin.WalletPlatform].LastDeleteDT = userWallet.ModifiedDT
+						res[baseCoin.WalletPlatform].LastDeleteWalletAddress = userWallet.WalletAddress
+						res[baseCoin.WalletPlatform].LastDeleteDT = userWallet.ModifiedDT
 					default:
 					}
 				}
 			}
 		}
 		//미등록상태이면 마지막 등록 주소는 내보내지않는다
-		for _, userWallet := range res.WalletData {
+		for _, userWallet := range res {
 			if !userWallet.IsRegistered {
 				userWallet.LastDeleteWalletAddress = ""
 				userWallet.LastDeleteDT = ""
