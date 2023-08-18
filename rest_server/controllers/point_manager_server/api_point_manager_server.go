@@ -34,6 +34,21 @@ func (o *PointManagerServerInfo) PostPointCoinSwap(swapInfo *ReqSwapInfo) (*ResS
 	return data.(*ResSwapInfo), nil
 }
 
+func (o *PointManagerServerInfo) PutSwapGasFee(params *ReqSwapGasFee) (*ResSwapGasFee, error) {
+	api := ApiList[Api_put_swap_gasfee]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
+
+	pbytes, _ := json.Marshal(params)
+	buff := bytes.NewBuffer(pbytes)
+
+	data, err := HttpCall(api.client, callUrl, o.ApiKey, api.Method, api.ApiType, buff, nil, api.ResponseFuncType())
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResSwapGasFee), nil
+}
+
 func (o *PointManagerServerInfo) PostCoinTransferFromParentWallet(req *ReqCoinTransferFromParentWallet) (*ResCoinTransferFromParentWallet, error) {
 	api := ApiList[Api_coin_transfer_from_parentwallet]
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)

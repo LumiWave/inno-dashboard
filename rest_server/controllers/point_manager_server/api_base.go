@@ -24,6 +24,7 @@ const (
 	Api_post_coin_reload                = 6 // 코인 mainnet reload : PostCoinReload
 	Api_get_balance                     = 7 // 단일 코인 balance 조회 : GetBalance
 	Api_get_balances                    = 8 // 유저의 전체 코인 balance 조회 : GetBalanceAll
+	Api_put_swap_gasfee                 = 9 // swap 상태 정보 갱신 요청
 )
 
 type ApiInfo struct {
@@ -53,6 +54,8 @@ var ApiList = map[api_kind]ApiInfo{
 		ResponseFuncType: func() interface{} { return new(ResBalance) }, client: NewClient()},
 	Api_get_balances: ApiInfo{ApiType: Api_get_balances, Uri: "/coin/address/balance/all", Method: "GET",
 		ResponseFuncType: func() interface{} { return new(ResBalanceAll) }, client: NewClient()},
+	Api_put_swap_gasfee: ApiInfo{ApiType: Api_put_swap_gasfee, Uri: "/swap/gasfee", Method: "PUT",
+		ResponseFuncType: func() interface{} { return new(ResSwapGasFee) }, client: NewClient()},
 }
 
 func NewClient() *http.Client {

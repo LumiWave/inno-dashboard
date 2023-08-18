@@ -26,6 +26,7 @@ const (
 	Result_Invalid_AdjustQuantity_Error = 32106 // adjust 수량 유효성 에러
 	Result_Invalid_WalletPlatform_Error = 32107 // wallet platform 이름
 	Result_Invalid_WalletAddress_Error  = 32108 // wallet address
+	Result_Invalid_TxStatus             = 32109 // invalid tx status
 
 	Result_Not_Exist_AppPointInfo_Error = 32201 // 앱 포인트 정보가 존재하지 않는다.
 	Result_Unknown_Swap_Error           = 32202 // unknown swap 에러
@@ -111,6 +112,7 @@ var ResultCodeText = map[int]string{
 	Result_Invalid_AdjustQuantity_Error: "Adjust quantity is invalid",
 	Result_Invalid_WalletPlatform_Error: "Wallet Platform is invalid",
 	Result_Invalid_WalletAddress_Error:  "Wallet Address is invalid",
+	Result_Invalid_TxStatus:             "TxStatus is invalid",
 
 	Result_Not_Exist_AppPointInfo_Error: "App point information does not exist",
 	Result_Unknown_Swap_Error:           "Unknown swap error",

@@ -45,3 +45,22 @@ func (o *ExternalAPI) PostSwap(c echo.Context) error {
 	}
 	return commonapi.PostSwap(ctx, params)
 }
+
+// Swap 을 위한 수수료 전송후 정보 수신
+func (o *ExternalAPI) PutSwapGasFee(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	params := new(context.ReqSwapGasFee)
+
+	// Request json 파싱
+	if err := c.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+	return commonapi.PutSwapGasFee(ctx, params)
+}

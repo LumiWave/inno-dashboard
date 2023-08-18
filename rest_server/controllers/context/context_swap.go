@@ -5,7 +5,7 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 )
 
-///////// Swap Info 전체 포인트, 코인 정보 리스트, swap 가능 정보 조회
+// /////// Swap Info 전체 포인트, 코인 정보 리스트, swap 가능 정보 조회
 type SwapablePoint struct {
 	PointID int64 `json:"point_id"`
 }
@@ -48,7 +48,7 @@ type RespSwapEnable struct {
 
 ////////////////////////////////////////
 
-///////// Swap 처리
+// /////// Swap 처리
 type SwapPoint struct {
 	AppID               int64 `json:"app_id"`
 	PointID             int64 `json:"point_id"`
@@ -102,3 +102,21 @@ func (o *ReqSwapInfo) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespons
 }
 
 ////////////////////////////////////////
+
+// swap 상태 변경 요청 : (수료 전송 후 tx정보 저장)
+type ReqSwapGasFee struct {
+	TxStatus          int64  `json:"tx_status"`
+	TxHash            string `json:"tx_hash"`
+	FromWalletAddress string `json:"from_wallet_address"`
+}
+
+func (o *ReqSwapGasFee) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+	if o.TxStatus < 2 && o.TxStatus > 4 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_TxStatus)
+	}
+	if len(o.FromWalletAddress) == 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletAddress_Error)
+	}
+
+	return nil
+}

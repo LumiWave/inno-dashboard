@@ -58,13 +58,29 @@ type ReqSwapInfo struct {
 
 	TxType int64 `json:"tx_type"` // 3: point->coin,  4: coin->point
 
-	SwapFee float64 `json:"swap_fee"` // point->coin 시 전환시 부모지갑에 전송될 코인량 coin->point는 0 고정
-	InnoUID string  `json:"inno_uid"`
+	SwapFee           float64 `json:"swap_fee"` // point->coin 시 전환시 부모지갑에 전송될 코인량 coin->point는 0 고정
+	SwapWalletAddress string  `json:"swap_fee_to_wallet"`
+	InnoUID           string  `json:"inno_uid"`
+	TxID              int64   `json:"tx_id"`
+	CreateAt          int64   `json:"create_at"`
 }
 
 type ResSwapInfo struct {
 	Common
 	ReqSwapInfo `json:"value"`
+}
+
+////////////////////////////////////////
+
+// swap 상태 갱신 요청
+type ReqSwapGasFee struct {
+	TxStatus          int64  `json:"tx_status"`
+	TxHash            string `json:"tx_hash"`
+	FromWalletAddress string `json:"from_wallet_address"`
+}
+
+type ResSwapGasFee struct {
+	Common
 }
 
 ////////////////////////////////////////

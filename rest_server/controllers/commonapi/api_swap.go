@@ -221,3 +221,26 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	}
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
+
+func PutSwapGasFee(ctx *context.InnoDashboardContext, params *context.ReqSwapGasFee) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	req := &point_manager_server.ReqSwapGasFee{
+		TxStatus:          params.TxStatus,
+		TxHash:            params.TxHash,
+		FromWalletAddress: params.FromWalletAddress,
+	}
+
+	if resSwap, err := point_manager_server.GetInstance().PutSwapGasFee(req); err != nil {
+		log.Errorf("PutSwapGasFee error : %v", err)
+		resp.SetReturn(resultcode.Result_Unknown_Swap_Error)
+	} else {
+		if resSwap.Common.Return != 0 {
+			resp.Return = resSwap.Return
+			resp.Message = resSwap.Message
+		}
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
