@@ -20,18 +20,15 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if walletList, err := model.GetDB().USPAU_GetList_AccountCoins(reqMeCoin.AUID); err != nil {
+	if balances, err := point_manager_server.GetInstance().GetBalanceAll(&point_manager_server.ReqBalanceAll{AUID: reqMeCoin.AUID}); err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 	} else {
-		resp.Value = walletList
-		// tmpWalletList := []*context.MeCoin{}
-		// for _, wallet := range walletList {
-		// 	if wallet.CoinSymbol == "MATIC" {
-		// 		continue
-		// 	}
-		// 	tmpWalletList = append(tmpWalletList, wallet)
-		// }
-		//resp.Value = tmpWalletList
+		if balances.Return == 0 {
+			resp.Value = balances.Value.Balances
+		} else {
+			resp.Message = balances.Message
+			resp.Return = balances.Return
+		}
 	}
 
 	return c.JSON(http.StatusOK, resp)
