@@ -143,6 +143,7 @@ type WalletRegistInfo struct {
 }
 
 type DBWalletRegist struct {
+	WalletID         int64
 	BaseCoinID       int64
 	WalletAddress    string
 	ConnectionStatus int64
