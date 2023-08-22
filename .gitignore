@@ -18,3 +18,4 @@ etc/conf/internal_api.yml
 .vscode/targets.log
 .vscode/dryrun.log
 .vscode/configurationCache.log
+__debug_bin
