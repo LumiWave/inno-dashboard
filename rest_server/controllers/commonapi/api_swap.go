@@ -262,7 +262,7 @@ func GetSwapInprogressNotExist(ctx *context.InnoDashboardContext, params *contex
 		if resSwap.Common.Return != 0 {
 			resp.Return = resSwap.Return
 			resp.Message = resSwap.Message
-			resp.Value = resSwap.Value
+			//resp.Value = resSwap.Value
 		}
 	}
 
