@@ -64,3 +64,22 @@ func (o *ExternalAPI) PutSwapGasFee(c echo.Context) error {
 	}
 	return commonapi.PutSwapGasFee(ctx, params)
 }
+
+// swap 진행 중인 정보가 있는지 확인
+func (o *ExternalAPI) GetSwapInprogressNotExist(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	params := context.NewReqSwapIniprogress()
+
+	// Request json 파싱
+	if err := c.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+	return commonapi.GetSwapInprogressNotExist(ctx, params)
+}

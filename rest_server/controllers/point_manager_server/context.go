@@ -58,6 +58,8 @@ type ReqSwapInfo struct {
 
 	TxType int64 `json:"tx_type"` // 3: point->coin,  4: coin->point
 
+	SwapFeeCoinID     int64   `json:"swap_fee_coin_id"` // 코인 수수료 전송용 코인 아이디
+	SwapFeeCoinSymbol string  `json:"swap_fee_coin_symbol"`
 	SwapFee           float64 `json:"swap_fee"` // point->coin 시 전환시 부모지갑에 전송될 코인량 coin->point는 0 고정
 	SwapWalletAddress string  `json:"swap_fee_to_wallet"`
 	InnoUID           string  `json:"inno_uid"`
@@ -81,6 +83,18 @@ type ReqSwapGasFee struct {
 
 type ResSwapGasFee struct {
 	Common
+}
+
+////////////////////////////////////////
+
+// swap 진행 정보 확인
+type ReqSwapInprogress struct {
+	AUID int64 `query:"au_id"`
+}
+
+type ResSwapInprogress struct {
+	Common
+	Value []*ReqSwapInfo `json:"value"`
 }
 
 ////////////////////////////////////////

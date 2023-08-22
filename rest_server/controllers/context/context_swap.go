@@ -120,3 +120,25 @@ func (o *ReqSwapGasFee) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespo
 
 	return nil
 }
+
+////////////////////////////////////////
+
+// swap 진행 중인지 체크
+type ReqSwapInprogress struct {
+	AUID int64 `query:"au_id"`
+}
+
+func NewReqSwapIniprogress() *ReqSwapInprogress {
+	return new(ReqSwapInprogress)
+}
+
+func (o *ReqSwapInprogress) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+	if ctx.GetValue() != nil {
+		o.AUID = ctx.GetValue().AUID
+	} else if ctx.GetValue() == nil || o.AUID == 0 {
+		return base.MakeBaseResponse(resultcode.Result_Get_Me_AUID_Empty)
+	}
+	return nil
+}
+
+////////////////////////////////////////

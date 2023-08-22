@@ -192,6 +192,8 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 						resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
 						return ctx.EchoContext.JSON(http.StatusOK, resp)
 					}
+					swapInfo.SwapFeeCoinID = coinFee.BaseCoinID
+					swapInfo.SwapFeeCoinSymbol = coinFee.BaseCoinSymbol
 					swapInfo.SwapFee = coinFee.TransactionFee
 				} else if swapInfo.TxType == context.EventID_toPoint {
 					if balance <= coinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료만 있으면 됨
@@ -239,6 +241,28 @@ func PutSwapGasFee(ctx *context.InnoDashboardContext, params *context.ReqSwapGas
 		if resSwap.Common.Return != 0 {
 			resp.Return = resSwap.Return
 			resp.Message = resSwap.Message
+		}
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
+}
+
+func GetSwapInprogressNotExist(ctx *context.InnoDashboardContext, params *context.ReqSwapInprogress) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	req := &point_manager_server.ReqSwapInprogress{
+		AUID: params.AUID,
+	}
+
+	if resSwap, err := point_manager_server.GetInstance().GetSwapInprogressNotExist(req); err != nil {
+		log.Errorf("PutSwapGasFee error : %v", err)
+		resp.SetReturn(resultcode.Result_Unknown_Swap_Error)
+	} else {
+		if resSwap.Common.Return != 0 {
+			resp.Return = resSwap.Return
+			resp.Message = resSwap.Message
+			resp.Value = resSwap.Value
 		}
 	}
 

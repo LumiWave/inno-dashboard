@@ -49,6 +49,19 @@ func (o *PointManagerServerInfo) PutSwapGasFee(params *ReqSwapGasFee) (*ResSwapG
 	return data.(*ResSwapGasFee), nil
 }
 
+func (o *PointManagerServerInfo) GetSwapInprogressNotExist(params *ReqSwapInprogress) (*ResSwapInprogress, error) {
+	api := ApiList[Api_get_swap_inprogress_notexist]
+	uri := fmt.Sprintf(api.Uri, params.AUID)
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, uri)
+
+	data, err := HttpCall(api.client, callUrl, o.ApiKey, api.Method, api.ApiType, bytes.NewBuffer(nil), nil, api.ResponseFuncType())
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResSwapInprogress), nil
+}
+
 func (o *PointManagerServerInfo) PostCoinTransferFromParentWallet(req *ReqCoinTransferFromParentWallet) (*ResCoinTransferFromParentWallet, error) {
 	api := ApiList[Api_coin_transfer_from_parentwallet]
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)

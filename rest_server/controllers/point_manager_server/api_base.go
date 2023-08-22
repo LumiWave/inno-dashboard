@@ -15,16 +15,17 @@ import (
 type api_kind int
 
 const (
-	Api_get_point_list                  = 0 // 포인트 리스트 조회 : GetPointAppList
-	Api_post_swap                       = 1 // swap 요청 : PostPointCoinSwap
-	Api_coin_transfer_from_parentwallet = 2 // 외부 지갑 coin 전송  : PostCoinTransferFromParentWallet
-	Api_coin_transfer_from_userwallet   = 3 // 외부 지갑 coin 전송  : PostCoinTransferFromUserWallet
-	Api_coin_transfer_exist_inprogress  = 4 // 외부 지갑 coin 전송 중 체크 : GetCoinTransferExistInProgress
-	Api_get_coin_fee                    = 5 // 코인 가스비 정보 요청 : GetCoinFee
-	Api_post_coin_reload                = 6 // 코인 mainnet reload : PostCoinReload
-	Api_get_balance                     = 7 // 단일 코인 balance 조회 : GetBalance
-	Api_get_balances                    = 8 // 유저의 전체 코인 balance 조회 : GetBalanceAll
-	Api_put_swap_gasfee                 = 9 // swap 상태 정보 갱신 요청
+	Api_get_point_list                  = 0  // 포인트 리스트 조회 : GetPointAppList
+	Api_post_swap                       = 1  // swap 요청 : PostPointCoinSwap
+	Api_coin_transfer_from_parentwallet = 2  // 외부 지갑 coin 전송  : PostCoinTransferFromParentWallet
+	Api_coin_transfer_from_userwallet   = 3  // 외부 지갑 coin 전송  : PostCoinTransferFromUserWallet
+	Api_coin_transfer_exist_inprogress  = 4  // 외부 지갑 coin 전송 중 체크 : GetCoinTransferExistInProgress
+	Api_get_coin_fee                    = 5  // 코인 가스비 정보 요청 : GetCoinFee
+	Api_post_coin_reload                = 6  // 코인 mainnet reload : PostCoinReload
+	Api_get_balance                     = 7  // 단일 코인 balance 조회 : GetBalance
+	Api_get_balances                    = 8  // 유저의 전체 코인 balance 조회 : GetBalanceAll
+	Api_put_swap_gasfee                 = 9  // swap 상태 정보 갱신 요청
+	Api_get_swap_inprogress_notexist    = 10 // swap 진행 중인 정보가 없는지 요청
 )
 
 type ApiInfo struct {
@@ -56,6 +57,8 @@ var ApiList = map[api_kind]ApiInfo{
 		ResponseFuncType: func() interface{} { return new(ResBalanceAll) }, client: NewClient()},
 	Api_put_swap_gasfee: ApiInfo{ApiType: Api_put_swap_gasfee, Uri: "/swap/gasfee", Method: "PUT",
 		ResponseFuncType: func() interface{} { return new(ResSwapGasFee) }, client: NewClient()},
+	Api_get_swap_inprogress_notexist: ApiInfo{ApiType: Api_get_swap_inprogress_notexist, Uri: "/swap/inprogress/notexist?au_id=%d", Method: "GET",
+		ResponseFuncType: func() interface{} { return new(ResSwapInprogress) }, client: NewClient()},
 }
 
 func NewClient() *http.Client {
