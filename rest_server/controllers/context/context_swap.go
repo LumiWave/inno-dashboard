@@ -61,7 +61,7 @@ type SwapCoin struct {
 }
 
 type ReqSwapInfo struct {
-	EventID int64  `json:"event_id"` // 3: point->coin,  4: coin->point
+	EventID int64  `json:"tx_type"` // 3: point->coin,  4: coin->point
 	OtpCode string `json:"otp_code"`
 
 	SwapPoint `json:"point"`

@@ -103,7 +103,7 @@ var ResultCodeText = map[int]string{
 	Result_Upbit_CandleWeeks:   "Upbit Candle Weeks API Error",
 	Result_Upbit_CandleMonths:  "Upbit Candle Months API Error",
 
-	Result_Invalid_EventID_Error:        "EventID is invalid",
+	Result_Invalid_EventID_Error:        "TxType is invalid",
 	Result_Invalid_AppID_Error:          "AppID is invalid",
 	Result_Invalid_PointID_Error:        "PointID is invalid",
 	Result_Invalid_PointQuantity_Error:  "point quantity is invalid",
