@@ -47,9 +47,9 @@ func (o *ExternalAPI) PostSwap(c echo.Context) error {
 }
 
 // Swap 을 위한 수수료 전송후 정보 수신
-func (o *ExternalAPI) PutSwapGasFee(c echo.Context) error {
+func (o *ExternalAPI) PutSwapStatus(c echo.Context) error {
 	ctx := base.GetContext(c).(*context.InnoDashboardContext)
-	params := new(context.ReqSwapGasFee)
+	params := new(context.PutSwapStatus)
 
 	// Request json 파싱
 	if err := c.Bind(params); err != nil {
@@ -62,7 +62,7 @@ func (o *ExternalAPI) PutSwapGasFee(c echo.Context) error {
 		log.Errorf("%v", err)
 		return c.JSON(http.StatusOK, err)
 	}
-	return commonapi.PutSwapGasFee(ctx, params)
+	return commonapi.PutSwapStatus(ctx, params)
 }
 
 // swap 진행 중인 정보가 있는지 확인

@@ -2,6 +2,7 @@ package commonapi
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 	"net/http"
 
@@ -149,37 +150,39 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 			resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
 		}
-		// 지갑에 수수료 확인을 위해서 보유량 가져오기
-		req := &point_manager_server.ReqBalance{
-			Symbol:  swapInfo.BaseCoinSymbol,
-			Address: swapInfo.WalletAddress,
-		}
-		res, err := point_manager_server.GetInstance().GetBalance(req)
-		if err != nil {
-			log.Errorf("GetBalance err : %v, wallet:%v", swapInfo.WalletAddress)
-			resp.SetReturn(resultcode.ResultInternalServerError)
-			return ctx.EchoContext.JSON(http.StatusOK, resp)
-		} else if res.Return != 0 {
-			log.Errorf("GetBalance return : %v, msg:%v", res.Return, res.Message)
-			resp.SetReturn(resultcode.ResultInternalServerError)
-			return ctx.EchoContext.JSON(http.StatusOK, resp)
-		} else {
-			log.Debugf("GetBalance symbol:%v, addr:%v, bal:%v", req.Symbol, res.Value.Address, res.Value.Balance)
-			// 스왑에 필요한 가스비 가지고 있는지 체크
-			coinInfo := model.GetDB().CoinsMap[swapInfo.CoinID]
-			redisKey := model.MakeCoinFeeKey(coinInfo.CoinSymbol)
-			if coinFee, err := model.GetDB().GetCacheCoinFee(redisKey); err != nil {
-				log.Errorf("GetCacheCoinFee err : %v", err)
-				resp.SetReturn(resultcode.Result_CoinFee_NotExist)
+
+		// point -> coin 에는 수수료로 지불할 지갑이 존재하는 지 체크
+		if swapInfo.TxType == context.EventID_toCoin {
+			// 지갑에 수수료 확인을 위해서 보유량 가져오기
+			req := &point_manager_server.ReqBalance{
+				Symbol:  swapInfo.BaseCoinSymbol,
+				Address: swapInfo.WalletAddress,
+			}
+			res, err := point_manager_server.GetInstance().GetBalance(req)
+			if err != nil {
+				log.Errorf("GetBalance err : %v, wallet:%v", err, swapInfo.WalletAddress)
+				resp.SetReturn(resultcode.ResultInternalServerError)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			} else if res.Return != 0 {
+				log.Errorf("GetBalance return : %v, msg:%v", res.Return, res.Message)
+				resp.SetReturn(resultcode.ResultInternalServerError)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			} else {
-				scale := new(big.Float).SetFloat64(1)
-				scale.SetString("1e" + fmt.Sprintf("%d", res.Value.Decimal))
-				myBalance, _ := new(big.Float).SetString(res.Value.Balance)
-				myBalance = new(big.Float).Quo(myBalance, scale)
-				balance, _ := myBalance.Float64()
+				log.Debugf("GetBalance symbol:%v, addr:%v, bal:%v", req.Symbol, res.Value.Address, res.Value.Balance)
+				// 스왑에 필요한 가스비 가지고 있는지 체크
+				coinInfo := model.GetDB().CoinsMap[swapInfo.CoinID]
+				redisKey := model.MakeCoinFeeKey(coinInfo.CoinSymbol)
+				if coinFee, err := model.GetDB().GetCacheCoinFee(redisKey); err != nil {
+					log.Errorf("GetCacheCoinFee err : %v", err)
+					resp.SetReturn(resultcode.Result_CoinFee_NotExist)
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				} else {
+					scale := new(big.Float).SetFloat64(1)
+					scale.SetString("1e" + fmt.Sprintf("%d", res.Value.Decimal))
+					myBalance, _ := new(big.Float).SetString(res.Value.Balance)
+					myBalance = new(big.Float).Quo(myBalance, scale)
+					balance, _ := myBalance.Float64()
 
-				if swapInfo.TxType == context.EventID_toCoin {
 					basecoinRedisKey := model.MakeCoinFeeKey(swapInfo.BaseCoinSymbol)
 					basecoinFee, err := model.GetDB().GetCacheCoinFee(basecoinRedisKey)
 					if err != nil {
@@ -195,15 +198,44 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					swapInfo.SwapFeeCoinID = coinFee.BaseCoinID
 					swapInfo.SwapFeeCoinSymbol = coinFee.BaseCoinSymbol
 					swapInfo.SwapFee = coinFee.TransactionFee
-				} else if swapInfo.TxType == context.EventID_toPoint {
-					if balance <= coinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료만 있으면 됨
-						resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
-						return ctx.EchoContext.JSON(http.StatusOK, resp)
-					}
-					swapInfo.SwapFee = 0
 				}
 			}
+		} else if swapInfo.TxType == context.EventID_toPoint { // coin -> point 에는 유저 지갑에 전환할 balance가 존재하는지 체크
+			// if balance <= coinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료만 있으면 됨
+			// 	resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
+			// 	return ctx.EchoContext.JSON(http.StatusOK, resp)
+			// }
+			req := &point_manager_server.ReqBalance{
+				Symbol:  swapInfo.CoinSymbol,
+				Address: swapInfo.WalletAddress,
+			}
+			res, err := point_manager_server.GetInstance().GetBalance(req)
+			if err != nil {
+				log.Errorf("GetBalance err : %v, wallet:%v", err, swapInfo.WalletAddress)
+				resp.SetReturn(resultcode.ResultInternalServerError)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			} else if res.Return != 0 {
+				log.Errorf("GetBalance return : %v, msg:%v", res.Return, res.Message)
+				resp.SetReturn(resultcode.ResultInternalServerError)
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			} else {
+				scale := new(big.Float).SetFloat64(1)
+				scale.SetString("1e" + fmt.Sprintf("%d", res.Value.Decimal))
+				myBalance, _ := new(big.Float).SetString(res.Value.Balance)
+				myBalance = new(big.Float).Quo(myBalance, scale)
+				balance, _ := myBalance.Float64()
+
+				// 보유 수량 부족
+				if math.Abs(swapInfo.SwapCoin.AdjustCoinQuantity) > balance {
+					log.Errorf("not enough swap coin cur : %v, wallet:%v, symbol:%v", balance, swapInfo.WalletAddress, swapInfo.CoinSymbol)
+					resp.SetReturn(resultcode.Result_CoinTransfer_NotEnough_Coin)
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
+			}
+
+			swapInfo.SwapFee = 0
 		}
+
 	}
 	swapInfo.InnoUID = ctx.GetValue().InnoUID
 
@@ -224,18 +256,19 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
 
-func PutSwapGasFee(ctx *context.InnoDashboardContext, params *context.ReqSwapGasFee) error {
+func PutSwapStatus(ctx *context.InnoDashboardContext, params *context.PutSwapStatus) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	req := &point_manager_server.ReqSwapGasFee{
+	req := &point_manager_server.ReqSwapStatus{
+		TxID:              params.TxID,
 		TxStatus:          params.TxStatus,
 		TxHash:            params.TxHash,
 		FromWalletAddress: params.FromWalletAddress,
 	}
 
-	if resSwap, err := point_manager_server.GetInstance().PutSwapGasFee(req); err != nil {
-		log.Errorf("PutSwapGasFee error : %v", err)
+	if resSwap, err := point_manager_server.GetInstance().PutSwapStatus(req); err != nil {
+		log.Errorf("PutSwapStatus error : %v", err)
 		resp.SetReturn(resultcode.Result_Unknown_Swap_Error)
 	} else {
 		if resSwap.Common.Return != 0 {
@@ -256,7 +289,7 @@ func GetSwapInprogressNotExist(ctx *context.InnoDashboardContext, params *contex
 	}
 
 	if resSwap, err := point_manager_server.GetInstance().GetSwapInprogressNotExist(req); err != nil {
-		log.Errorf("PutSwapGasFee error : %v", err)
+		log.Errorf("GetSwapInprogressNotExist error : %v", err)
 		resp.SetReturn(resultcode.Result_Unknown_Swap_Error)
 	} else {
 		if resSwap.Common.Return != 0 {

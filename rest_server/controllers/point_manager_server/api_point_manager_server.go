@@ -34,8 +34,8 @@ func (o *PointManagerServerInfo) PostPointCoinSwap(swapInfo *ReqSwapInfo) (*ResS
 	return data.(*ResSwapInfo), nil
 }
 
-func (o *PointManagerServerInfo) PutSwapGasFee(params *ReqSwapGasFee) (*ResSwapGasFee, error) {
-	api := ApiList[Api_put_swap_gasfee]
+func (o *PointManagerServerInfo) PutSwapStatus(params *ReqSwapStatus) (*ResSwapStatus, error) {
+	api := ApiList[Api_put_swap_status]
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
 
 	pbytes, _ := json.Marshal(params)
@@ -46,7 +46,7 @@ func (o *PointManagerServerInfo) PutSwapGasFee(params *ReqSwapGasFee) (*ResSwapG
 		return nil, err
 	}
 
-	return data.(*ResSwapGasFee), nil
+	return data.(*ResSwapStatus), nil
 }
 
 func (o *PointManagerServerInfo) GetSwapInprogressNotExist(params *ReqSwapInprogress) (*ResSwapInprogress, error) {

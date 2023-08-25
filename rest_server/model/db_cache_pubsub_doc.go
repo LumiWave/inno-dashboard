@@ -4,7 +4,7 @@ var (
 	gIsMaintenance            = false
 	gIsExternalTransferEnable = true
 	gIsSwapToCoinEnable       = true
-	gIsSwapToPointEnable      = false
+	gIsSwapToPointEnable      = true
 	gIsPointUpdateEnable      = true
 )
 

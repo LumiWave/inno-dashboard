@@ -104,13 +104,14 @@ func (o *ReqSwapInfo) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespons
 ////////////////////////////////////////
 
 // swap 상태 변경 요청 : (수료 전송 후 tx정보 저장)
-type ReqSwapGasFee struct {
+type PutSwapStatus struct {
+	TxID              int64  `json:"tx_id"`
 	TxStatus          int64  `json:"tx_status"`
 	TxHash            string `json:"tx_hash"`
 	FromWalletAddress string `json:"from_wallet_address"`
 }
 
-func (o *ReqSwapGasFee) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+func (o *PutSwapStatus) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
 	if o.TxStatus < 2 && o.TxStatus > 4 {
 		return base.MakeBaseResponse(resultcode.Result_Invalid_TxStatus)
 	}
