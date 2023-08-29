@@ -5,7 +5,6 @@ import (
 	"math"
 	"math/big"
 	"net/http"
-	"strconv"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
@@ -199,7 +198,12 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					swapInfo.SwapFeeCoinID = coinFee.BaseCoinID
 					swapInfo.SwapFeeCoinSymbol = coinFee.BaseCoinSymbol
 					swapInfo.SwapFee = coinFee.TransactionFee
-					swapInfo.SwapFeeT = strconv.FormatFloat(coinFee.TransactionFee, 'f', -1, 64)
+
+					swapFee := new(big.Float).SetFloat64(coinFee.TransactionFee)
+					swapFee = new(big.Float).Mul(swapFee, scale)
+					swapInfo.SwapFeeT = swapFee.String()
+					//swapInfo.SwapFeeT = strconv.FormatFloat(coinFee.TransactionFee, 'f', -1, 64)
+
 				}
 			}
 		} else if swapInfo.TxType == context.EventID_toPoint { // coin -> point 에는 유저 지갑에 전환할 balance가 존재하는지 체크

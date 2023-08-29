@@ -202,8 +202,8 @@ func DeleteWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqDe
 					log.Errorf("wallet registDT parse error : %v", err)
 					resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_System_Error)
 				} else {
-					//limitDT := registDT.Add(time.Hour * context.DeleteWalletHour)
-					limitDT := registDT.Add(0)
+					limitDT := registDT.Add(time.Hour * context.DeleteWalletHour)
+					//limitDT := registDT.Add(0)
 					cmp := limitDT.Compare(time.Now())
 					if cmp > 0 {
 						resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_DeleteTime_Error) //24시간이 안됨
