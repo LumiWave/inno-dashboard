@@ -1,10 +1,9 @@
 package commonapi
 
 import (
-	"fmt"
 	"math"
-	"math/big"
 	"net/http"
+	"strconv"
 
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
@@ -14,6 +13,7 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/util"
 	"github.com/labstack/echo"
 )
 
@@ -177,11 +177,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					resp.SetReturn(resultcode.Result_CoinFee_NotExist)
 					return ctx.EchoContext.JSON(http.StatusOK, resp)
 				} else {
-					scale := new(big.Float).SetFloat64(1)
-					scale.SetString("1e" + fmt.Sprintf("%d", res.Value.Decimal))
-					myBalance, _ := new(big.Float).SetString(res.Value.Balance)
-					myBalance = new(big.Float).Quo(myBalance, scale)
-					balance, _ := myBalance.Float64()
+					balance := util.ToDecimalEncf(res.Value.Balance, res.Value.Decimal)
 
 					basecoinRedisKey := model.MakeCoinFeeKey(swapInfo.BaseCoinSymbol)
 					basecoinFee, err := model.GetDB().GetCacheCoinFee(basecoinRedisKey)
@@ -199,10 +195,8 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					swapInfo.SwapFeeCoinSymbol = coinFee.BaseCoinSymbol
 					swapInfo.SwapFee = coinFee.TransactionFee
 
-					swapFee := new(big.Float).SetFloat64(coinFee.TransactionFee)
-					swapFee = new(big.Float).Mul(swapFee, scale)
-					swapInfo.SwapFeeT = swapFee.String()
-					//swapInfo.SwapFeeT = strconv.FormatFloat(coinFee.TransactionFee, 'f', -1, 64)
+					swapInfo.SwapFeeT = util.ToDecimalDecStr(coinFee.TransactionFee, model.GetDB().CoinsMap[swapInfo.SwapFeeCoinID].Decimal)
+					swapInfo.SwapFeeD = strconv.FormatFloat(coinFee.TransactionFee, 'f', -1, 64)
 
 				}
 			}
@@ -225,11 +219,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 				resp.SetReturn(resultcode.ResultInternalServerError)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			} else {
-				scale := new(big.Float).SetFloat64(1)
-				scale.SetString("1e" + fmt.Sprintf("%d", res.Value.Decimal))
-				myBalance, _ := new(big.Float).SetString(res.Value.Balance)
-				myBalance = new(big.Float).Quo(myBalance, scale)
-				balance, _ := myBalance.Float64()
+				balance := util.ToDecimalEncf(res.Value.Balance, res.Value.Decimal)
 
 				// 보유 수량 부족
 				if math.Abs(swapInfo.SwapCoin.AdjustCoinQuantity) > balance {
