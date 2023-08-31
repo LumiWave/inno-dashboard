@@ -13,7 +13,7 @@ func ToDecimalEncf(value string, decimal int64) float64 {
 
 // 4000000 => "0.00004" string
 func ToDecimalEncStr(value string, decimal int64) string {
-	return toDecimalEnc(value, decimal).String()
+	return toDecimalEnc(value, decimal).Text('f', -1)
 }
 
 // 0.00004 => 4000000 float64
