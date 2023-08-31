@@ -191,8 +191,14 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 						resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
 						return ctx.EchoContext.JSON(http.StatusOK, resp)
 					}
-					swapInfo.SwapFeeCoinID = coinFee.BaseCoinID
-					swapInfo.SwapFeeCoinSymbol = coinFee.BaseCoinSymbol
+
+					for _, coin := range model.GetDB().CoinsMap {
+						if coin.CoinSymbol == coinFee.BaseCoinSymbol {
+							swapInfo.SwapFeeCoinID = coin.CoinId
+							swapInfo.SwapFeeCoinSymbol = coin.CoinSymbol
+							break
+						}
+					}
 					swapInfo.SwapFee = coinFee.TransactionFee
 
 					swapInfo.SwapFeeT = util.ToDecimalDecStr(coinFee.TransactionFee, model.GetDB().CoinsMap[swapInfo.SwapFeeCoinID].Decimal)
