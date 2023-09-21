@@ -118,6 +118,18 @@ func (o *PointManagerServerInfo) GetCoinTransferNotExistInProgress(auid int64) (
 	return data.(*ResCoinTransferFromUserWallet), nil
 }
 
+func (o *PointManagerServerInfo) GetCoinObjectIDS(req *ReqCoinObjects) (*ResCoinObjects, error) {
+	urlInfo := ApiList[Api_get_coin_ojbectids]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, urlInfo.Uri)
+
+	data, err := HttpCall(urlInfo.client, callUrl, o.ApiKey, urlInfo.Method, urlInfo.ApiType, bytes.NewBuffer(nil), req, urlInfo.ResponseFuncType())
+	if err != nil {
+		return nil, err
+	}
+
+	return data.(*ResCoinObjects), nil
+}
+
 func (o *PointManagerServerInfo) GetCoinFee(req *ReqCoinFee) (*ResCoinFeeInfo, error) {
 	api := ApiList[Api_get_coin_fee]
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
@@ -129,6 +141,7 @@ func (o *PointManagerServerInfo) GetCoinFee(req *ReqCoinFee) (*ResCoinFeeInfo, e
 
 	return data.(*ResCoinFeeInfo), nil
 }
+
 func (o *PointManagerServerInfo) PostCoinReload(req *CoinReload) (*ResCoinReload, error) {
 	api := ApiList[Api_post_coin_reload]
 	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)

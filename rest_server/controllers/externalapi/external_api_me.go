@@ -64,6 +64,23 @@ func (o *ExternalAPI) GetMeCoinList(c echo.Context) error {
 	return commonapi.GetMeCoinList(c, params)
 }
 
+// 내 sui 코인 보유 object id 리스트 조회
+func (o *ExternalAPI) GetCoinObjects(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+
+	params := context.NewReqCoinObjects()
+	if err := c.Bind(params); err != nil {
+		log.Error(err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	if err := params.CheckValidate(ctx); err != nil {
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetCoinObjects(params, ctx)
+}
+
 // google otp : qrcode용 uri 조회
 func (o *ExternalAPI) GetOtpUri(c echo.Context) error {
 	ctx := base.GetContext(c).(*context.InnoDashboardContext)

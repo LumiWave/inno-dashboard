@@ -40,6 +40,32 @@ type MePoint struct {
 
 ////////////////////////////////////////
 
+// sui coin object id 리스트 조회
+type ReqCoinObjects struct {
+	AUID   int64 `json:"au_id" query:"au_id"`
+	CoinID int64 `query:"coin_id"`
+}
+
+func NewReqCoinObjects() *ReqCoinObjects {
+	return new(ReqCoinObjects)
+}
+
+func (o *ReqCoinObjects) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
+	if ctx.GetValue() != nil {
+		o.AUID = ctx.GetValue().AUID
+	}
+	if o.CoinID == 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_CoinID_Error)
+	}
+	return nil
+}
+
+type ResCoinObjects struct {
+	ObjectIDs []string `json:"object_ids"`
+}
+
+////////////////////////////////////////
+
 // /////// Me Coin List
 type ReqMeCoin struct {
 	AUID int64 `json:"au_id" query:"au_id"`

@@ -12,6 +12,7 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
+
 	"github.com/labstack/echo"
 )
 
@@ -89,6 +90,54 @@ func GetMeCoinList(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	}
 
 	return c.JSON(http.StatusOK, resp)
+}
+
+func GetCoinObjects(req *context.ReqCoinObjects, ctx *context.InnoDashboardContext) error {
+	resp := new(base.BaseResponse)
+	resp.Success()
+
+	if wallets, err := model.GetDB().USPAU_GetList_AccountWallets(ctx.GetValue().AUID); err != nil {
+		log.Errorf("USPAU_GetList_AccountWallets err : %v, auid:%v", err, ctx.GetValue().AUID)
+		resp.SetReturn(resultcode.Result_Error_Db_GetAccountWallets)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	} else if len(wallets) == 0 {
+		log.Errorf("USPAU_GetList_AccountWallets not exist wallet by auid : %v", ctx.GetValue().AUID)
+		resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	} else {
+		bFind := false
+		params := &point_manager_server.ReqCoinObjects{}
+		for _, wallet := range wallets {
+			if wallet.BaseCoinID == model.GetDB().CoinsMap[req.CoinID].BaseCoinID {
+				params.WalletAddress = wallet.WalletAddress
+				params.ContractAddress = model.GetDB().CoinsMap[req.CoinID].ContractAddress
+				bFind = true
+
+				if res, err := point_manager_server.GetInstance().GetCoinObjectIDS(params); err != nil {
+					log.Errorf("GetCoinObjectIDS err : %v,  wallet:%v, contract:%v ", err, params.WalletAddress, params.ContractAddress)
+					resp.SetReturn(resultcode.ResultInternalServerError)
+				} else {
+					if res.Common.Return == 0 {
+						resValue := new(context.ResCoinObjects)
+						resValue.ObjectIDs = res.Value.ObjectIDs
+						resp.Value = resValue
+					} else {
+						log.Errorf("GetCoinObjectIDS error return : %v, %s, wallet:%v, contract:%v", res.Common.Return, res.Common.Message, params.WalletAddress, params.ContractAddress)
+						resp.SetReturn(resultcode.ResultInternalServerError)
+					}
+				}
+
+				break
+			}
+		}
+		if !bFind { // 수수료 지불한 지갑이 존재하지 않다면 에러
+			log.Errorf("Not Find swap fee wallet / auid : %v", ctx.GetValue().AUID)
+			resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
+			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		}
+	}
+
+	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
 
 // google otp : qrcode용 uri 조회
