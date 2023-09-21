@@ -96,6 +96,11 @@ func GetCoinObjects(req *context.ReqCoinObjects, ctx *context.InnoDashboardConte
 	resp := new(base.BaseResponse)
 	resp.Success()
 
+	if _, ok := model.GetDB().CoinsMap[req.CoinID]; !ok {
+		resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	}
+
 	if wallets, err := model.GetDB().USPAU_GetList_AccountWallets(ctx.GetValue().AUID); err != nil {
 		log.Errorf("USPAU_GetList_AccountWallets err : %v, auid:%v", err, ctx.GetValue().AUID)
 		resp.SetReturn(resultcode.Result_Error_Db_GetAccountWallets)
