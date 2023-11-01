@@ -6,8 +6,8 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/servers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
 	"github.com/labstack/echo"
 )

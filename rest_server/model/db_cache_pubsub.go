@@ -78,7 +78,7 @@ func (o *DB) ListenSubscribeEvent(termSec int64) error {
 			o.PubSubCmdByInternal(msg)
 		}
 
-		log.Debugf("subscribe channel: %v, val: %v", msg.Channel, msg.Payload)
+		//log.Debugf("subscribe channel: %v, val: %v", msg.Channel, msg.Payload)
 	}
 
 	return nil

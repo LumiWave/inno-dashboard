@@ -9,7 +9,7 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/servers/point_manager_server"
 )
 
 func MakeCoinFeeKey(baseSymbol string) string {

@@ -11,8 +11,9 @@ import (
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/externalapi"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/internalapi"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/servers/inno_market"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/servers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/upbit"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/schedule"
@@ -35,6 +36,7 @@ func (o *ServerApp) Init(configFile string) (err error) {
 	// }
 	auth.InitHttpClient()
 	o.InitPointManagerServer(o.conf)
+	o.InitMarketServer(o.conf)
 
 	if err := o.NewDB(o.conf); err != nil {
 		return err
@@ -88,6 +90,10 @@ func (o *ServerApp) InitPointManagerServer(conf *config.ServerConfig) {
 		ExtVer:     pointMgrServer.ExternalVer,
 	}
 	point_manager_server.NewPointManagerServerInfo("", hostInfo)
+}
+
+func (o *ServerApp) InitMarketServer(conf *config.ServerConfig) error {
+	return inno_market.InitMarketServer(conf)
 }
 
 func (o *ServerApp) NewDB(conf *config.ServerConfig) error {

@@ -12,12 +12,14 @@ import (
 )
 
 const (
-	USPAU_GetList_AccountCoins   = "[dbo].[USPAU_GetList_AccountCoins]"
-	USPAU_GetList_AccountPoints  = "[dbo].[USPAU_GetList_AccountPoints]"
-	USPAU_GetList_Members        = "[dbo].[USPAU_GetList_Members]"
-	USPAU_GetList_AccountWallets = "[dbo].[USPAU_GetList_AccountWallets]"
-	USPAU_Cnct_AccountWallets    = "[dbo].[USPAU_Cnct_AccountWallets]"
-	USPAU_Dscnct_AccountWallets  = "[dbo].[USPAU_Dscnct_AccountWallets]"
+	USPAU_GetList_AccountCoins    = "[dbo].[USPAU_GetList_AccountCoins]"
+	USPAU_GetList_AccountPoints   = "[dbo].[USPAU_GetList_AccountPoints]"
+	USPAU_GetList_Members         = "[dbo].[USPAU_GetList_Members]"
+	USPAU_GetList_AccountWallets  = "[dbo].[USPAU_GetList_AccountWallets]"
+	USPAU_Cnct_AccountWallets     = "[dbo].[USPAU_Cnct_AccountWallets]"
+	USPAU_Dscnct_AccountWallets   = "[dbo].[USPAU_Dscnct_AccountWallets]"
+	USPAU_GetList_MigrationData   = "[dbo].[USPAU_GetList_MigrationData]"
+	USPAU_Mod_Accounts_IsMigrated = "[dbo].[USPAU_Mod_Accounts_IsMigrated]"
 )
 
 // 계정 코인 조회
@@ -180,13 +182,15 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) ([]*context.DBWalletRegist
 }
 
 // 지갑등록
-func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string) (int, error) {
+func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string) (int, bool, error) {
 	var returnValue orginMssql.ReturnStatus
 	proc := USPAU_Cnct_AccountWallets
+	isMigrated := false
 	rows, err := o.MssqlAccountAll.QueryContext(contextR.Background(), proc,
 		sql.Named("AUID", auid),
 		sql.Named("BaseCoinID", baseCoinID),
 		sql.Named("WalletAddress", walletAddress),
+		sql.Named("IsMigrated", sql.Out{Dest: &isMigrated}),
 		&returnValue)
 
 	if rows != nil {
@@ -195,7 +199,7 @@ func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddre
 
 	if err != nil {
 		log.Errorf("%s QueryContext error : %v", proc, err)
-		return 1, err
+		return 1, isMigrated, err
 	}
 
 	if returnValue != 1 {
@@ -203,16 +207,16 @@ func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddre
 		switch returnValue {
 		case 50106:
 			//이미 다른지갑에 연결된 지갑주소
-			return 2, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+			return 2, isMigrated, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
 		case 50107:
 			//다른 사용자에 의해 연결된 지갑주소
-			return 3, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+			return 3, isMigrated, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
 		default:
-			return 1, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+			return 1, isMigrated, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
 		}
 	}
 
-	return 0, nil
+	return 0, isMigrated, nil
 }
 
 // 지갑삭제
@@ -240,4 +244,53 @@ func (o *DB) USPAU_Dscnct_AccountWallets(auid int64, baseCoinID int64, walletAdd
 	}
 
 	return nil
+}
+
+// 마이그레이션 해야할 데이터 조회
+func (o *DB) USPAU_GetList_MigrationData(auid int64) ([]*context.MIGCoin, []*context.MIGNFT, error) {
+	var returnValue orginMssql.ReturnStatus
+	proc := USPAU_GetList_MigrationData
+	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), proc,
+		sql.Named("AUID", auid),
+		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
+	if err != nil {
+		log.Errorf("%s QueryContext error : %v", proc, err)
+		return nil, nil, err
+	}
+
+	migCoins := []*context.MIGCoin{}
+	for rows.Next() {
+		data := &context.MIGCoin{}
+		if err := rows.Scan(&data.CoinID, &data.Quantity); err != nil {
+			log.Errorf("%s Scan error : %v", proc, err)
+			return nil, nil, err
+		} else {
+			migCoins = append(migCoins, data)
+		}
+	}
+
+	migNFT := []*context.MIGNFT{}
+	if rows.NextResultSet() {
+		for rows.Next() {
+			data := &context.MIGNFT{}
+			if err := rows.Scan(&data.NFTPackID, &data.CoinID, &data.NFTID); err != nil {
+				log.Errorf("%s Scan error : %v", proc, err)
+				return nil, nil, err
+			} else {
+				migNFT = append(migNFT, data)
+			}
+		}
+	}
+
+	if returnValue != 1 {
+		log.Errorf("%s returnvalue error : %v", proc, returnValue)
+		return nil, nil, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+	}
+
+	return migCoins, migNFT, nil
 }

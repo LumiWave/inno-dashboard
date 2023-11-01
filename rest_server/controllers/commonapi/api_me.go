@@ -4,13 +4,15 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ONBUFF-IP-TOKEN/baseInnoClient/market"
 	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/baseutil/otp_google"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/servers/inno_market"
+	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/servers/point_manager_server"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
 
 	"github.com/labstack/echo"
@@ -220,9 +222,11 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 			if walletData.IsRegistered {
 				resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegistered_Error)
 			} else {
+
+				isMigration := true
 				for _, basecoin := range model.GetDB().BaseCoins.Coins {
 					if basecoin.WalletPlatform == params.WalletPlatform {
-						if errType, err := model.GetDB().USPAU_Cnct_AccountWallets(params.AUID, basecoin.BaseCoinID, params.WalletAddress); err != nil {
+						if errType, isMigrated, err := model.GetDB().USPAU_Cnct_AccountWallets(params.AUID, basecoin.BaseCoinID, params.WalletAddress); err != nil {
 							switch errType {
 							case 2:
 								resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegisteredDB_Error)
@@ -231,8 +235,83 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 							default:
 								resp.SetReturn(resultcode.Result_DBError)
 							}
+						} else {
+							isMigration = isMigrated
 						}
 					}
+				}
+
+				// 등록하기 전에 마이그래션을 위한 정보를 수집해준다.
+				// 마이그레이션은 비동기로 처리해준다.
+				if !isMigration {
+					go func(auid int64, userWalletAddress string) {
+						if migCoins, migNFT, err := model.GetDB().USPAU_GetList_MigrationData(auid); err != nil {
+							log.Errorf("USPAU_GetList_MigrationData err : %v, auid:%v", err, auid)
+						} else {
+							// 시작 전에 redis에 남기도록 해서 문제가 발생시 레디스를 삭제하지 않고 그대로 두고 추후 수동으로 처리해준다.
+							// 코인 전송 시작
+							for _, coin := range migCoins {
+								coin.WalletAddress = userWalletAddress
+								coin.Ts = time.Now().Unix()
+
+								if coin.Quantity != 0 {
+									// 레디스에 전송 시작 기록
+									if err := model.GetDB().SetCacheIMGCoinTransfer(auid, coin); err != nil {
+										log.Errorf("[IMG] SetCacheIMGCoinTransfer err:%v, auid:%v", err, auid)
+									}
+
+									req := &point_manager_server.ReqCoinTransferFromParentWallet{
+										AUID:             auid,
+										CoinID:           coin.CoinID,
+										CoinSymbol:       model.GetDB().CoinsMap[coin.CoinID].CoinSymbol,
+										ToAddress:        userWalletAddress,
+										Quantity:         coin.Quantity,
+										IsNormalTransfer: true,
+									}
+									if res, err := point_manager_server.GetInstance().PostCoinTransferFromParentWallet(req); err != nil {
+										log.Errorf("[IMG] PostCoinTransferFromParentWallet err : %v, auid:%v, coinid:%v, toAddress:%v, quantity:%v", err, auid, coin.CoinID, userWalletAddress, coin.Quantity)
+									} else {
+										if res.Common.Return != 0 {
+											log.Errorf("[IMG] PostCoinTransferFromParentWallet return err : %v, auid:%v, coinid:%v, toAddress:%v, quantity:%v", res.Common.Return, auid, coin.CoinID, userWalletAddress, coin.Quantity)
+										} else {
+											log.Infof("[IMG] coin send success tx:%v, auid:%v, coinid:%v, toAddress:%v, quantity:%v", res.Value.TransactionId, auid, coin.CoinID, userWalletAddress, coin.Quantity)
+											// 전송 완료라고 생각하고 레디스 삭제 만약에 삭제가 안되어 있으면 문제가 있어서 전송 안된것으로 간주한다.
+											if err := model.GetDB().DelCacheIMGCoinTransfer(auid, coin); err != nil {
+												log.Errorf("[IMG] DelCacheIMGCoinTransfer:%v, auid:%v", err, auid)
+											}
+										}
+									}
+								}
+							}
+							// nft 전송 시작
+							for _, nft := range migNFT {
+								if err := model.GetDB().SetCacheIMGNFTransfer(params.AUID, nft); err != nil {
+									log.Errorf("[IMG] SetCacheIMGNFTransfer err:%v, auid:%v, nftid:%v ", err, auid, nft.NFTID)
+								}
+								req := &market.ReqPostNFTTransferFromParent{
+									AUID:            auid,
+									NFTPackID:       nft.NFTPackID,
+									CoinID:          nft.CoinID,
+									NFTID:           nft.NFTID,
+									ToWalletAddress: userWalletAddress,
+								}
+								if res, err := inno_market.GetInstance().PostNFTTransferFromParent(req); err != nil {
+									log.Errorf("[IMG] PostNFTTransferFromParent err : %v, auid:%v, nftid:%v, toAddress:%v", err, auid, nft.NFTID, userWalletAddress)
+								} else {
+									if res.Common.Return != 0 {
+										log.Errorf("[IMG] PostNFTTransferFromParent return err : %v, auid:%v, nftid:%v, toAddress:%v", res.Common.Return, auid, nft.NFTID, userWalletAddress)
+									} else {
+										log.Infof("[IMG] nft send success tx:%v, auid:%v, nftid:%v, toAddress:%v", res.Value.TxHash, auid, nft.NFTID, userWalletAddress)
+										// 전송 완료라고 생각하고 레디스 삭제 만약에 삭제가 안되어 있으면 문제가 있어서 전송 안된것으로 간주한다.
+										if err := model.GetDB().DelCacheIMGNFTTransfer(auid, nft); err != nil {
+											log.Errorf("[IMG] DelCacheIMGNFTTransfer:%v, auid:%v", err, auid)
+										}
+									}
+								}
+							}
+							// 마이그레이션 완료 처리
+						}
+					}(params.AUID, params.WalletAddress)
 				}
 			}
 		}

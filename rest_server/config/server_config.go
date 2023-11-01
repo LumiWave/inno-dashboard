@@ -30,7 +30,7 @@ type ApiAuth struct {
 	ApiAuthVerify string `json:"api_auth_verify" yaml:"api_auth_verify"`
 }
 
-type ApiPointManagerServer struct {
+type ApiInno struct {
 	InternalpiDomain string `yaml:"api_internal_domain"`
 	ExternalpiDomain string `yaml:"api_external_domain"`
 	InternalVer      string `yaml:"internal_ver"`
@@ -40,13 +40,14 @@ type ApiPointManagerServer struct {
 type ServerConfig struct {
 	baseconf.Config `yaml:",inline"`
 
-	App                App                   `yaml:"app"`
-	Otp                Otp                   `yaml:"otp"`
-	MssqlDBAccountAll  baseconf.DBAuth       `yaml:"mssql_db_account"`
-	MssqlDBAccountRead baseconf.DBAuth       `yaml:"mssql_db_account_read"`
-	MssqlDBLogRead     baseconf.DBAuth       `yaml:"mssql_db_log_read"`
-	Auth               ApiAuth               `yaml:"api_auth"`
-	PointMgrServer     ApiPointManagerServer `yaml:"api_point_manager_server"`
+	App                App             `yaml:"app"`
+	Otp                Otp             `yaml:"otp"`
+	MssqlDBAccountAll  baseconf.DBAuth `yaml:"mssql_db_account"`
+	MssqlDBAccountRead baseconf.DBAuth `yaml:"mssql_db_account_read"`
+	MssqlDBLogRead     baseconf.DBAuth `yaml:"mssql_db_log_read"`
+	Auth               ApiAuth         `yaml:"api_auth"`
+	InnoMarket         ApiInno         `yaml:"api_inno_market"`
+	PointMgrServer     ApiInno         `yaml:"api_point_manager_server"`
 }
 
 func GetInstance(filepath ...string) *ServerConfig {
