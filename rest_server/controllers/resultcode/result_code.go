@@ -49,6 +49,7 @@ const (
 	Result_Get_Me_Verify_otp_Error      = 34006 // otp verify error
 	Result_Error_Db_GetAccountWallets   = 34007 // db 지갑 리스트 조회 에러
 	Result_Error_Db_NotExistWallets     = 34008 // db 보유한 지갑 없음 에러
+	Result_Get_Me_Wallets_Regiest_Error = 34009 // 지갑등록안됨
 
 	Result_Post_Me_WalletRegist_UnsupportWallet_Error                 = 34101 // 지원하지 않는 지갑 종류
 	Result_Post_Me_WalletRegist_AreadyRegistered_Error                = 34102 // 이미 지갑이 등록된 계정
@@ -135,6 +136,7 @@ var ResultCodeText = map[int]string{
 	Result_Get_Me_Verify_otp_Error:      "Otp Verify Error",
 	Result_Error_Db_GetAccountWallets:   "db get account wallet list error",
 	Result_Error_Db_NotExistWallets:     "db not exist wallet",
+	Result_Get_Me_Wallets_Regiest_Error: "not regist wallet",
 
 	Result_Post_Me_WalletRegist_UnsupportWallet_Error:                 "Unsupported wallet.",
 	Result_Post_Me_WalletRegist_AreadyRegistered_Error:                "already have a registered wallet",

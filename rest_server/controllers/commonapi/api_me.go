@@ -23,19 +23,33 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if balances, err := point_manager_server.GetInstance().GetBalanceAll(&point_manager_server.ReqBalanceAll{AUID: reqMeCoin.AUID}); err != nil {
-		resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
-	} else {
-		if balances.Return == 0 {
-			if len(balances.Value.Balances) == 0 {
-				resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
-			} else {
-				resp.Value = balances.Value.Balances
-			}
+	if reqMeCoin.CoinID == 0 {
+		balances, err := point_manager_server.GetInstance().GetBalanceAll(&point_manager_server.ReqBalanceAll{AUID: reqMeCoin.AUID})
+		if err != nil {
+			resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 		} else {
-			resp.Message = balances.Message
-			resp.Return = balances.Return
+			if balances.Return == 0 {
+				if len(balances.Value.Balances) == 0 {
+					resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
+				} else {
+					resp.Value = balances.Value.Balances
+				}
+			} else {
+				resp.Message = balances.Message
+				resp.Return = balances.Return
+			}
 		}
+	} else {
+		// UserWallets, err := model.GetDB().USPAU_GetList_AccountWallets(reqMeCoin.AUID)
+		// if err != nil {
+		// 	resp.SetReturn(resultcode.Result_Get_Me_Wallets_Regiest_Error)
+		// } else {
+		// 	meCoin, ok := model.GetDB().CoinsMap[reqMeCoin.CoinID]
+		// 	if !ok {
+
+		// 	}
+		// 	balances, err := point_manager_server.GetInstance().GetBalance(&point_manager_server.ReqBalance{AUID: reqMeCoin.AUID})
+		// }
 	}
 
 	return c.JSON(http.StatusOK, resp)
