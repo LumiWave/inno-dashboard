@@ -69,7 +69,7 @@ type ResCoinObjects struct {
 // /////// Me Coin List
 type ReqMeCoin struct {
 	AUID   int64 `json:"au_id" query:"au_id"`
-	CoinID int64 `json:"coin_id" queryu:"coin_id"`
+	CoinID int64 `json:"coin_id" query:"coin_id"`
 }
 
 func (o *ReqMeCoin) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {

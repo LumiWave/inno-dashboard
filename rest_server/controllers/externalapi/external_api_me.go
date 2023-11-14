@@ -15,6 +15,12 @@ func (o *ExternalAPI) GetMeWallets(c echo.Context) error {
 	ctx := base.GetContext(c).(*context.InnoDashboardContext)
 	params := new(context.ReqMeCoin)
 
+	// Request json 파싱
+	if err := ctx.EchoContext.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
 	// 유효성 체크
 	if err := params.CheckValidate(ctx); err != nil {
 		log.Errorf("%v", err)

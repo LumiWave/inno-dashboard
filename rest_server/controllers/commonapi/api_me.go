@@ -26,6 +26,7 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 	if reqMeCoin.CoinID == 0 {
 		balances, err := point_manager_server.GetInstance().GetBalanceAll(&point_manager_server.ReqBalanceAll{AUID: reqMeCoin.AUID})
 		if err != nil {
+			log.Errorf("GetBalanceAll Error : %v", err)
 			resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 		} else {
 			if balances.Return == 0 {
@@ -40,16 +41,52 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 			}
 		}
 	} else {
-		// UserWallets, err := model.GetDB().USPAU_GetList_AccountWallets(reqMeCoin.AUID)
-		// if err != nil {
-		// 	resp.SetReturn(resultcode.Result_Get_Me_Wallets_Regiest_Error)
-		// } else {
-		// 	meCoin, ok := model.GetDB().CoinsMap[reqMeCoin.CoinID]
-		// 	if !ok {
-
-		// 	}
-		// 	balances, err := point_manager_server.GetInstance().GetBalance(&point_manager_server.ReqBalance{AUID: reqMeCoin.AUID})
-		// }
+		userWallets, err := model.GetDB().USPAU_GetList_AccountWallets(reqMeCoin.AUID)
+		if err != nil {
+			resp.SetReturn(resultcode.Result_Get_Me_Wallets_Regiest_Error)
+		} else {
+			meCoin, ok := model.GetDB().CoinsMap[reqMeCoin.CoinID]
+			if !ok {
+				resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
+			} else {
+				var targetWallet *context.DBWalletRegist
+				for _, userwallet := range userWallets {
+					if userwallet.ConnectionStatus == 1 && userwallet.BaseCoinID == meCoin.BaseCoinID {
+						targetWallet = userwallet
+					}
+				}
+				if targetWallet == nil {
+					resp.SetReturn(resultcode.Result_Get_Me_Wallets_Regiest_Error)
+				} else {
+					balance, err := point_manager_server.GetInstance().GetBalance(&point_manager_server.ReqBalance{Symbol: meCoin.CoinSymbol, Address: targetWallet.WalletAddress})
+					if err != nil {
+						log.Errorf("GetBalanceAll Error : %v", err)
+						resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
+					} else {
+						if balance.Return == 0 {
+							if len(balance.Value.Balance) == 0 {
+								resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
+							} else {
+								res := []*point_manager_server.Balance{
+									{
+										CoinID:     reqMeCoin.CoinID,
+										BaseCoinID: meCoin.BaseCoinID,
+										Symbol:     meCoin.CoinSymbol,
+										Balance:    balance.Value.Balance,
+										Address:    balance.Value.Address,
+										Decimal:    balance.Value.Decimal,
+									},
+								}
+								resp.Value = res
+							}
+						} else {
+							resp.Message = balance.Message
+							resp.Return = balance.Return
+						}
+					}
+				}
+			}
+		}
 	}
 
 	return c.JSON(http.StatusOK, resp)
