@@ -249,6 +249,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 		resp.SetReturn(resultcode.Result_Unknown_Swap_Error)
 	} else {
 		if resSwap.Common.Return != 0 {
+			log.Errorf("PostPointCoinSwap response return:%v, msg:%v", resSwap.Return, resSwap.Message)
 			resp.Return = resSwap.Return
 			resp.Message = resSwap.Message
 		} else {
