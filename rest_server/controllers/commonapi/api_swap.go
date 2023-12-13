@@ -188,6 +188,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					}
 					//// 수수료로 사용될 코인 balance를 가져와서 보유량 확인
 					if balance <= coinFee.TransactionFee+basecoinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료 + 부모가 보내줄 수수료만큼 있어야함
+						log.Errorf("lock of gas for swap audi : %v, coin_id:%v, symbol:%v, balance:%v", ctx.GetValue().AUID, swapInfo.CoinID, swapInfo.CoinSymbol, balance)
 						resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
 						return ctx.EchoContext.JSON(http.StatusOK, resp)
 					}
