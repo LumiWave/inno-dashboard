@@ -136,7 +136,8 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 		// 수수료로 지불할 지갑이 존재 하는지 찾기
 		bFind := false
 		for _, wallet := range wallets {
-			if wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.CoinID].BaseCoinID {
+			if wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
+
 				swapInfo.WalletAddress = wallet.WalletAddress
 				swapInfo.CoinSymbol = model.GetDB().CoinsMap[swapInfo.CoinID].CoinSymbol
 				swapInfo.BaseCoinID = wallet.BaseCoinID
