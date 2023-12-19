@@ -42,9 +42,9 @@ func (o *DB) USPAU_GetList_AccountCoins(auid int64) ([]*context.MeCoin, error) {
 	for rows.Next() {
 		meCoin := &context.MeCoin{}
 		if err := rows.Scan(&meCoin.CoinID,
-			&meCoin.BaseCoinID,
-			&meCoin.WalletAddress,
-			&meCoin.Quantity,
+			//&meCoin.BaseCoinID,
+			//&meCoin.WalletAddress,
+			//&meCoin.Quantity,
 			&meCoin.TodayAcqQuantity,
 			&meCoin.TodayCnsmQuantity,
 			&meCoin.TodayAcqExchangeQuantity,
