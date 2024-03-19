@@ -162,10 +162,9 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) ([]*context.DBWalletRegist
 	}
 
 	walletRegists := make([]*context.DBWalletRegist, 0)
-
 	for rows.Next() {
 		data := &context.DBWalletRegist{}
-		if err := rows.Scan(&data.WalletID, &data.BaseCoinID, &data.WalletAddress, &data.ConnectionStatus, &data.ModifiedDT); err != nil {
+		if err := rows.Scan(&data.WalletID, &data.BaseCoinID, &data.WalletAddress, &data.WalletTypeID, &data.ConnectionStatus, &data.ModifiedDT); err != nil {
 			log.Errorf("%s Scan error : %v", proc, err)
 			return nil, err
 		} else {
@@ -182,7 +181,7 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) ([]*context.DBWalletRegist
 }
 
 // 지갑등록
-func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string) (int, bool, error) {
+func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string, walletTypeID int64) (int, bool, error) {
 	var returnValue orginMssql.ReturnStatus
 	proc := USPAU_Cnct_AccountWallets
 	isMigrated := false
@@ -190,6 +189,7 @@ func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddre
 		sql.Named("AUID", auid),
 		sql.Named("BaseCoinID", baseCoinID),
 		sql.Named("WalletAddress", walletAddress),
+		sql.Named("WalletTypeID", walletTypeID),
 		sql.Named("IsMigrated", sql.Out{Dest: &isMigrated}),
 		&returnValue)
 
@@ -220,13 +220,14 @@ func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddre
 }
 
 // 지갑삭제
-func (o *DB) USPAU_Dscnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string) error {
+func (o *DB) USPAU_Dscnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string, walletTypeID int64) error {
 	var returnValue orginMssql.ReturnStatus
 	proc := USPAU_Dscnct_AccountWallets
 	rows, err := o.MssqlAccountAll.QueryContext(contextR.Background(), proc,
 		sql.Named("AUID", auid),
 		sql.Named("BaseCoinID", baseCoinID),
 		sql.Named("WalletAddress", walletAddress),
+		sql.Named("WalletTypeID", walletTypeID),
 		&returnValue)
 
 	if rows != nil {

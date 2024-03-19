@@ -8,7 +8,9 @@ import (
 )
 
 // 지갑 등록 후 해제 가능시간
-const DeleteWalletHour = 24
+// const DeleteWalletHour = 24 //todo::test후 주석해제
+const DeleteWalletHour = 0
+
 const UserTypeLimit int64 = 2000000
 
 ////////////////////////////////////////
@@ -160,11 +162,16 @@ type ResGetWalletRegist struct {
 }
 
 type WalletRegistInfo struct {
+	BaseCoinID              int64  `json:"base_coin_id"`
+	BaseCoinSymbol          string `json:"base_coin_symbol"`
+	WalletTypeID            int64  `json:"wallet_type_id"`
 	WalletName              string `json:"wallet_name"`
 	IsRegistered            bool   `json:"is_registered"` //등록여부 true:등록되어있음, false:등록안됨
 	WalletAddress           string `json:"wallet_address"`
 	RegistDT                string `json:"regist_dt"` //등록시간(해제가능시간 24시간체크용)
 	LastDeleteWalletAddress string `json:"last_delete_wallet_address"`
+	LastDeleteWalletTypeID  int64  `json:"last_delete_wallet_type_id"`
+	LastDeleteWalletName    string `json:"last_delete_wallet_name"`
 	LastDeleteDT            string `json:"last_delete_dt"`
 	UserType                int    `json:"user_type"` //1:구유저(지갑바로등록), 2:신유저(필요할떄등록) 체크용
 }
@@ -173,23 +180,28 @@ type DBWalletRegist struct {
 	WalletID         int64
 	BaseCoinID       int64
 	WalletAddress    string
+	WalletTypeID     int64
 	ConnectionStatus int64
 	ModifiedDT       string
 }
 
 // //// 지갑등록요청
 type ReqPostWalletRegist struct {
-	AUID           int64  `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
-	WalletPlatform string `json:"wallet_platform"`
-	WalletAddress  string `json:"wallet_address"`
+	AUID          int64  `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
+	BaseCoinID    int64  `json:"base_coin_id"`
+	WalletTypeID  int64  `json:"wallet_type_id"`
+	WalletAddress string `json:"wallet_address"`
 }
 
 func (o *ReqPostWalletRegist) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
 	if ctx.GetValue() != nil {
 		o.AUID = ctx.GetValue().AUID
 	}
-	if o.WalletPlatform == "" {
-		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletPlatform_Error)
+	if o.BaseCoinID == 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_BaseCoinID_Error)
+	}
+	if o.WalletTypeID == 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletTypeID_Error)
 	}
 	if o.WalletAddress == "" {
 		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletAddress_Error)
@@ -199,17 +211,21 @@ func (o *ReqPostWalletRegist) CheckValidate(ctx *InnoDashboardContext) *base.Bas
 
 // //// 지갑삭제요청
 type ReqDeleteWalletRegist struct {
-	AUID           int64  `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
-	WalletPlatform string `json:"wallet_platform" query:"wallet_platform"`
-	WalletAddress  string `json:"wallet_address" query:"wallet_address"`
+	AUID          int64  `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
+	BaseCoinID    int64  `json:"base_coin_id" query:"base_coin_id"`
+	WalletTypeID  int64  `json:"wallet_platform" query:"wallet_type_id"`
+	WalletAddress string `json:"wallet_address" query:"wallet_address"`
 }
 
 func (o *ReqDeleteWalletRegist) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
 	if ctx.GetValue() != nil {
 		o.AUID = ctx.GetValue().AUID
 	}
-	if o.WalletPlatform == "" {
-		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletPlatform_Error)
+	if o.BaseCoinID == 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_CoinID_Error)
+	}
+	if o.WalletTypeID == 0 {
+		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletTypeID_Error)
 	}
 	if o.WalletAddress == "" {
 		return base.MakeBaseResponse(resultcode.Result_Invalid_WalletAddress_Error)

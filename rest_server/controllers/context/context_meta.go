@@ -6,4 +6,5 @@ type Meta struct {
 	BaseCoinList
 	CoinList
 	Swapable []*Swapable `json:"swapable"`
+	WalletTypeList
 }

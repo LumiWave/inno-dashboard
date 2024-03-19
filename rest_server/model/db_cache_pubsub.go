@@ -103,13 +103,7 @@ func (o *DB) PubSubCmdByInternal(msg basedb.PubSubMessageV8) error {
 		SetExternalTransferEnable(psPacket.Value.Enable)
 	} else if strings.EqualFold(header.Type, PubSub_type_meta_refresh) {
 		// db meta refresh
-		gDB.GetPointList()
-		gDB.GetBaseCoins()
-		gDB.GetAppCoins()
-		gDB.GetCoins()
-		gDB.GetApps()
-		gDB.GetAppPoints()
-		gDB.GetScanExchangeGoods()
+		LoadDBMeta()
 		log.Infof("pubsub cmd : %v", PubSub_type_meta_refresh)
 	}
 	return nil

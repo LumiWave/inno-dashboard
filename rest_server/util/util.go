@@ -48,3 +48,12 @@ func Contains(x string, arr []string) bool {
 	}
 	return false
 }
+
+func ContainsInt(x int64, arr []int64) bool {
+	for _, i := range arr {
+		if x == i {
+			return true
+		}
+	}
+	return false
+}

@@ -59,7 +59,9 @@ type DB struct {
 	BaseCoinMapBySymbol map[string]*context.BaseCoinInfo // 전체 base coin 정보 : key coin symbol
 	BaseCoins           context.BaseCoinList
 
-	RegistWalletNames []string //등록할 지갑 이름.. 위 맵의 KEY 리스트
+	WalletTypes        context.WalletTypeList        //meta용 월렛 타입정보
+	WalletTypeMap      map[int64]*context.WalletType //key WalletTypeID
+	AllowWalletTypeMap map[int64][]int64             //플랫폼별 허용가능한 지갑종류 : key basecoin & val walletID
 
 	SwapAbleMap map[int64]*context.Swapable // 전체 스왑 가능한 정보 1 : key appID
 	SwapAble    []*context.Swapable         // 전체 스왑 가능한 정보 2
@@ -123,6 +125,17 @@ func LoadDBPoint(conf *config.ServerConfig) {
 	gDB.BaseCoinMapByCoinID = make(map[int64]*context.BaseCoinInfo)
 	gDB.BaseCoinMapBySymbol = make(map[string]*context.BaseCoinInfo)
 
+	LoadDBMeta()
+
+	if conf.App.LiquidityUpdate {
+		gDB.LoadFullPointLiquidity(1000, true)
+		gDB.LoadFullCoinLiquidity(1000, true)
+		gDB.UpdateLiquidity()
+		gDB.UpdateCoinFee()
+	}
+}
+
+func LoadDBMeta() {
 	gDB.GetPointList()
 	gDB.GetBaseCoins()
 	gDB.GetAppCoins()
@@ -131,12 +144,9 @@ func LoadDBPoint(conf *config.ServerConfig) {
 	gDB.GetAppPoints()
 	gDB.GetScanExchangeGoods()
 
-	if conf.App.LiquidityUpdate {
-		gDB.LoadFullPointLiquidity(1000, true)
-		gDB.LoadFullCoinLiquidity(1000, true)
-		gDB.UpdateLiquidity()
-		gDB.UpdateCoinFee()
-	}
+	//wallet
+	gDB.USPAU_Scan_WalletTypes()
+	gDB.USPAU_Scan_BaseCoinWalletTypes()
 }
 
 func MakeDbError(resp *base.BaseResponse, errCode int, err error) {

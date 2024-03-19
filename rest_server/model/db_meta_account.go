@@ -3,6 +3,8 @@ package model
 import (
 	originCtx "context"
 	"database/sql"
+	"errors"
+	"strconv"
 
 	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
 	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
@@ -10,13 +12,15 @@ import (
 )
 
 const (
-	USPAU_Scan_DatabaseServers   = "[dbo].[USPAU_Scan_DatabaseServers]"
-	USPAU_Scan_Points            = "[dbo].[USPAU_Scan_Points]"
-	USPAU_Scan_ApplicationCoins  = "[dbo].[USPAU_Scan_ApplicationCoins]"
-	USPAU_Scan_ApplicationPoints = "[dbo].[USPAU_Scan_ApplicationPoints]"
-	USPAU_Scan_Applications      = "[dbo].[USPAU_Scan_Applications]"
-	USPAU_Scan_Coins             = "[dbo].[USPAU_Scan_Coins]"
-	USPAU_Scan_BaseCoins         = "[dbo].[USPAU_Scan_BaseCoins]"
+	USPAU_Scan_DatabaseServers     = "[dbo].[USPAU_Scan_DatabaseServers]"
+	USPAU_Scan_Points              = "[dbo].[USPAU_Scan_Points]"
+	USPAU_Scan_ApplicationCoins    = "[dbo].[USPAU_Scan_ApplicationCoins]"
+	USPAU_Scan_ApplicationPoints   = "[dbo].[USPAU_Scan_ApplicationPoints]"
+	USPAU_Scan_Applications        = "[dbo].[USPAU_Scan_Applications]"
+	USPAU_Scan_Coins               = "[dbo].[USPAU_Scan_Coins]"
+	USPAU_Scan_BaseCoins           = "[dbo].[USPAU_Scan_BaseCoins]"
+	USPAU_Scan_WalletTypes         = "[dbo].[USPAU_Scan_WalletTypes]"
+	USPAU_Scan_BaseCoinWalletTypes = "[dbo].[USPAU_Scan_BaseCoinWalletTypes]"
 )
 
 // point database 리스트 요청
@@ -164,30 +168,14 @@ func (o *DB) GetBaseCoins() error {
 	o.BaseCoins.Coins = nil
 	for rows.Next() {
 		baseCoin := &context.BaseCoinInfo{}
-		if err := rows.Scan(&baseCoin.BaseCoinID, &baseCoin.BaseCoinName, &baseCoin.BaseCoinSymbol, &baseCoin.IsUsedParentWallet, &baseCoin.WalletPlatform); err == nil {
+		if err := rows.Scan(&baseCoin.BaseCoinID, &baseCoin.BaseCoinName, &baseCoin.BaseCoinSymbol, &baseCoin.IsUsedParentWallet); err == nil {
 			o.BaseCoinMapByCoinID[baseCoin.BaseCoinID] = baseCoin
 			o.BaseCoinMapBySymbol[baseCoin.BaseCoinSymbol] = baseCoin
 			o.BaseCoins.Coins = append(o.BaseCoins.Coins, baseCoin)
 		}
 	}
 
-	o.RegistWalletNames = make([]string, 0)
-	for _, basecoin := range o.BaseCoins.Coins {
-		if !stringContains(o.RegistWalletNames, basecoin.WalletPlatform) {
-			o.RegistWalletNames = append(o.RegistWalletNames, basecoin.WalletPlatform)
-		}
-	}
-
 	return nil
-}
-
-func stringContains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
 }
 
 // 전체 app list 조회
@@ -239,6 +227,75 @@ func (o *DB) GetAppPoints() error {
 			o.AppPointsMap[appId.Int64].Points = append(o.AppPointsMap[appId.Int64].Points, temp)
 			o.AppPoints.Apps = append(o.AppPoints.Apps, o.AppPointsMap[appId.Int64])
 		}
+	}
+
+	return nil
+}
+
+func (o *DB) USPAU_Scan_WalletTypes() error {
+	ProcName := USPAU_Scan_WalletTypes
+	var rs orginMssql.ReturnStatus
+
+	rows, err := o.MssqlAccountRead.GetDB().QueryContext(originCtx.Background(), ProcName, &rs)
+	if err != nil {
+		log.Errorf(ProcName+"QueryContext err : %v", err)
+		return err
+	}
+
+	defer rows.Close()
+
+	o.WalletTypeMap = make(map[int64]*context.WalletType)
+	o.WalletTypes = context.WalletTypeList{
+		WalletTypes: make([]*context.WalletType, 0),
+	}
+	for rows.Next() {
+		var WalletTypeID int64
+		var WalletTypeName string
+		if err := rows.Scan(&WalletTypeID, &WalletTypeName); err == nil {
+			wallet := &context.WalletType{WalletName: WalletTypeName, WalletTypeID: WalletTypeID}
+			o.WalletTypeMap[WalletTypeID] = wallet
+			o.WalletTypes.WalletTypes = append(o.WalletTypes.WalletTypes, wallet)
+		} else {
+			log.Errorf("Scan error : %v", err)
+		}
+	}
+
+	if rs != 1 {
+		log.Errorf(ProcName+" returnvalue error : %v", rs)
+		return errors.New(ProcName + " returnvalue error " + strconv.Itoa(int(rs)))
+	}
+
+	return nil
+}
+func (o *DB) USPAU_Scan_BaseCoinWalletTypes() error {
+	ProcName := USPAU_Scan_BaseCoinWalletTypes
+	var rs orginMssql.ReturnStatus
+
+	rows, err := o.MssqlAccountRead.GetDB().QueryContext(originCtx.Background(), ProcName, &rs)
+	if err != nil {
+		log.Errorf(ProcName+"QueryContext err : %v", err)
+		return err
+	}
+
+	defer rows.Close()
+
+	o.AllowWalletTypeMap = make(map[int64][]int64)
+	for rows.Next() {
+		var BaseCoinID int64
+		var WalletTypeID int64
+		if err := rows.Scan(&BaseCoinID, &WalletTypeID); err == nil {
+			if _, ok := o.AllowWalletTypeMap[BaseCoinID]; !ok {
+				o.AllowWalletTypeMap[BaseCoinID] = make([]int64, 0)
+			}
+			o.AllowWalletTypeMap[BaseCoinID] = append(o.AllowWalletTypeMap[BaseCoinID], WalletTypeID)
+		} else {
+			log.Errorf("Scan error : %v", err)
+		}
+	}
+
+	if rs != 1 {
+		log.Errorf(ProcName+" returnvalue error : %v", rs)
+		return errors.New(ProcName + " returnvalue error " + strconv.Itoa(int(rs)))
 	}
 
 	return nil

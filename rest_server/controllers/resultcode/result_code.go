@@ -27,6 +27,8 @@ const (
 	Result_Invalid_WalletPlatform_Error = 32107 // wallet platform 이름
 	Result_Invalid_WalletAddress_Error  = 32108 // wallet address
 	Result_Invalid_TxStatus             = 32109 // invalid tx status
+	Result_Invalid_WalletTypeID_Error   = 32110 // wallet platform 이름
+	Result_Invalid_BaseCoinID_Error     = 32111 // basecoinid 유효성 에러
 
 	Result_Not_Exist_AppPointInfo_Error = 32201 // 앱 포인트 정보가 존재하지 않는다.
 	Result_Unknown_Swap_Error           = 32202 // unknown swap 에러
@@ -59,6 +61,7 @@ const (
 	Result_Post_Me_WalletRegist_System_Error                          = 34106 // 공통오류
 	Result_Post_Me_WalletRegist_DeleteTime_Error                      = 34107 // 해제시간이 안됨
 	Result_Post_Me_WalletRegist_Diffrent_Wallet_Error                 = 34108 // 등록된 지갑주소와 정보가 다름
+	Result_Post_Me_WalletRegist_NotAllowedWalletType                  = 34109 // 허용된 지갑종류가 아님
 
 	Result_CoinTransfer_CoinSymbol_Empty = 36001 // Coin Symbol is Empty
 	Result_CoinTransfer_ToAddress_Empty  = 36002 // To Address is Empty
@@ -114,6 +117,8 @@ var ResultCodeText = map[int]string{
 	Result_Invalid_WalletPlatform_Error: "Wallet Platform is invalid",
 	Result_Invalid_WalletAddress_Error:  "Wallet Address is invalid",
 	Result_Invalid_TxStatus:             "TxStatus is invalid",
+	Result_Invalid_WalletTypeID_Error:   "wallet_type_id is invalid",
+	Result_Invalid_BaseCoinID_Error:     "base_coin_id is invalid",
 
 	Result_Not_Exist_AppPointInfo_Error: "App point information does not exist",
 	Result_Unknown_Swap_Error:           "Unknown swap error",
@@ -146,6 +151,7 @@ var ResultCodeText = map[int]string{
 	Result_Post_Me_WalletRegist_System_Error:                          "system error.",
 	Result_Post_Me_WalletRegist_DeleteTime_Error:                      "can delete wallet in 24 hours.",
 	Result_Post_Me_WalletRegist_Diffrent_Wallet_Error:                 "Not a registered wallet address",
+	Result_Post_Me_WalletRegist_NotAllowedWalletType:                  "Not Allowed Wallet Type",
 
 	Result_CoinTransfer_CoinSymbol_Empty: "CoinSymbol is empty",
 	Result_CoinTransfer_ToAddress_Empty:  "ToAddress is empty",
