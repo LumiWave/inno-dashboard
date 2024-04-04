@@ -437,6 +437,7 @@ func GetWalletRegistInfo(auid int64) (map[string]*context.WalletRegistInfo, int)
 					case 1:
 						res[baseCoin.WalletPlatform].IsRegistered = true
 						res[baseCoin.WalletPlatform].WalletAddress = userWallet.WalletAddress
+						res[baseCoin.WalletPlatform].WalletID = userWallet.WalletID
 						res[baseCoin.WalletPlatform].RegistDT = userWallet.ModifiedDT
 					case 2:
 						res[baseCoin.WalletPlatform].LastDeleteWalletAddress = userWallet.WalletAddress

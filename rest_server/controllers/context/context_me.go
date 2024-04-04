@@ -163,6 +163,7 @@ type WalletRegistInfo struct {
 	WalletName              string `json:"wallet_name"`
 	IsRegistered            bool   `json:"is_registered"` //등록여부 true:등록되어있음, false:등록안됨
 	WalletAddress           string `json:"wallet_address"`
+	WalletID                int64  `json:"wallet_id"`
 	RegistDT                string `json:"regist_dt"` //등록시간(해제가능시간 24시간체크용)
 	LastDeleteWalletAddress string `json:"last_delete_wallet_address"`
 	LastDeleteDT            string `json:"last_delete_dt"`
