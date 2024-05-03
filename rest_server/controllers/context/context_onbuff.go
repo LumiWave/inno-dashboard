@@ -1,12 +1,12 @@
 package context
 
 import (
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/util"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/LumiWave/inno-dashboard/rest_server/util"
 )
 
-///////// 가격 정보
+// /////// 가격 정보
 type ReqPriceInfo struct {
 	CoinSymbol string `json:"coin_symbol" query:"coin_symbol"`
 }
@@ -27,7 +27,7 @@ func (o *ReqPriceInfo) CheckValidate() *base.BaseResponse {
 
 ////////////////////////////////////////
 
-///////// Candle Base
+// /////// Candle Base
 type ReqBaseCandle struct {
 	CoinSymbol string `json:"coin_symbol" query:"coin_symbol"`
 	Count      string `json:"count" query:"count"`
@@ -36,7 +36,7 @@ type ReqBaseCandle struct {
 
 ////////////////////////////////////////
 
-///////// Candle Minutes
+// /////// Candle Minutes
 type ReqCandleMinutes struct {
 	ReqBaseCandle
 	Unit string `json:"unit" query:"unit"`
@@ -60,7 +60,7 @@ func (o *ReqCandleMinutes) CheckValidate() *base.BaseResponse {
 
 ////////////////////////////////////////
 
-///////// Candle Days
+// /////// Candle Days
 type ReqCandleDays struct {
 	ReqBaseCandle
 	ConvertingPriceUnit string `json:"converting_price_unit" query:"converting_price_unit"`
@@ -78,7 +78,7 @@ func (o *ReqCandleDays) CheckValidate() *base.BaseResponse {
 
 ////////////////////////////////////////
 
-///////// Candle Weeks
+// /////// Candle Weeks
 type ReqCandleWeeks struct {
 	ReqBaseCandle
 }
@@ -95,7 +95,7 @@ func (o *ReqCandleWeeks) CheckValidate() *base.BaseResponse {
 
 ////////////////////////////////////////
 
-///////// Candle Months
+// /////// Candle Months
 type ReqCandleMonths struct {
 	ReqBaseCandle
 }

@@ -3,8 +3,8 @@ package commonapi
 import (
 	"net/http"
 
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/commonapi/inner"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/commonapi/inner"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 	"github.com/labstack/echo"
 )
 

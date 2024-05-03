@@ -1,8 +1,8 @@
 package context
 
 import (
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 )
 
 // /////// Swap Info 전체 포인트, 코인 정보 리스트, swap 가능 정보 조회

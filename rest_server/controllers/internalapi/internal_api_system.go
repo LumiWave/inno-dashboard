@@ -1,9 +1,9 @@
 package internalapi
 
 import (
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/commonapi"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/commonapi"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 )

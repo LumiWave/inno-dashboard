@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	baseupbit "github.com/ONBUFF-IP-TOKEN/baseMarket/market/upbit"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	baseupbit "github.com/LumiWave/baseMarket/market/upbit"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 )
 
 const (

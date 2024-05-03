@@ -3,8 +3,8 @@ package context
 import (
 	"time"
 
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 )
 
 // 지갑 등록 후 해제 가능시간

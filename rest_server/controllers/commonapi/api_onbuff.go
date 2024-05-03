@@ -3,14 +3,14 @@ package commonapi
 import (
 	"net/http"
 
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/upbit"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/upbit"
 	"github.com/labstack/echo"
 )
 
-//  현재 시세 조회
+// 현재 시세 조회
 func GetCoinPrice(c echo.Context, reqPriceInfo *context.ReqPriceInfo) error {
 	resp := new(base.BaseResponse)
 	resp.Success()

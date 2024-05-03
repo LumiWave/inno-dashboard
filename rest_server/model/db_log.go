@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/baseutil/log"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 )
 
 // 특정 개수만큼 포인트 유동량 history 정보 업데이트

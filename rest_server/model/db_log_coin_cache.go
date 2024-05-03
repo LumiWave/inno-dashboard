@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/ONBUFF-IP-TOKEN/basedb"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/basedb"
+	"github.com/LumiWave/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 )
 
 func MakeLogKeyOfCoin(CoinID int64, candleType string) string {

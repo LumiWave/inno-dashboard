@@ -3,9 +3,9 @@ package model
 import (
 	"strconv"
 
-	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/baseutil/log"
+	"github.com/LumiWave/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 )
 
 // 코인 마이그레이션 관련

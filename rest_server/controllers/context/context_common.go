@@ -1,9 +1,9 @@
 package context
 
 import (
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/baseutil/datetime"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/baseutil/datetime"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 )
 
 type LogID_type int

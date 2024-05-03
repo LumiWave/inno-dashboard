@@ -3,11 +3,11 @@ package context
 import (
 	"time"
 
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 )
 
-///////// Get List Coin Liquidity (코인 유동량)
+// /////// Get List Coin Liquidity (코인 유동량)
 var CandleTypeOfCoin = map[string]string{
 	"hour":  "USPW_GetList_HourlyCoins",
 	"day":   "USPW_GetList_DailyCoins",
@@ -57,7 +57,7 @@ type ResCoinLiquidity struct {
 
 ////////////////////////////////////////
 
-///////// Get List Point Liquidity (포인트 유동량)
+// /////// Get List Point Liquidity (포인트 유동량)
 var CandleTypeOfPoint = map[string]string{
 	"hour":  "USPW_GetList_HourlyPoints",
 	"day":   "USPW_GetList_DailyPoints",
