@@ -19,3 +19,8 @@ func (o *InternalAPI) PutNotice(c echo.Context) error {
 func (o *InternalAPI) DeleteNotice(c echo.Context) error {
 	return commonapi.DeleteNotice(c)
 }
+
+// 뉴스 캐시 삭제
+func (o *InternalAPI) DeleteNewsCache(c echo.Context) error {
+	return commonapi.DeleteNewsCache(c)
+}

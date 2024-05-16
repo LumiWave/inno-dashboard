@@ -28,3 +28,22 @@ func (o *ExternalAPI) GetNotice(c echo.Context) error {
 
 	return commonapi.GetNotice(c)
 }
+
+// 뉴스 조회
+func (o *ExternalAPI) GetNews(c echo.Context) error {
+	params := new(context.PageInfo)
+
+	// Request json 파싱
+	if err := c.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+
+	return commonapi.GetNews(c, params)
+}
