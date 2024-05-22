@@ -24,7 +24,7 @@ func (o *DB) SetCacheNews(pageSize string, pageOffset string, newsList *context.
 	}
 
 	key := MakeNewsKey(pageSize, pageOffset)
-	return o.Cache.Set(key, newsList, -1)
+	return o.Cache.Set(key, newsList, 60)
 }
 
 func (o *DB) GetCacheNews(pageSize string, pageOffset string) (*context.ResNewsList, error) {
