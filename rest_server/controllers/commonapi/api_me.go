@@ -436,7 +436,7 @@ func GetWalletRegistInfo(auid int64) (map[int64]*context.WalletRegistInfo, int) 
 					} else {
 						walletRegistInfo.UserType = 1
 					}
-
+					walletRegistInfo.WalletID = userWallet.WalletID
 					switch userWallet.ConnectionStatus {
 					case 1:
 						walletRegistInfo.IsRegistered = true
