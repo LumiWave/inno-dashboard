@@ -1,12 +1,12 @@
 package inner
 
 import (
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/model"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/util"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/baseutil/log"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/LumiWave/inno-dashboard/rest_server/model"
+	"github.com/LumiWave/inno-dashboard/rest_server/util"
 )
 
 func GetPointHistory(req *context.ReqPointLiquidity) *base.BaseResponse {

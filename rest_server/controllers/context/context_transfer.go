@@ -1,11 +1,11 @@
 package context
 
 import (
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/resultcode"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 )
 
-///////// Coin Transfer
+// /////// Coin Transfer
 type ReqCoinTransfer struct {
 	AUID        int64   `json:"au_id" url:"au_id"`               // 계정의 UID (Access Token에서 가져옴)
 	CoinID      int64   `json:"coin_id" url:"coin_id"`           // 코인 심볼
@@ -33,7 +33,7 @@ func (o *ReqCoinTransfer) CheckValidate(ctx *InnoDashboardContext) *base.BaseRes
 
 ////////////////////////////////////////
 
-///////// 외부 지갑으로 코인 전송 중인 상태 정보 요청
+// /////// 외부 지갑으로 코인 전송 중인 상태 정보 요청
 type GetCoinTransferExistInProgress struct {
 	AUID int64 `json:"au_id" query:"au_id"`
 }
@@ -53,7 +53,7 @@ func (o *GetCoinTransferExistInProgress) CheckValidate(ctx *InnoDashboardContext
 
 ////////////////////////////////////////
 
-///////// 코인 가스비 조회
+// /////// 코인 가스비 조회
 type GetCoinFee struct {
 	BaseCoinSymbol string `json:"coin_symbol" query:"coin_symbol"`
 }

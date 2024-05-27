@@ -1,7 +1,7 @@
 package internalapi
 
 import (
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/commonapi"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/commonapi"
 	"github.com/labstack/echo"
 )
 
@@ -18,4 +18,9 @@ func (o *InternalAPI) PutNotice(c echo.Context) error {
 // 공지 삭제
 func (o *InternalAPI) DeleteNotice(c echo.Context) error {
 	return commonapi.DeleteNotice(c)
+}
+
+// 뉴스 캐시 삭제
+func (o *InternalAPI) DeleteNewsCache(c echo.Context) error {
+	return commonapi.DeleteNewsCache(c)
 }

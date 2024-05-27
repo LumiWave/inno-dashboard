@@ -3,14 +3,14 @@ package externalapi
 import (
 	"net/http"
 
-	"github.com/ONBUFF-IP-TOKEN/baseapp/base"
-	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/commonapi"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/baseutil/log"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/commonapi"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 	"github.com/labstack/echo"
 )
 
-//  현재 시세 조회
+// 현재 시세 조회
 func (o *ExternalAPI) GetCoinPrice(c echo.Context) error {
 	reqPriceInfo := new(context.ReqPriceInfo)
 

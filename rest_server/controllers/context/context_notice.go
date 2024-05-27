@@ -1,6 +1,6 @@
 package context
 
-///////// Notice Info
+// /////// Notice Info
 type NoticeInfo struct {
 	Id       int64  `json:"id,omitempty"`
 	Title    string `json:"title,omitempty"`
@@ -10,3 +10,19 @@ type NoticeInfo struct {
 }
 
 ////////////////////////////////////////
+
+type News struct {
+	NewsID           int64  `json:"news_id"`
+	Title            string `json:"title"`
+	StartSDT         string `json:"start_sdt"`
+	EndSDT           string `json:"end_sdt"`
+	BannerURL        string `json:"banner_url"`
+	NewsURL          string `json:"news_url"`
+	IsAlwaysVisibled bool   `json:"is_always_visibled"`
+}
+
+type ResNewsList struct {
+	PageInfo
+	TotalCount int64   `json:"total_count"`
+	List       []*News `json:"list"`
+}

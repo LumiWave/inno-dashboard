@@ -1,9 +1,9 @@
 package inno_market
 
 import (
-	"github.com/ONBUFF-IP-TOKEN/baseInnoClient/context"
-	"github.com/ONBUFF-IP-TOKEN/baseInnoClient/market"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/baseInnoClient/context"
+	"github.com/LumiWave/baseInnoClient/market"
+	"github.com/LumiWave/inno-dashboard/rest_server/config"
 )
 
 var gMarketServer *market.Server

@@ -6,8 +6,8 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/baseutil/log"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 	orginMssql "github.com/denisenkom/go-mssqldb"
 )
 

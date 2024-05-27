@@ -3,7 +3,7 @@ package model
 import (
 	"strconv"
 
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/inno-dashboard/rest_server/config"
 )
 
 // redis member point lock key generate

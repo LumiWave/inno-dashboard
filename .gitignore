@@ -1,12 +1,5 @@
 bin/
 
-etc/swagger/ext/key.pem
-etc/swagger/ext/onbuffcerti.crt.pem
-
-
-etc/onbuffcerti.crt
-etc/onbuffcerti.key
-
 etc/conf/config.local.yml
 etc/conf/config.dev.yml
 etc/conf/config.stage.yml
@@ -19,3 +12,5 @@ etc/conf/internal_api.yml
 .vscode/dryrun.log
 .vscode/configurationCache.log
 __debug_bin
+etc/lumiwavecerti.crt
+etc/lumiwavecerti.key

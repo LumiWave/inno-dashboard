@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/baseutil/log"
+	"github.com/LumiWave/inno-dashboard/rest_server/config"
 )
 
 // verify auth token respoinse

@@ -6,10 +6,10 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/ONBUFF-IP-TOKEN/baseutil/log"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/config"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/context"
-	"github.com/ONBUFF-IP-TOKEN/inno-dashboard/rest_server/controllers/servers/point_manager_server"
+	"github.com/LumiWave/baseutil/log"
+	"github.com/LumiWave/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/servers/point_manager_server"
 )
 
 func MakeCoinFeeKey(baseSymbol string) string {
