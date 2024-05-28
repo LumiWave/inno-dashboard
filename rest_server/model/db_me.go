@@ -226,8 +226,8 @@ func (o *DB) USPAU_Dscnct_AccountWallets(auid int64, baseCoinID int64, walletAdd
 	rows, err := o.MssqlAccountAll.QueryContext(contextR.Background(), proc,
 		sql.Named("AUID", auid),
 		sql.Named("BaseCoinID", baseCoinID),
-		sql.Named("WalletAddress", walletAddress),
 		sql.Named("WalletTypeID", walletTypeID),
+		sql.Named("WalletAddress", walletAddress),
 		&returnValue)
 
 	if rows != nil {
