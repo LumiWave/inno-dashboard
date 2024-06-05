@@ -58,10 +58,11 @@ type CoinList struct {
 
 // /////// BaseCoinInfo
 type BaseCoinInfo struct {
-	BaseCoinID         int64  `json:"base_coin_id"`
-	BaseCoinName       string `json:"base_coin_name"`
-	BaseCoinSymbol     string `json:"base_coin_symbol"`
-	IsUsedParentWallet bool   `json:"is_used_parent_wallet"`
+	BaseCoinID         int64   `json:"base_coin_id"`
+	BaseCoinName       string  `json:"base_coin_name"`
+	BaseCoinSymbol     string  `json:"base_coin_symbol"`
+	IsUsedParentWallet bool    `json:"is_used_parent_wallet"`
+	AllowWalletTypes   []int64 `json:"allow_wallet_types"`
 }
 
 type BaseCoinList struct {
