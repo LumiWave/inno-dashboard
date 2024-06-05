@@ -274,10 +274,10 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 			if walletData.IsRegistered {
 				resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegistered_Error)
 			} else {
-				if allowWallets, ok := model.GetDB().AllowWalletTypeMap[params.BaseCoinID]; !ok {
+				if baseCoin, ok := model.GetDB().BaseCoinMapByCoinID[params.BaseCoinID]; !ok {
 					resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
 				} else {
-					if !util.ContainsInt(params.WalletTypeID, allowWallets) {
+					if !util.ContainsInt(params.WalletTypeID, baseCoin.AllowWalletTypes) {
 						resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_NotAllowedWalletType)
 					} else {
 						isMigration := true

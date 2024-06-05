@@ -279,15 +279,16 @@ func (o *DB) USPAU_Scan_BaseCoinWalletTypes() error {
 
 	defer rows.Close()
 
-	o.AllowWalletTypeMap = make(map[int64][]int64)
 	for rows.Next() {
 		var BaseCoinID int64
 		var WalletTypeID int64
 		if err := rows.Scan(&BaseCoinID, &WalletTypeID); err == nil {
-			if _, ok := o.AllowWalletTypeMap[BaseCoinID]; !ok {
-				o.AllowWalletTypeMap[BaseCoinID] = make([]int64, 0)
+			if _, ok := o.BaseCoinMapByCoinID[BaseCoinID]; ok {
+				if o.BaseCoinMapByCoinID[BaseCoinID].AllowWalletTypes == nil {
+					o.BaseCoinMapByCoinID[BaseCoinID].AllowWalletTypes = make([]int64, 0)
+				}
+				o.BaseCoinMapByCoinID[BaseCoinID].AllowWalletTypes = append(o.BaseCoinMapByCoinID[BaseCoinID].AllowWalletTypes, WalletTypeID)
 			}
-			o.AllowWalletTypeMap[BaseCoinID] = append(o.AllowWalletTypeMap[BaseCoinID], WalletTypeID)
 		} else {
 			log.Errorf("Scan error : %v", err)
 		}
