@@ -8,8 +8,8 @@ import (
 )
 
 // 지갑 등록 후 해제 가능시간
-// const DeleteWalletHour = 24 //todo::test후 주석해제
-const DeleteWalletHour = 0
+const DeleteWalletHour = 24 //todo::test후 주석해제
+//const DeleteWalletHour = 0
 
 const UserTypeLimit int64 = 2000000
 
