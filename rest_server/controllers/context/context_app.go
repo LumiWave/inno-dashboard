@@ -42,7 +42,7 @@ type CoinInfo struct {
 	CoinName                      string           `json:"coin_name"`
 	CoinSymbol                    string           `json:"coin_symbol,omitempty"`
 	ContractAddress               string           `json:"contract_address,omitempty"`
-	Decimal                       int64            `json:"dicimal"`
+	Decimal                       int64            `json:"decimal"`
 	ExplorePath                   string           `json:"explore_path"`
 	IconUrl                       string           `json:"icon_url,omitempty"`
 	DailyLimitExchangeAcqQuantity float64          `json:"daily_limit_exchange_acq_quantity"` // 일일 제한 전환 획득량
