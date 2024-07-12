@@ -37,19 +37,24 @@ type AppPoints struct {
 
 // /////// Coin Info
 type CoinInfo struct {
-	BaseCoinID                      int64   `json:"base_coin_id"`
-	CoinId                          int64   `json:"coin_id,omitempty"`
-	CoinName                        string  `json:"coin_name"`
-	CoinSymbol                      string  `json:"coin_symbol,omitempty"`
-	ContractAddress                 string  `json:"contract_address,omitempty"`
-	Decimal                         int64   `json:"dicimal"`
-	ExplorePath                     string  `json:"explore_path"`
-	IconUrl                         string  `json:"icon_url,omitempty"`
-	DailyLimitedAcqExchangeQuantity float64 `json:"daily_limited_acq_exchange_quantity"`
-	ExchangeFees                    float64 `json:"exchange_fees"`
-	IsRechargeable                  bool    `json:"is_rechargeable"`
+	BaseCoinID                      int64            `json:"base_coin_id"`
+	CoinId                          int64            `json:"coin_id,omitempty"`
+	CoinName                        string           `json:"coin_name"`
+	CoinSymbol                      string           `json:"coin_symbol,omitempty"`
+	ContractAddress                 string           `json:"contract_address,omitempty"`
+	Decimal                         int64            `json:"dicimal"`
+	ExplorePath                     string           `json:"explore_path"`
+	IconUrl                         string           `json:"icon_url,omitempty"`
+	DailyLimitedAcqExchangeQuantity float64          `json:"daily_limited_acq_exchange_quantity"`
+	ExchangeFees                    float64          `json:"exchange_fees"`
+	IsRechargeable                  bool             `json:"is_rechargeable"`
+	RechargeURL                     string           `json:"recharge_url"`
+	CustomProperties                CustomProperties `json:"custom_properties"`
 }
 
+type CustomProperties struct {
+	CoinType string `json:"coin_type,omitempty"`
+}
 type CoinList struct {
 	Coins []*CoinInfo `json:"coins"`
 }

@@ -3,6 +3,7 @@ package model
 import (
 	originCtx "context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"strconv"
 
@@ -118,6 +119,7 @@ func (o *DB) GetCoins() error {
 
 	for rows.Next() {
 		coin := &context.CoinInfo{}
+		var customProperties string
 		if err := rows.Scan(&coin.CoinId,
 			&coin.BaseCoinID,
 			&coin.CoinName,
@@ -128,7 +130,12 @@ func (o *DB) GetCoins() error {
 			&coin.IconUrl,
 			&coin.DailyLimitedAcqExchangeQuantity,
 			&coin.ExchangeFees,
-			&coin.IsRechargeable); err == nil {
+			&coin.IsRechargeable,
+			&coin.RechargeURL,
+			&customProperties); err == nil {
+			if err := json.Unmarshal([]byte(customProperties), &coin.CustomProperties); err != nil {
+				log.Error("USPAU_Scan_Coins customProperties Unmarshal err : ", err)
+			}
 			o.Coins.Coins = append(o.Coins.Coins, coin)
 			o.CoinsMap[coin.CoinId] = coin
 		}
