@@ -17,10 +17,11 @@ const (
 type EventID_type int
 
 const (
-	EventID_add     = 1 // 재화 증가
-	EventID_sub     = 2 // 재화 감소
-	EventID_toCoin  = 3 // 포인트->코인
-	EventID_toPoint = 4 // 코인->포인트
+	EventID_add   = 1  // 재화 증가
+	EventID_sub   = 2  // 재화 감소
+	EventID_toP2C = 3  // 포인트->코인
+	EventID_toC2P = 4  // 코인->포인트
+	EventID_toC2C = 26 // 코인->코인
 )
 
 type ContextKey struct {

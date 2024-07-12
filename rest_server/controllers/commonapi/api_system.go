@@ -98,7 +98,7 @@ func GetPubsub(ctx *context.InnoDashboardContext) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	isToCoinEnable, isToPointEnable := model.GetSwapEnable()
+	isToCoinEnable, isToPointEnable, isToC2CEnable := model.GetSwapEnable()
 
 	resp.Value = &context.PubsubInfo{
 		Maintenance: &context.PSMaintenance{
@@ -107,6 +107,7 @@ func GetPubsub(ctx *context.InnoDashboardContext) error {
 		Swap: &context.PSSwap{
 			ToCoinEnable:  isToCoinEnable,
 			ToPointEnable: isToPointEnable,
+			ToC2CEnable:   isToC2CEnable,
 		},
 		CoinTransferExternal: &context.PSCoinTransferExternal{
 			Enable: model.GetExternalTransferEnable(),

@@ -98,7 +98,7 @@ func GetMePointList(c echo.Context, reqMePoint *context.ReqMePoint) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if pointList, err := model.GetDB().USPAU_GetList_AccountPoints(reqMePoint.AUID, 0); err != nil {
+	if pointList, err := model.GetDB().USPAU_GetList_AccountPoints(reqMePoint.AUID); err != nil {
 		resp.SetReturn(resultcode.Result_Get_Me_PointList_Scan_Error)
 	} else {
 		if _, membersMap, err := model.GetDB().USPAU_GetList_Members(reqMePoint.AUID); err != nil {

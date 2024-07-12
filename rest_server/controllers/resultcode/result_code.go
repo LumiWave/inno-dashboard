@@ -32,6 +32,7 @@ const (
 
 	Result_Not_Exist_AppPointInfo_Error = 32201 // 앱 포인트 정보가 존재하지 않는다.
 	Result_Unknown_Swap_Error           = 32202 // unknown swap 에러
+	Result_Not_Support_Swap_Error       = 32303 // 지원하지 않는 스왑
 
 	Result_Get_App_AppID_Empty                = 33001 // Get App AppID Empty
 	Result_Get_App_PointID_Empty              = 33002 // Get App PointID Empty
@@ -122,6 +123,7 @@ var ResultCodeText = map[int]string{
 
 	Result_Not_Exist_AppPointInfo_Error: "App point information does not exist",
 	Result_Unknown_Swap_Error:           "Unknown swap error",
+	Result_Not_Support_Swap_Error:       "Not support swap type",
 
 	Result_Get_App_AppID_Empty:                "AppID is empty",
 	Result_Get_App_PointID_Empty:              "PointID is empty",

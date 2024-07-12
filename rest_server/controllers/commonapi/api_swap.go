@@ -1,19 +1,17 @@
 package commonapi
 
 import (
-	"math"
 	"net/http"
-	"strconv"
 
 	"github.com/LumiWave/baseapp/base"
 	"github.com/LumiWave/baseutil/log"
 	"github.com/LumiWave/baseutil/otp_google"
 	"github.com/LumiWave/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/commonapi/inner"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/servers/point_manager_server"
 	"github.com/LumiWave/inno-dashboard/rest_server/model"
-	"github.com/LumiWave/inno-dashboard/rest_server/util"
 	"github.com/labstack/echo"
 )
 
@@ -26,7 +24,11 @@ func GetSwapList(c echo.Context) error {
 		PointList: model.GetDB().ScanPoints,
 		AppPoints: model.GetDB().AppPoints,
 		CoinList:  model.GetDB().Coins,
-		Swapable:  model.GetDB().SwapAble,
+		SwapAble: context.SwapAble{
+			SwapAbleP2C: model.GetDB().SwapAblePointToCoins,
+			SwapAbleC2P: model.GetDB().SwapAbleCoinToPoints,
+			SwapAbleC2C: model.GetDB().SwapAbleCoinToCoins,
+		},
 	}
 
 	resp.Value = swapList
@@ -47,18 +49,10 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	isToCoinEnable, isToPointEnable := model.GetSwapEnable()
-
-	if reqSwapInfo.EventID == context.EventID_toPoint && !isToPointEnable {
-		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Invalid_CoinID_Error])
-		resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
-		resp.Message = "This swap is not currently supported."
-		return ctx.EchoContext.JSON(http.StatusOK, resp)
-	}
-
-	if reqSwapInfo.EventID == context.EventID_toCoin && !isToCoinEnable {
-		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Invalid_CoinID_Error])
-		resp.SetReturn(resultcode.Result_Invalid_CoinID_Error)
+	// swap 사용 가능 상태 체크
+	if !inner.IsEnableSwap(reqSwapInfo) {
+		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Support_Swap_Error])
+		resp.SetReturn(resultcode.Result_Not_Support_Swap_Error)
 		resp.Message = "This swap is not currently supported."
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
 	}
@@ -86,39 +80,37 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 		}
 	}()
 
-	swapInfo := &point_manager_server.ReqSwapInfo{
-		AUID: ctx.GetValue().AUID,
-		SwapPoint: point_manager_server.SwapPoint{
-			MUID:                  0,
-			AppID:                 reqSwapInfo.AppID,
-			DatabaseID:            0,
-			PointID:               reqSwapInfo.PointID,
-			PreviousPointQuantity: 0,
-			AdjustPointQuantity:   reqSwapInfo.AdjustPointQuantity,
-			PointQuantity:         0,
-		},
-		SwapCoin: point_manager_server.SwapCoin{
-			CoinID:             reqSwapInfo.CoinID,
-			WalletAddress:      "",
-			AdjustCoinQuantity: reqSwapInfo.AdjustCoinQuantity,
-		},
-		TxType: reqSwapInfo.EventID,
-	}
+	// 기초 정보 생성
+	swapInfo := inner.MakeSwapInfo(ctx.GetValue(), reqSwapInfo)
 
-	// SwapPoint 정보 추가
-	if _, membersMap, err := model.GetDB().USPAU_GetList_Members(swapInfo.AUID); err != nil {
-		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
-		resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
-		return ctx.EchoContext.JSON(http.StatusOK, resp)
-	} else {
-		if member, ok := membersMap[swapInfo.AppID]; ok {
-			swapInfo.MUID = member.MUID
-			swapInfo.DatabaseID = member.DatabaseID
-		} else {
-			// swap 하려는 app point 정보가 없다.
-			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
-			resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
+	// SwapPoint 정보 추가 : P2C, C2P 인경우에만 처리
+	if reqSwapInfo.EventID == context.EventID_toC2P || reqSwapInfo.EventID == context.EventID_toP2C {
+		if _, membersMap, err := model.GetDB().USPAU_GetList_Members(swapInfo.AUID); err != nil {
+			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
+			resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		} else {
+			if reqSwapInfo.EventID == context.EventID_toC2P {
+				if member, ok := membersMap[swapInfo.SwapToPoint.AppID]; ok {
+					swapInfo.SwapToPoint.MUID = member.MUID
+					swapInfo.SwapToPoint.DatabaseID = member.DatabaseID
+				} else {
+					// swap 하려는 app point 정보가 없다.
+					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
+			} else if reqSwapInfo.EventID == context.EventID_toP2C {
+				if member, ok := membersMap[swapInfo.SwapFromPoint.AppID]; ok {
+					swapInfo.SwapFromPoint.MUID = member.MUID
+					swapInfo.SwapFromPoint.DatabaseID = member.DatabaseID
+				} else {
+					// swap 하려는 app point 정보가 없다.
+					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
+			}
 		}
 	}
 
@@ -136,14 +128,31 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 		// 수수료로 지불할 지갑이 존재 하는지 찾기
 		bFind := false
 		for _, wallet := range wallets {
-			if wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
+			// to coin 처리를 위해 정보 수집
+			if swapInfo.TxType == context.EventID_toP2C || swapInfo.TxType == context.EventID_toC2C {
+				if swapInfo.SwapToCoin.CoinID != 0 && wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.SwapToCoin.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
+					swapInfo.SwapToCoin.WalletAddress = wallet.WalletAddress
+					swapInfo.SwapToCoin.WalletTypeID = wallet.WalletTypeID
+					swapInfo.SwapToCoin.WalletID = wallet.WalletID
+					swapInfo.SwapToCoin.CoinSymbol = model.GetDB().CoinsMap[swapInfo.SwapToCoin.CoinID].CoinSymbol
+					swapInfo.SwapToCoin.BaseCoinID = wallet.BaseCoinID
+					swapInfo.SwapToCoin.BaseCoinSymbol = model.GetDB().BaseCoinMapByCoinID[wallet.BaseCoinID].BaseCoinSymbol
 
-				swapInfo.WalletAddress = wallet.WalletAddress
-				swapInfo.CoinSymbol = model.GetDB().CoinsMap[swapInfo.CoinID].CoinSymbol
-				swapInfo.BaseCoinID = wallet.BaseCoinID
-				swapInfo.BaseCoinSymbol = model.GetDB().BaseCoinMapByCoinID[wallet.BaseCoinID].BaseCoinSymbol
-				bFind = true
-				break
+					bFind = true
+				}
+			}
+			// from coin 처리를 위해 정보 수집
+			if swapInfo.TxType == context.EventID_toC2P || swapInfo.TxType == context.EventID_toC2C {
+				if swapInfo.SwapFromCoin.CoinID != 0 && wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.SwapFromCoin.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
+					swapInfo.SwapFromCoin.WalletAddress = wallet.WalletAddress
+					swapInfo.SwapFromCoin.WalletTypeID = wallet.WalletTypeID
+					swapInfo.SwapFromCoin.WalletID = wallet.WalletID
+					swapInfo.SwapFromCoin.CoinSymbol = model.GetDB().CoinsMap[swapInfo.SwapFromCoin.CoinID].CoinSymbol
+					swapInfo.SwapFromCoin.BaseCoinID = wallet.BaseCoinID
+					swapInfo.SwapFromCoin.BaseCoinSymbol = model.GetDB().BaseCoinMapByCoinID[wallet.BaseCoinID].BaseCoinSymbol
+
+					bFind = true
+				}
 			}
 		}
 		if !bFind { // 수수료 지불한 지갑이 존재하지 않다면 에러
@@ -152,96 +161,32 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
 		}
 
-		// point -> coin 에는 수수료로 지불할 지갑이 존재하는 지 체크
-		if swapInfo.TxType == context.EventID_toCoin {
+		// p2c, c2c 에는 수수료로 지불할 지갑이 존재하는 지 체크
+		if swapInfo.TxType == context.EventID_toP2C {
 			// 지갑에 수수료 확인을 위해서 보유량 가져오기
-			req := &point_manager_server.ReqBalance{
-				Symbol:  swapInfo.BaseCoinSymbol,
-				Address: swapInfo.WalletAddress,
-			}
-			res, err := point_manager_server.GetInstance().GetBalance(req)
-			if err != nil {
-				log.Errorf("GetBalance err : %v, wallet:%v", err, swapInfo.WalletAddress)
-				resp.SetReturn(resultcode.ResultInternalServerError)
+			inner.CheckSwapFee(swapInfo, resp)
+			if resp.Return != 0 {
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
-			} else if res.Return != 0 {
-				log.Errorf("GetBalance return : %v, msg:%v", res.Return, res.Message)
-				resp.SetReturn(resultcode.ResultInternalServerError)
-				return ctx.EchoContext.JSON(http.StatusOK, resp)
-			} else {
-				log.Debugf("GetBalance symbol:%v, addr:%v, bal:%v", req.Symbol, res.Value.Address, res.Value.Balance)
-				// 스왑에 필요한 가스비 가지고 있는지 체크
-				coinInfo := model.GetDB().CoinsMap[swapInfo.CoinID]
-				redisKey := model.MakeCoinFeeKey(coinInfo.CoinSymbol)
-				if coinFee, err := model.GetDB().GetCacheCoinFee(redisKey); err != nil {
-					log.Errorf("GetCacheCoinFee err : %v", err)
-					resp.SetReturn(resultcode.Result_CoinFee_NotExist)
-					return ctx.EchoContext.JSON(http.StatusOK, resp)
-				} else {
-					balance := util.ToDecimalEncf(res.Value.Balance, res.Value.Decimal)
-
-					basecoinRedisKey := model.MakeCoinFeeKey(swapInfo.BaseCoinSymbol)
-					basecoinFee, err := model.GetDB().GetCacheCoinFee(basecoinRedisKey)
-					if err != nil {
-						log.Errorf("GetCacheCoinFee err : %v", err)
-						resp.SetReturn(resultcode.Result_CoinFee_NotExist)
-						return ctx.EchoContext.JSON(http.StatusOK, resp)
-					}
-					//// 수수료로 사용될 코인 balance를 가져와서 보유량 확인
-					if balance <= coinFee.TransactionFee+basecoinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료 + 부모가 보내줄 수수료만큼 있어야함
-						log.Errorf("lock of gas for swap audi : %v, coin_id:%v, symbol:%v, balance:%v", ctx.GetValue().AUID, swapInfo.CoinID, swapInfo.CoinSymbol, balance)
-						resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
-						return ctx.EchoContext.JSON(http.StatusOK, resp)
-					}
-
-					for _, coin := range model.GetDB().CoinsMap {
-						if coin.CoinSymbol == coinFee.BaseCoinSymbol {
-							swapInfo.SwapFeeCoinID = coin.CoinId
-							swapInfo.SwapFeeCoinSymbol = coin.CoinSymbol
-							break
-						}
-					}
-					swapInfo.SwapFee = coinFee.TransactionFee
-
-					swapInfo.SwapFeeT = util.ToDecimalDecStr(coinFee.TransactionFee, model.GetDB().CoinsMap[swapInfo.SwapFeeCoinID].Decimal)
-					swapInfo.SwapFeeD = strconv.FormatFloat(coinFee.TransactionFee, 'f', -1, 64)
-
-				}
 			}
-		} else if swapInfo.TxType == context.EventID_toPoint { // coin -> point 에는 유저 지갑에 전환할 balance가 존재하는지 체크
-			// if balance <= coinFee.TransactionFee { // 부모지갑에 보낼 전송 수수료만 있으면 됨
-			// 	resp.SetReturn(resultcode.Result_CoinFee_LackOfGas)
-			// 	return ctx.EchoContext.JSON(http.StatusOK, resp)
-			// }
-			req := &point_manager_server.ReqBalance{
-				Symbol:  swapInfo.CoinSymbol,
-				Address: swapInfo.WalletAddress,
-			}
-			res, err := point_manager_server.GetInstance().GetBalance(req)
-			if err != nil {
-				log.Errorf("GetBalance err : %v, wallet:%v", err, swapInfo.WalletAddress)
-				resp.SetReturn(resultcode.ResultInternalServerError)
+		} else if swapInfo.TxType == context.EventID_toC2P { // coin -> point 에는 유저 지갑에 전환할 balance 존재하는지 만 체크
+			// 스왑에 사용될 수량 존재 확인
+			inner.CheckSwapCoinBalance(swapInfo, resp)
+			if resp.Return != 0 {
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
-			} else if res.Return != 0 {
-				log.Errorf("GetBalance return : %v, msg:%v", res.Return, res.Message)
-				resp.SetReturn(resultcode.ResultInternalServerError)
-				return ctx.EchoContext.JSON(http.StatusOK, resp)
-			} else {
-				balance := util.ToDecimalEncf(res.Value.Balance, res.Value.Decimal)
-
-				// 보유 수량 부족
-				if math.Abs(swapInfo.SwapCoin.AdjustCoinQuantity) > balance {
-					log.Errorf("not enough swap coin cur : %v, wallet:%v, symbol:%v", balance, swapInfo.WalletAddress, swapInfo.CoinSymbol)
-					resp.SetReturn(resultcode.Result_CoinTransfer_NotEnough_Coin)
-					return ctx.EchoContext.JSON(http.StatusOK, resp)
-				}
 			}
-
-			swapInfo.SwapFee = 0
+		} else if swapInfo.TxType == context.EventID_toC2C { // c2c는 보유 balance, fee 모두 체크 확인
+			// 스왑에 사용될 수량 존재 확인
+			inner.CheckSwapCoinBalance(swapInfo, resp)
+			if resp.Return != 0 {
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			}
+			// 스왑에 필요한 수수료 보유량 확인
+			inner.CheckSwapFee(swapInfo, resp)
+			if resp.Return != 0 {
+				return ctx.EchoContext.JSON(http.StatusOK, resp)
+			}
 		}
-
 	}
-	swapInfo.InnoUID = ctx.GetValue().InnoUID
 
 	// 아래 체크 사항은 point manager server에서 처리한다.
 	// 최소 변환 비율에 맞는지 체크

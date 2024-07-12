@@ -33,6 +33,7 @@ func NewPSMaintenance() *PSMaintenance {
 type PSSwap struct {
 	ToCoinEnable  bool `json:"to_coin_enable"`
 	ToPointEnable bool `json:"to_point_enable"`
+	ToC2CEnable   bool `json:"to_c2c_enable"`
 }
 
 func NewPSSwap() *PSSwap {

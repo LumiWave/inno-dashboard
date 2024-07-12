@@ -63,8 +63,11 @@ type DB struct {
 	WalletTypeMap      map[int64]*context.WalletType //key WalletTypeID
 	AllowWalletTypeMap map[int64][]int64             //플랫폼별 허용가능한 지갑종류 : key basecoin & val walletID
 
-	SwapAbleMap map[int64]*context.Swapable // 전체 스왑 가능한 정보 1 : key appID
-	SwapAble    []*context.Swapable         // 전체 스왑 가능한 정보 2
+	//SwapAbleMap          map[int64]*context.Swapable // 전체 스왑 가능한 정보 1 : key appID
+	//SwapAble             []*context.Swapable         // 전체 스왑 가능한 정보 2
+	SwapAbleCoinToCoins  []*context.SwapCointoCon   // coin to coin 전환 정보
+	SwapAblePointToCoins []*context.SwapPointToCoin // point to coin 전환 정보
+	SwapAbleCoinToPoints []*context.SwapCoinToPoint // coin to point 전환 정보
 
 	RedSync *redsync.Redsync
 }
@@ -121,7 +124,7 @@ func LoadDBPoint(conf *config.ServerConfig) {
 	gDB.AppCoins = make(map[int64][]*AppCoin)
 	gDB.AppPointsMap = make(map[int64]*context.AppPointInfo)
 	gDB.CoinsMap = make(map[int64]*context.CoinInfo)
-	gDB.SwapAbleMap = make(map[int64]*context.Swapable)
+	//gDB.SwapAbleMap = make(map[int64]*context.Swapable)
 	gDB.BaseCoinMapByCoinID = make(map[int64]*context.BaseCoinInfo)
 	gDB.BaseCoinMapBySymbol = make(map[string]*context.BaseCoinInfo)
 
@@ -142,7 +145,10 @@ func LoadDBMeta() {
 	gDB.GetCoins()
 	gDB.GetApps()
 	gDB.GetAppPoints()
-	gDB.GetScanExchangeGoods()
+	//gDB.GetScanExchangeGoods()
+	gDB.USPAU_Scan_ExchangeCoinToCoins()
+	gDB.USPAU_Scan_ExchangePointToCoins()
+	gDB.USPAU_Scan_ExchangeCoinToPoints()
 
 	//wallet
 	gDB.USPAU_Scan_WalletTypes()

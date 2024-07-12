@@ -12,14 +12,15 @@ import (
 )
 
 const (
-	USPAU_GetList_AccountCoins    = "[dbo].[USPAU_GetList_AccountCoins]"
-	USPAU_GetList_AccountPoints   = "[dbo].[USPAU_GetList_AccountPoints]"
-	USPAU_GetList_Members         = "[dbo].[USPAU_GetList_Members]"
-	USPAU_GetList_AccountWallets  = "[dbo].[USPAU_GetList_AccountWallets]"
-	USPAU_Cnct_AccountWallets     = "[dbo].[USPAU_Cnct_AccountWallets]"
-	USPAU_Dscnct_AccountWallets   = "[dbo].[USPAU_Dscnct_AccountWallets]"
-	USPAU_GetList_MigrationData   = "[dbo].[USPAU_GetList_MigrationData]"
-	USPAU_Mod_Accounts_IsMigrated = "[dbo].[USPAU_Mod_Accounts_IsMigrated]"
+	USPAU_GetList_AccountCoins             = "[dbo].[USPAU_GetList_AccountCoins]"
+	USPAU_GetList_AccountPoints            = "[dbo].[USPAU_GetList_AccountPoints]"
+	USPAU_GetList_Members                  = "[dbo].[USPAU_GetList_Members]"
+	USPAU_GetList_AccountWallets           = "[dbo].[USPAU_GetList_AccountWallets]"
+	USPAU_Cnct_AccountWallets              = "[dbo].[USPAU_Cnct_AccountWallets]"
+	USPAU_Dscnct_AccountWallets            = "[dbo].[USPAU_Dscnct_AccountWallets]"
+	USPAU_GetList_MigrationData            = "[dbo].[USPAU_GetList_MigrationData]"
+	USPAU_Mod_Accounts_IsMigrated          = "[dbo].[USPAU_Mod_Accounts_IsMigrated]"
+	USPAU_GetList_AccountApplicationPoints = "[dbo].[USPAU_GetList_AccountApplicationPoints]"
 )
 
 // 계정 코인 조회
@@ -47,8 +48,8 @@ func (o *DB) USPAU_GetList_AccountCoins(auid int64) ([]*context.MeCoin, error) {
 			//&meCoin.Quantity,
 			&meCoin.TodayAcqQuantity,
 			&meCoin.TodayCnsmQuantity,
-			&meCoin.TodayAcqExchangeQuantity,
-			&meCoin.TodayCnsmExchangeQuantity,
+			&meCoin.TodayExchangeAcqQuantity,
+			&meCoin.TodayExchangeCnsmQuantity,
 			&meCoin.ResetDate); err != nil {
 			log.Errorf("USPAU_GetList_AccountCoins Scan error %v", err)
 			return nil, err
@@ -66,11 +67,10 @@ func (o *DB) USPAU_GetList_AccountCoins(auid int64) ([]*context.MeCoin, error) {
 }
 
 // 계정 포인트 조회
-func (o *DB) USPAU_GetList_AccountPoints(auid, muid int64) ([]*context.MePoint, error) {
+func (o *DB) USPAU_GetList_AccountPoints(auid int64) ([]*context.MePoint, error) {
 	var returnValue orginMssql.ReturnStatus
 	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), USPAU_GetList_AccountPoints,
 		sql.Named("AUID", auid),
-		sql.Named("MUID", muid),
 		&returnValue)
 
 	if rows != nil {
@@ -86,12 +86,10 @@ func (o *DB) USPAU_GetList_AccountPoints(auid, muid int64) ([]*context.MePoint, 
 
 	for rows.Next() {
 		mePoint := context.MePoint{}
-		if err := rows.Scan(&mePoint.AppID,
+		if err := rows.Scan(
 			&mePoint.PointID,
-			&mePoint.TodayAcqQuantity,
-			&mePoint.TodayCnsmQuantity,
-			&mePoint.TodayAcqExchangeQuantity,
-			&mePoint.TodayCnsmExchangeQuantity,
+			&mePoint.TodayExchangeAcqQuantity,
+			&mePoint.TodayExchangeCnsmQuantity,
 			&mePoint.ResetDate); err != nil {
 			log.Errorf("USPAU_GetList_AccountPoints Scan error : %v", err)
 			return nil, err
@@ -294,4 +292,37 @@ func (o *DB) USPAU_GetList_MigrationData(auid int64) ([]*context.MIGCoin, []*con
 	}
 
 	return migCoins, migNFT, nil
+}
+
+func (o *DB) USPAU_GetList_AccountApplicationPoints(auid, muid int64) (*context.ReqMeAppPoint, error) {
+	var returnValue orginMssql.ReturnStatus
+	proc := USPAU_GetList_AccountApplicationPoints
+	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), proc,
+		sql.Named("AUID", auid),
+		sql.Named("MUID", muid),
+		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
+	if err != nil {
+		log.Errorf("%s QueryContext error : %v", proc, err)
+		return nil, err
+	}
+
+	points := &context.ReqMeAppPoint{}
+	for rows.Next() {
+		if err := rows.Scan(&points.AppID, &points.PointID, &points.TodayAcqQuantity, &points.TodayCnsmQuantity, &points.ResetDate); err != nil {
+			log.Errorf("%s Scan error : %v", proc, err)
+			return nil, err
+		}
+	}
+
+	if returnValue != 1 {
+		log.Errorf("%s returnvalue error : %v", proc, returnValue)
+		return nil, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+	}
+
+	return points, nil
 }

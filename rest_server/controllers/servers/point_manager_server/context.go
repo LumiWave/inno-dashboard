@@ -47,26 +47,36 @@ type SwapCoin struct {
 	BaseCoinID         int64   `json:"base_coin_id"` // 요청 인자
 	BaseCoinSymbol     string  `json:"base_coin_symbol"`
 	WalletAddress      string  `json:"walletaddress"`
+	ToWalletAddress    string  `json:"to_wallet"`
+	WalletTypeID       int64   `json:"wallet_type_id"`
+	WalletID           int64   `json:"wallet_id"`
 	AdjustCoinQuantity float64 `json:"adjust_coin_quantity"` // 요청 인자
+	TokenTxHash        string  `json:"token_tx_hash"`        // swap 코인 전송 txhash
+	IsComplete         bool    `json:"is_complete"`          // 전송 완료 여부
 }
 
 type ReqSwapInfo struct {
 	AUID int64 `json:"au_id"`
 
-	SwapPoint `json:"point"`
-	SwapCoin  `json:"coin"`
+	SwapFromPoint SwapPoint `json:"from_point"`
+	SwapToPoint   SwapPoint `json:"to_point"`
 
-	TxType int64 `json:"tx_type"` // 3: point->coin,  4: coin->point
+	SwapFromCoin SwapCoin `json:"from_coin"`
+	SwapToCoin   SwapCoin `json:"to_coin"`
+
+	TxType int64 `json:"tx_type"` // 3: point->coin,  4: coin->point, 26: coin->coin
 
 	SwapFeeCoinID     int64   `json:"swap_fee_coin_id"` // 코인 수수료 전송용 코인 아이디
 	SwapFeeCoinSymbol string  `json:"swap_fee_coin_symbol"`
 	SwapFee           float64 `json:"swap_fee"` // point->coin 시 전환시 부모지갑에 전송될 코인량 coin->point는 0 고정
 	SwapFeeT          string  `json:"swap_fee_string"`
 	SwapFeeD          string  `json:"swap_fee_string_d"`
-	SwapWalletAddress string  `json:"to_wallet"`
+	ToWalletAddress   string  `json:"to_wallet"` // 수수료 받을 부모지갑 주소
 	InnoUID           string  `json:"inno_uid"`
 	TxID              int64   `json:"tx_id"`
 	CreateAt          int64   `json:"create_at"`
+	TxHash            string  `json:"tx_hash"`
+	IsFeeComplete     bool    `json:"is_fee_complete"`
 }
 
 type ResSwapInfo struct {

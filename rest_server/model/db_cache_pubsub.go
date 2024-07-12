@@ -96,7 +96,7 @@ func (o *DB) PubSubCmdByInternal(msg basedb.PubSubMessageV8) error {
 	} else if strings.EqualFold(header.Type, PubSub_type_Swap) {
 		psPacket := &PSSwap{}
 		json.Unmarshal([]byte(msg.Payload), psPacket)
-		SetSwapEnable(psPacket.Value.ToCoinEnable, psPacket.Value.ToPointEnable)
+		SetSwapEnable(psPacket.Value.ToCoinEnable, psPacket.Value.ToPointEnable, psPacket.Value.ToC2CEnable)
 	} else if strings.EqualFold(header.Type, PubSub_type_CoinTransferExternal) {
 		psPacket := &PSCoinTransferExternal{}
 		json.Unmarshal([]byte(msg.Payload), psPacket)

@@ -10,20 +10,20 @@ type SwapablePoint struct {
 	PointID int64 `json:"point_id"`
 }
 
-type Swapable struct {
-	AppID      int64            `json:"app_id"`
-	CoinID     int64            `json:"coin_id"`
-	BaseCoinID int64            `json:"base_coin_id"`
-	IsEnable   bool             `json:"is_enabled"`
-	Points     []*SwapablePoint `json:"points"`
-}
+// type Swapable struct {
+// 	AppID      int64            `json:"app_id"`
+// 	CoinID     int64            `json:"coin_id"`
+// 	BaseCoinID int64            `json:"base_coin_id"`
+// 	IsEnable   bool             `json:"is_enabled"`
+// 	Points     []*SwapablePoint `json:"points"`
+// }
 
 type SwapList struct {
 	PointList
 	AppPoints
 	CoinList
 
-	Swapable []*Swapable `json:"swapable"`
+	SwapAble `json:"swapable"`
 }
 
 ////////////////////////////////////////
@@ -64,36 +64,39 @@ type ReqSwapInfo struct {
 	EventID int64  `json:"tx_type"` // 3: point->coin,  4: coin->point
 	OtpCode string `json:"otp_code"`
 
-	SwapPoint `json:"point"`
-	SwapCoin  `json:"coin"`
+	SwapFromPoint SwapPoint `json:"from_point"`
+	SwapToPoint   SwapPoint `json:"to_point"`
+
+	SwapFromCoin SwapCoin `json:"from_coin"`
+	SwapToCoin   SwapCoin `json:"to_coin"`
 }
 
 func (o *ReqSwapInfo) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
-	if o.EventID != EventID_toCoin && o.EventID != EventID_toPoint {
+	if o.EventID != EventID_toP2C && o.EventID != EventID_toC2P && o.EventID != EventID_toC2C {
 		return base.MakeBaseResponse(resultcode.Result_Invalid_EventID_Error)
 	}
-	if o.AppID <= 0 {
-		return base.MakeBaseResponse(resultcode.Result_Invalid_AppID_Error)
-	}
-	if o.PointID <= 0 {
-		return base.MakeBaseResponse(resultcode.Result_Invalid_PointID_Error)
-	}
-	if o.AdjustPointQuantity == 0 {
-		return base.MakeBaseResponse(resultcode.Result_Invalid_PointQuantity_Error)
-	}
-	if o.CoinID <= 0 {
-		return base.MakeBaseResponse(resultcode.Result_Invalid_CoinID_Error)
-	}
-	if o.AdjustCoinQuantity == 0 {
-		return base.MakeBaseResponse(resultcode.Result_Invalid_CoinQuantity_Error)
-	}
+	// if o.AppID <= 0 {
+	// 	return base.MakeBaseResponse(resultcode.Result_Invalid_AppID_Error)
+	// }
+	// if o.PointID <= 0 {
+	// 	return base.MakeBaseResponse(resultcode.Result_Invalid_PointID_Error)
+	// }
+	// if o.AdjustPointQuantity == 0 {
+	// 	return base.MakeBaseResponse(resultcode.Result_Invalid_PointQuantity_Error)
+	// }
+	// if o.CoinID <= 0 {
+	// 	return base.MakeBaseResponse(resultcode.Result_Invalid_CoinID_Error)
+	// }
+	// if o.AdjustCoinQuantity == 0 {
+	// 	return base.MakeBaseResponse(resultcode.Result_Invalid_CoinQuantity_Error)
+	// }
 	// event id에 따라  AdjustPointQuantity AdjustCoinQuantity두 정보 양수 음수 체크
-	if o.EventID == EventID_toCoin {
-		if !(o.AdjustPointQuantity < 0 && o.AdjustCoinQuantity > 0) {
+	if o.EventID == EventID_toP2C {
+		if !(o.SwapFromPoint.AdjustPointQuantity < 0 && o.SwapToCoin.AdjustCoinQuantity > 0) {
 			return base.MakeBaseResponse(resultcode.Result_Invalid_AdjustQuantity_Error)
 		}
-	} else if o.EventID == EventID_toPoint {
-		if !(o.AdjustCoinQuantity < 0 && o.AdjustPointQuantity > 0) {
+	} else if o.EventID == EventID_toC2P {
+		if !(o.SwapFromCoin.AdjustCoinQuantity < 0 && o.SwapToPoint.AdjustPointQuantity > 0) {
 			return base.MakeBaseResponse(resultcode.Result_Invalid_AdjustQuantity_Error)
 		}
 	}
@@ -140,6 +143,75 @@ func (o *ReqSwapInprogress) CheckValidate(ctx *InnoDashboardContext) *base.BaseR
 		return base.MakeBaseResponse(resultcode.Result_Get_Me_AUID_Empty)
 	}
 	return nil
+}
+
+////////////////////////////////////////
+
+// / 스왑 가능 메타 데이터 정보
+// coin to coin
+type SwapCointoCon struct {
+	// FromBaseCoinID는 전환할 재료 코인의 계열 ID입니다.
+	FromBaseCoinID int64 `json:"from_base_coin_id"`
+
+	// FromID는 전환할 재료의 ID입니다.
+	FromID int64 `json:"from_id"`
+
+	// ToBaseCoinID는 받을 코인의 계열 ID입니다.
+	ToBaseCoinID int64 `json:"to_base_coin_id"`
+
+	// ToID는 받을 코인의 ID입니다.
+	ToID int64 `json:"to_id"`
+
+	// IsEnabled는 해당 전환이 활성화 되어있는지 여부를 나타냅니다.
+	IsEnabled bool `json:"is_enabled"`
+
+	// MinimumExchangeQuantity는 최소 전환량을 나타냅니다.
+	MinimumExchangeQuantity string `json:"minimum_exchange_quantity"`
+
+	// ExchangeRatio는 받을 전환 비율을 나타냅니다.
+	ExchangeRatio float64 `json:"exchange_ratio"`
+}
+
+// point to coin
+type SwapPointToCoin struct {
+	// FromID는 전환할 재료의 포인트 ID입니다.
+	FromID int64 `json:"from_id"`
+
+	// ToBaseCoinID는 받을 코인의 계열 ID입니다.
+	ToBaseCoinID int64 `json:"to_base_coin_id"`
+
+	// ToID는 받을 코인의 ID입니다.
+	ToID int64 `json:"to_id"`
+
+	// IsEnabled는 해당 전환이 활성화 되어있는지 여부를 나타냅니다.
+	IsEnabled bool `json:"is_enabled"`
+
+	// MinimumExchangeQuantity는 최소 전환량을 나타냅니다.
+	MinimumExchangeQuantity string `json:"minimum_exchange_quantity"`
+
+	// ExchangeRatio는 받을 전환 비율을 나타냅니다.
+	ExchangeRatio float64 `json:"exchange_ratio"`
+}
+
+// coin to point 정보
+type SwapCoinToPoint struct {
+	// FromBaseCoinID는 전환할 재료 코인의 계열 ID입니다.
+	FromBaseCoinID int64 `json:"from_base_coin_id"`
+
+	// FromID는 전환할 재료의 ID입니다.
+	FromID int64 `json:"from_id"`
+
+	// ToID는 받을 포인트의 ID입니다.
+	ToID int64 `json:"to_id"`
+
+	// IsEnabled는 해당 전환이 활성화 되어있는지 여부를 나타냅니다.
+	IsEnabled bool `json:"is_enabled"`
+
+	// MinimumExchangeQuantity는 최소 전환량을 나타냅니다.
+	MinimumExchangeQuantity string `json:"minimum_exchange_quantity"`
+
+	// ExchangeRatio는 받을 전환 비율을 나타냅니다.
+	ExchangeRatio float64 `json:"exchange_ratio"`
 }
 
 ////////////////////////////////////////
