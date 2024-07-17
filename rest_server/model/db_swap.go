@@ -83,8 +83,16 @@ func (o *DB) USPAU_Scan_ExchangeCoinToCoins() error {
 	for rows.Next() {
 		swapAble := &context.SwapCointoCon{}
 
-		if err := rows.Scan(&swapAble.FromBaseCoinID, &swapAble.FromID, &swapAble.ToBaseCoinID, &swapAble.ToID, &swapAble.IsEnabled, &swapAble.MinimumExchangeQuantity, &swapAble.ExchangeRatio); err != nil {
-			log.Errorf("USPAU_Scan_ExchangeGoods Scan error : %v", err)
+		if err := rows.Scan(&swapAble.FromBaseCoinID,
+			&swapAble.FromID,
+			&swapAble.ToBaseCoinID,
+			&swapAble.ToID,
+			&swapAble.IsEnabled,
+			&swapAble.IsVisible,
+			&swapAble.SortOrder,
+			&swapAble.MinimumExchangeQuantity,
+			&swapAble.ExchangeRatio); err != nil {
+			log.Errorf("USPAU_Scan_ExchangeCoinToCoins Scan error : %v", err)
 			return err
 		} else {
 			o.SwapAbleCoinToCoins = append(o.SwapAbleCoinToCoins, swapAble)
@@ -118,8 +126,15 @@ func (o *DB) USPAU_Scan_ExchangePointToCoins() error {
 	for rows.Next() {
 		swapAble := &context.SwapPointToCoin{}
 
-		if err := rows.Scan(&swapAble.FromID, &swapAble.ToBaseCoinID, &swapAble.ToID, &swapAble.IsEnabled, &swapAble.MinimumExchangeQuantity, &swapAble.ExchangeRatio); err != nil {
-			log.Errorf("USPAU_Scan_ExchangeGoods Scan error : %v", err)
+		if err := rows.Scan(&swapAble.FromID,
+			&swapAble.ToBaseCoinID,
+			&swapAble.ToID,
+			&swapAble.IsEnabled,
+			&swapAble.IsVisible,
+			&swapAble.SortOrder,
+			&swapAble.MinimumExchangeQuantity,
+			&swapAble.ExchangeRatio); err != nil {
+			log.Errorf("USPAU_Scan_ExchangePointToCoins Scan error : %v", err)
 			return err
 		} else {
 			o.SwapAblePointToCoins = append(o.SwapAblePointToCoins, swapAble)
@@ -153,8 +168,15 @@ func (o *DB) USPAU_Scan_ExchangeCoinToPoints() error {
 	for rows.Next() {
 		swapAble := &context.SwapCoinToPoint{}
 
-		if err := rows.Scan(&swapAble.FromBaseCoinID, &swapAble.FromID, &swapAble.ToID, &swapAble.IsEnabled, &swapAble.MinimumExchangeQuantity, &swapAble.ExchangeRatio); err != nil {
-			log.Errorf("USPAU_Scan_ExchangeGoods Scan error : %v", err)
+		if err := rows.Scan(&swapAble.FromBaseCoinID,
+			&swapAble.FromID,
+			&swapAble.ToID,
+			&swapAble.IsEnabled,
+			&swapAble.IsVisible,
+			&swapAble.SortOrder,
+			&swapAble.MinimumExchangeQuantity,
+			&swapAble.ExchangeRatio); err != nil {
+			log.Errorf("USPAU_Scan_ExchangeCoinToPoints Scan error : %v", err)
 			return err
 		} else {
 			o.SwapAbleCoinToPoints = append(o.SwapAbleCoinToPoints, swapAble)
