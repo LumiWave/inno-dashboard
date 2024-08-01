@@ -168,9 +168,6 @@ type SwapCointoCon struct {
 	// 화면에 표출 여부
 	IsVisible bool `json:"is_visible"`
 
-	// 정렬 정보
-	SortOrder int64 `json:"sort_order"`
-
 	// MinimumExchangeQuantity는 최소 전환량을 나타냅니다.
 	MinimumExchangeQuantity string `json:"minimum_exchange_quantity"`
 
@@ -195,9 +192,6 @@ type SwapPointToCoin struct {
 	// 화면에 표출 여부
 	IsVisible bool `json:"is_visible"`
 
-	// 정렬 정보
-	SortOrder int64 `json:"sort_order"`
-
 	// MinimumExchangeQuantity는 최소 전환량을 나타냅니다.
 	MinimumExchangeQuantity string `json:"minimum_exchange_quantity"`
 
@@ -221,9 +215,6 @@ type SwapCoinToPoint struct {
 
 	// 화면에 표출 여부
 	IsVisible bool `json:"is_visible"`
-
-	// 정렬 정보
-	SortOrder int64 `json:"sort_order"`
 
 	// MinimumExchangeQuantity는 최소 전환량을 나타냅니다.
 	MinimumExchangeQuantity string `json:"minimum_exchange_quantity"`

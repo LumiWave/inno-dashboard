@@ -13,6 +13,7 @@ type PointInfo struct {
 	//ExchangeRatio                   float64 `json:"exchange_ratio,omitempty"`
 	DaliyLimitAcqQuantity         int64 `json:"daliy_limit_acq_quantity,omitempty"`          // 게임을 통한 일일 제한 획득량
 	DailyLimitExchangeAcqQuantity int64 `json:"daily_limit_exchange_acq_quantity,omitempty"` // 일일 제한 전환 획득량
+	ExchangeSortOrder             int64 `json:"exchange_sort_order"`                         // 스왑 정렬 순서
 }
 
 type PointList struct {
@@ -49,6 +50,7 @@ type CoinInfo struct {
 	ExchangeFees                  float64          `json:"exchange_fees"`
 	IsRechargeable                bool             `json:"is_rechargeable"`
 	RechargeURL                   string           `json:"recharge_url"`
+	ExchangeSortOrder             int64            `json:"exchnage_sort_order"`
 	CustomProperties              CustomProperties `json:"custom_properties"`
 }
 

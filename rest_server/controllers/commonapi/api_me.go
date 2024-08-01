@@ -98,32 +98,29 @@ func GetMePointList(c echo.Context, reqMePoint *context.ReqMePoint) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
-	if pointList, err := model.GetDB().USPAU_GetList_AccountPoints(reqMePoint.AUID); err != nil {
-		resp.SetReturn(resultcode.Result_Get_Me_PointList_Scan_Error)
+	if _, membersMap, err := model.GetDB().USPAU_GetList_Members(reqMePoint.AUID); err != nil {
+		resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
 	} else {
-		if _, membersMap, err := model.GetDB().USPAU_GetList_Members(reqMePoint.AUID); err != nil {
-			resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
-		} else {
-			for _, member := range membersMap {
-				// 포인트 서버에서 현재 실제 정보 가져와서 merge
-				if memberInfo, err := point_manager_server.GetInstance().GetPointAppList(member.MUID, member.DatabaseID); err == nil {
-					for _, point := range memberInfo.Points {
-						for _, mePoint := range pointList {
-							if point.PointID == mePoint.PointID {
-								mePoint.Quantity = point.Quantity
-							}
-						}
-					}
-				} else {
-					log.Errorf("point_manager_server GetPointAppList error : %v", err)
+		mePoints := []*context.MePoint{}
+		for _, member := range membersMap {
+			// 포인트 서버에서 현재 실제 정보 가져와서 merge
+			mePoint := &context.MePoint{}
+			if memberInfo, err := point_manager_server.GetInstance().GetPointAppList(member.MUID, member.DatabaseID); err == nil {
+				for _, point := range memberInfo.Points {
+					mePoint.PointID = point.PointID
+					mePoint.Quantity = point.Quantity
+					mePoint.ResetDate = point.ResetDate
+
+					mePoints = append(mePoints, mePoint)
 				}
+			} else {
+				log.Errorf("point_manager_server GetPointAppList error : %v", err)
 			}
 
-			resp.Value = []*context.MePoint{}
-			if pointList != nil {
-				resp.Value = pointList
-			}
 		}
+
+		resp.Value = mePoints
+
 	}
 
 	return c.JSON(http.StatusOK, resp)

@@ -60,15 +60,16 @@ func (o *DB) GetPointList() error {
 	o.ScanPointsMap = make(map[int64]*context.PointInfo)
 	o.ScanPoints.Points = nil
 
-	var pointId, dailyLimitExchangeAcqQuantity int64
+	var pointId, dailyLimitExchangeAcqQuantity, exchangeSortOrder int64
 	var pointName, iconPath string
 	for rows.Next() {
-		if err := rows.Scan(&pointId, &pointName, &iconPath, &dailyLimitExchangeAcqQuantity); err == nil {
+		if err := rows.Scan(&pointId, &pointName, &iconPath, &dailyLimitExchangeAcqQuantity, &exchangeSortOrder); err == nil {
 			info := &context.PointInfo{
 				PointId:                       pointId,
 				PointName:                     pointName,
 				IconUrl:                       iconPath,
 				DailyLimitExchangeAcqQuantity: dailyLimitExchangeAcqQuantity,
+				ExchangeSortOrder:             exchangeSortOrder,
 			}
 			o.ScanPointsMap[pointId] = info
 			o.ScanPoints.Points = append(o.ScanPoints.Points, info)
@@ -133,6 +134,7 @@ func (o *DB) GetCoins() error {
 			&coin.ExchangeFees,
 			&coin.IsRechargeable,
 			&coin.RechargeURL,
+			&coin.ExchangeSortOrder,
 			&customProperties); err == nil {
 			if err := json.Unmarshal([]byte(customProperties), &coin.CustomProperties); err != nil {
 				log.Error("USPAU_Scan_Coins customProperties Unmarshal err : ", err)
