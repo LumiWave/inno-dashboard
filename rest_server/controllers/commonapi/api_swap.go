@@ -28,6 +28,7 @@ func GetSwapList(c echo.Context) error {
 			SwapAbleP2C: model.GetDB().SwapAblePointToCoins,
 			SwapAbleC2P: model.GetDB().SwapAbleCoinToPoints,
 			SwapAbleC2C: model.GetDB().SwapAbleCoinToCoins,
+			SwapAbleP2P: model.GetDB().SwapAblePointToPoints,
 		},
 	}
 
@@ -84,7 +85,9 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	swapInfo := inner.MakeSwapInfo(ctx.GetValue(), reqSwapInfo)
 
 	// SwapPoint 정보 추가 : P2C, C2P 인경우에만 처리
-	if reqSwapInfo.EventID == context.EventID_toC2P || reqSwapInfo.EventID == context.EventID_toP2C {
+	if reqSwapInfo.EventID == context.EventID_toC2P ||
+		reqSwapInfo.EventID == context.EventID_toP2C ||
+		reqSwapInfo.EventID == context.EventID_toP2P {
 		if _, membersMap, err := model.GetDB().USPAU_GetList_Members(swapInfo.AUID); err != nil {
 			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
 			resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
@@ -110,80 +113,102 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
 					return ctx.EchoContext.JSON(http.StatusOK, resp)
 				}
+			} else if reqSwapInfo.EventID == context.EventID_toP2P {
+				if member, ok := membersMap[swapInfo.SwapFromPoint.AppID]; ok {
+					swapInfo.SwapFromPoint.MUID = member.MUID
+					swapInfo.SwapFromPoint.DatabaseID = member.DatabaseID
+				} else {
+					// swap 하려는 app point 정보가 없다.
+					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
+
+				if member, ok := membersMap[swapInfo.SwapToPoint.AppID]; ok {
+					swapInfo.SwapToPoint.MUID = member.MUID
+					swapInfo.SwapToPoint.DatabaseID = member.DatabaseID
+				} else {
+					// swap 하려는 app point 정보가 없다.
+					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
 			}
 		}
 	}
 
-	// SwapCoin 정보 추가
-	// 내가 보유하고 있는 지갑이 있는지 검증한다.
-	if wallets, err := model.GetDB().USPAU_GetList_AccountWallets(ctx.GetValue().AUID); err != nil {
-		log.Errorf("USPAU_GetList_AccountWallets err : %v, auid:%v", err, ctx.GetValue().AUID)
-		resp.SetReturn(resultcode.Result_Error_Db_GetAccountWallets)
-		return ctx.EchoContext.JSON(http.StatusOK, resp)
-	} else if len(wallets) == 0 {
-		log.Errorf("USPAU_GetList_AccountWallets not exist wallet by auid : %v", ctx.GetValue().AUID)
-		resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
-		return ctx.EchoContext.JSON(http.StatusOK, resp)
-	} else {
-		// 수수료로 지불할 지갑이 존재 하는지 찾기
-		bFind := false
-		for _, wallet := range wallets {
-			// to coin 처리를 위해 정보 수집
-			if swapInfo.TxType == context.EventID_toP2C || swapInfo.TxType == context.EventID_toC2C {
-				if swapInfo.SwapToCoin.CoinID != 0 && wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.SwapToCoin.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
-					swapInfo.SwapToCoin.WalletAddress = wallet.WalletAddress
-					swapInfo.SwapToCoin.WalletTypeID = wallet.WalletTypeID
-					swapInfo.SwapToCoin.WalletID = wallet.WalletID
-					swapInfo.SwapToCoin.CoinSymbol = model.GetDB().CoinsMap[swapInfo.SwapToCoin.CoinID].CoinSymbol
-					swapInfo.SwapToCoin.BaseCoinID = wallet.BaseCoinID
-					swapInfo.SwapToCoin.BaseCoinSymbol = model.GetDB().BaseCoinMapByCoinID[wallet.BaseCoinID].BaseCoinSymbol
-
-					bFind = true
-				}
-			}
-			// from coin 처리를 위해 정보 수집
-			if swapInfo.TxType == context.EventID_toC2P || swapInfo.TxType == context.EventID_toC2C {
-				if swapInfo.SwapFromCoin.CoinID != 0 && wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.SwapFromCoin.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
-					swapInfo.SwapFromCoin.WalletAddress = wallet.WalletAddress
-					swapInfo.SwapFromCoin.WalletTypeID = wallet.WalletTypeID
-					swapInfo.SwapFromCoin.WalletID = wallet.WalletID
-					swapInfo.SwapFromCoin.CoinSymbol = model.GetDB().CoinsMap[swapInfo.SwapFromCoin.CoinID].CoinSymbol
-					swapInfo.SwapFromCoin.BaseCoinID = wallet.BaseCoinID
-					swapInfo.SwapFromCoin.BaseCoinSymbol = model.GetDB().BaseCoinMapByCoinID[wallet.BaseCoinID].BaseCoinSymbol
-
-					bFind = true
-				}
-			}
-		}
-		if !bFind { // 수수료 지불한 지갑이 존재하지 않다면 에러
-			log.Errorf("Not Find swap fee wallet / auid : %v", ctx.GetValue().AUID)
+	if reqSwapInfo.EventID != context.EventID_toP2P {
+		// SwapCoin 정보 추가
+		// 내가 보유하고 있는 지갑이 있는지 검증한다.
+		if wallets, err := model.GetDB().USPAU_GetList_AccountWallets(ctx.GetValue().AUID); err != nil {
+			log.Errorf("USPAU_GetList_AccountWallets err : %v, auid:%v", err, ctx.GetValue().AUID)
+			resp.SetReturn(resultcode.Result_Error_Db_GetAccountWallets)
+			return ctx.EchoContext.JSON(http.StatusOK, resp)
+		} else if len(wallets) == 0 {
+			log.Errorf("USPAU_GetList_AccountWallets not exist wallet by auid : %v", ctx.GetValue().AUID)
 			resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
-		}
+		} else {
+			// 수수료로 지불할 지갑이 존재 하는지 찾기
+			bFind := false
+			for _, wallet := range wallets {
+				// to coin 처리를 위해 정보 수집
+				if swapInfo.TxType == context.EventID_toP2C || swapInfo.TxType == context.EventID_toC2C {
+					if swapInfo.SwapToCoin.CoinID != 0 && wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.SwapToCoin.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
+						swapInfo.SwapToCoin.WalletAddress = wallet.WalletAddress
+						swapInfo.SwapToCoin.WalletTypeID = wallet.WalletTypeID
+						swapInfo.SwapToCoin.WalletID = wallet.WalletID
+						swapInfo.SwapToCoin.CoinSymbol = model.GetDB().CoinsMap[swapInfo.SwapToCoin.CoinID].CoinSymbol
+						swapInfo.SwapToCoin.BaseCoinID = wallet.BaseCoinID
+						swapInfo.SwapToCoin.BaseCoinSymbol = model.GetDB().BaseCoinMapByCoinID[wallet.BaseCoinID].BaseCoinSymbol
 
-		// p2c, c2c 에는 수수료로 지불할 지갑이 존재하는 지 체크
-		if swapInfo.TxType == context.EventID_toP2C {
-			// 지갑에 수수료 확인을 위해서 보유량 가져오기
-			inner.CheckSwapFee(swapInfo, resp)
-			if resp.Return != 0 {
+						bFind = true
+					}
+				}
+				// from coin 처리를 위해 정보 수집
+				if swapInfo.TxType == context.EventID_toC2P || swapInfo.TxType == context.EventID_toC2C {
+					if swapInfo.SwapFromCoin.CoinID != 0 && wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.SwapFromCoin.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
+						swapInfo.SwapFromCoin.WalletAddress = wallet.WalletAddress
+						swapInfo.SwapFromCoin.WalletTypeID = wallet.WalletTypeID
+						swapInfo.SwapFromCoin.WalletID = wallet.WalletID
+						swapInfo.SwapFromCoin.CoinSymbol = model.GetDB().CoinsMap[swapInfo.SwapFromCoin.CoinID].CoinSymbol
+						swapInfo.SwapFromCoin.BaseCoinID = wallet.BaseCoinID
+						swapInfo.SwapFromCoin.BaseCoinSymbol = model.GetDB().BaseCoinMapByCoinID[wallet.BaseCoinID].BaseCoinSymbol
+
+						bFind = true
+					}
+				}
+			}
+			if !bFind { // 수수료 지불한 지갑이 존재하지 않다면 에러
+				log.Errorf("Not Find swap fee wallet / auid : %v", ctx.GetValue().AUID)
+				resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
 				return ctx.EchoContext.JSON(http.StatusOK, resp)
 			}
-		} else if swapInfo.TxType == context.EventID_toC2P { // coin -> point 에는 유저 지갑에 전환할 balance 존재하는지 만 체크
-			// 스왑에 사용될 수량 존재 확인
-			inner.CheckSwapCoinBalance(swapInfo, resp)
-			if resp.Return != 0 {
-				return ctx.EchoContext.JSON(http.StatusOK, resp)
-			}
-		} else if swapInfo.TxType == context.EventID_toC2C { // c2c는 보유 balance, fee 모두 체크 확인
-			// 스왑에 사용될 수량 존재 확인
-			inner.CheckSwapCoinBalance(swapInfo, resp)
-			if resp.Return != 0 {
-				return ctx.EchoContext.JSON(http.StatusOK, resp)
-			}
-			// 스왑에 필요한 수수료 보유량 확인
-			inner.CheckSwapFee(swapInfo, resp)
-			if resp.Return != 0 {
-				return ctx.EchoContext.JSON(http.StatusOK, resp)
+
+			// p2c, c2c 에는 수수료로 지불할 지갑이 존재하는 지 체크
+			if swapInfo.TxType == context.EventID_toP2C {
+				// 지갑에 수수료 확인을 위해서 보유량 가져오기
+				inner.CheckSwapFee(swapInfo, resp)
+				if resp.Return != 0 {
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
+			} else if swapInfo.TxType == context.EventID_toC2P { // coin -> point 에는 유저 지갑에 전환할 balance 존재하는지 만 체크
+				// 스왑에 사용될 수량 존재 확인
+				inner.CheckSwapCoinBalance(swapInfo, resp)
+				if resp.Return != 0 {
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
+			} else if swapInfo.TxType == context.EventID_toC2C { // c2c는 보유 balance, fee 모두 체크 확인
+				// 스왑에 사용될 수량 존재 확인
+				inner.CheckSwapCoinBalance(swapInfo, resp)
+				if resp.Return != 0 {
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
+				// 스왑에 필요한 수수료 보유량 확인
+				inner.CheckSwapFee(swapInfo, resp)
+				if resp.Return != 0 {
+					return ctx.EchoContext.JSON(http.StatusOK, resp)
+				}
 			}
 		}
 	}

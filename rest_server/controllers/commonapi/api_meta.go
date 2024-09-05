@@ -31,6 +31,7 @@ func GetMeta(c echo.Context) error {
 			SwapAbleP2C: model.GetDB().SwapAblePointToCoins,
 			SwapAbleC2P: model.GetDB().SwapAbleCoinToPoints,
 			SwapAbleC2C: model.GetDB().SwapAbleCoinToCoins,
+			SwapAbleP2P: model.GetDB().SwapAblePointToPoints,
 		},
 
 		BaseCoinList:   model.GetDB().BaseCoins,

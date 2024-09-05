@@ -81,6 +81,25 @@ func MakeSwapInfo(token *auth.VerifyAuthToken, reqSwapInfo *context.ReqSwapInfo)
 			WalletAddress:      "",
 			AdjustCoinQuantity: reqSwapInfo.SwapToCoin.AdjustCoinQuantity,
 		}
+	case context.EventID_toP2P:
+		swapInfo.SwapFromPoint = point_manager_server.SwapPoint{
+			MUID:                  0,
+			AppID:                 reqSwapInfo.SwapFromPoint.AppID,
+			DatabaseID:            0,
+			PointID:               reqSwapInfo.SwapFromPoint.PointID,
+			PreviousPointQuantity: 0,
+			AdjustPointQuantity:   reqSwapInfo.SwapFromPoint.AdjustPointQuantity,
+			PointQuantity:         0,
+		}
+		swapInfo.SwapToPoint = point_manager_server.SwapPoint{
+			MUID:                  0,
+			AppID:                 reqSwapInfo.SwapToPoint.AppID,
+			DatabaseID:            0,
+			PointID:               reqSwapInfo.SwapToPoint.PointID,
+			PreviousPointQuantity: 0,
+			AdjustPointQuantity:   reqSwapInfo.SwapToPoint.AdjustPointQuantity,
+			PointQuantity:         0,
+		}
 	}
 
 	return swapInfo

@@ -11,57 +11,11 @@ import (
 )
 
 const (
-	//USPAU_Scan_ExchangeGoods        = "[dbo].[USPAU_Scan_ExchangeGoods]"
-	USPAU_Scan_ExchangeCoinToCoins  = "[dbo].[USPAU_Scan_ExchangeCoinToCoins]"
-	USPAU_Scan_ExchangePointToCoins = "[dbo].[USPAU_Scan_ExchangePointToCoins]"
-	USPAU_Scan_ExchangeCoinToPoints = "[dbo].[USPAU_Scan_ExchangeCoinToPoints]"
+	USPAU_Scan_ExchangeCoinToCoins   = "[dbo].[USPAU_Scan_ExchangeCoinToCoins]"
+	USPAU_Scan_ExchangePointToCoins  = "[dbo].[USPAU_Scan_ExchangePointToCoins]"
+	USPAU_Scan_ExchangeCoinToPoints  = "[dbo].[USPAU_Scan_ExchangeCoinToPoints]"
+	USPAU_Scan_ExchangePointToPoints = "[dbo].[USPAU_Scan_ExchangePointToPoints]"
 )
-
-// 교환 가능 코인, 포인트 정보
-// func (o *DB) GetScanExchangeGoods() error {
-// 	var returnValue orginMssql.ReturnStatus
-// 	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), USPAU_Scan_ExchangeGoods,
-// 		&returnValue)
-
-// 	if rows != nil {
-// 		defer rows.Close()
-// 	}
-
-// 	if err != nil {
-// 		log.Errorf("USPAU_Scan_ExchangeGoods QueryContext error : %v", err)
-// 		return nil
-// 	}
-
-// 	o.SwapAbleMap = make(map[int64]*context.Swapable)
-// 	o.SwapAble = nil
-
-// 	for rows.Next() {
-// 		swapAble := &context.Swapable{}
-// 		swapablePoint := &context.SwapablePoint{}
-// 		if err := rows.Scan(&swapAble.AppID, &swapAble.CoinID, &swapAble.BaseCoinID, &swapablePoint.PointID, &swapAble.IsEnable); err != nil {
-// 			log.Errorf("USPAU_Scan_ExchangeGoods Scan error : %v", err)
-// 			return err
-// 		} else {
-// 			if swapItem, ok := o.SwapAbleMap[swapAble.AppID]; ok {
-// 				swapItem.Points = append(swapItem.Points, swapablePoint)
-// 			} else {
-// 				swapAble.Points = append(swapAble.Points, swapablePoint)
-// 				o.SwapAbleMap[swapAble.AppID] = swapAble
-// 			}
-// 		}
-// 	}
-
-// 	for _, swabAble := range o.SwapAbleMap {
-// 		o.SwapAble = append(o.SwapAble, swabAble)
-// 	}
-
-// 	if returnValue != 1 {
-// 		log.Errorf("USPAU_Scan_ExchangeGoods returnvalue error : %v", returnValue)
-// 		return errors.New("USPAU_Scan_ExchangeGoods returnvalue error " + strconv.Itoa(int(returnValue)))
-// 	}
-// 	return nil
-
-// }
 
 func (o *DB) USPAU_Scan_ExchangeCoinToCoins() error {
 	var returnValue orginMssql.ReturnStatus
@@ -177,6 +131,47 @@ func (o *DB) USPAU_Scan_ExchangeCoinToPoints() error {
 			return err
 		} else {
 			o.SwapAbleCoinToPoints = append(o.SwapAbleCoinToPoints, swapAble)
+		}
+	}
+
+	if returnValue != 1 {
+		log.Errorf("%v returnvalue error : %v", proc, returnValue)
+		return errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+	}
+	return nil
+}
+
+func (o *DB) USPAU_Scan_ExchangePointToPoints() error {
+	var returnValue orginMssql.ReturnStatus
+	proc := USPAU_Scan_ExchangePointToPoints
+	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), proc,
+		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
+	if err != nil {
+		log.Errorf("%v QueryContext error : %v", proc, err)
+		return nil
+	}
+
+	o.SwapAblePointToPoints = nil
+
+	for rows.Next() {
+		swapAble := &context.SwapPointToPoint{}
+
+		if err := rows.Scan(
+			&swapAble.FromID,
+			&swapAble.ToID,
+			&swapAble.IsEnabled,
+			&swapAble.IsVisible,
+			&swapAble.MinimumExchangeQuantity,
+			&swapAble.ExchangeRatio); err != nil {
+			log.Errorf("%v Scan error : %v", proc, err)
+			return err
+		} else {
+			o.SwapAblePointToPoints = append(o.SwapAblePointToPoints, swapAble)
 		}
 	}
 

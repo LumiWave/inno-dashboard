@@ -22,6 +22,7 @@ const (
 	EventID_toP2C = 3  // 포인트->코인
 	EventID_toC2P = 4  // 코인->포인트
 	EventID_toC2C = 26 // 코인->코인
+	EventID_toP2P = 28 // 포인트->포인트
 )
 
 type ContextKey struct {

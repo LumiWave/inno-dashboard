@@ -63,11 +63,10 @@ type DB struct {
 	WalletTypeMap      map[int64]*context.WalletType //key WalletTypeID
 	AllowWalletTypeMap map[int64][]int64             //플랫폼별 허용가능한 지갑종류 : key basecoin & val walletID
 
-	//SwapAbleMap          map[int64]*context.Swapable // 전체 스왑 가능한 정보 1 : key appID
-	//SwapAble             []*context.Swapable         // 전체 스왑 가능한 정보 2
-	SwapAbleCoinToCoins  []*context.SwapCointoCon   // coin to coin 전환 정보
-	SwapAblePointToCoins []*context.SwapPointToCoin // point to coin 전환 정보
-	SwapAbleCoinToPoints []*context.SwapCoinToPoint // coin to point 전환 정보
+	SwapAbleCoinToCoins   []*context.SwapCointoCon    // coin to coin 전환 정보
+	SwapAblePointToCoins  []*context.SwapPointToCoin  // point to coin 전환 정보
+	SwapAbleCoinToPoints  []*context.SwapCoinToPoint  // coin to point 전환 정보
+	SwapAblePointToPoints []*context.SwapPointToPoint // point to point 전환 정보
 
 	RedSync *redsync.Redsync
 }
@@ -149,6 +148,7 @@ func LoadDBMeta() {
 	gDB.USPAU_Scan_ExchangeCoinToCoins()
 	gDB.USPAU_Scan_ExchangePointToCoins()
 	gDB.USPAU_Scan_ExchangeCoinToPoints()
+	gDB.USPAU_Scan_ExchangePointToPoints()
 
 	//wallet
 	gDB.USPAU_Scan_WalletTypes()
