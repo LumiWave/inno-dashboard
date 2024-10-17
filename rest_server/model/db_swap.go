@@ -32,10 +32,10 @@ func (o *DB) USPAU_Scan_ExchangeCoinToCoins() error {
 		return nil
 	}
 
-	o.SwapAbleCoinToCoins = nil
+	o.SwapAbleCoinToCoins = []*context.SwapCointoCoin{}
 
 	for rows.Next() {
-		swapAble := &context.SwapCointoCon{}
+		swapAble := &context.SwapCointoCoin{}
 
 		if err := rows.Scan(&swapAble.FromBaseCoinID,
 			&swapAble.FromID,
@@ -74,7 +74,7 @@ func (o *DB) USPAU_Scan_ExchangePointToCoins() error {
 		return nil
 	}
 
-	o.SwapAblePointToCoins = nil
+	o.SwapAblePointToCoins = []*context.SwapPointToCoin{}
 
 	for rows.Next() {
 		swapAble := &context.SwapPointToCoin{}
@@ -115,7 +115,7 @@ func (o *DB) USPAU_Scan_ExchangeCoinToPoints() error {
 		return nil
 	}
 
-	o.SwapAbleCoinToPoints = nil
+	o.SwapAbleCoinToPoints = []*context.SwapCoinToPoint{}
 
 	for rows.Next() {
 		swapAble := &context.SwapCoinToPoint{}
@@ -156,7 +156,7 @@ func (o *DB) USPAU_Scan_ExchangePointToPoints() error {
 		return nil
 	}
 
-	o.SwapAblePointToPoints = nil
+	o.SwapAblePointToPoints = []*context.SwapPointToPoint{}
 
 	for rows.Next() {
 		swapAble := &context.SwapPointToPoint{}

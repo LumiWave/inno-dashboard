@@ -134,7 +134,7 @@ func (o *ReqSwapInprogress) CheckValidate(ctx *InnoDashboardContext) *base.BaseR
 
 // / 스왑 가능 메타 데이터 정보
 // coin to coin
-type SwapCointoCon struct {
+type SwapCointoCoin struct {
 	// FromBaseCoinID는 전환할 재료 코인의 계열 ID입니다.
 	FromBaseCoinID int64 `json:"from_base_coin_id"`
 

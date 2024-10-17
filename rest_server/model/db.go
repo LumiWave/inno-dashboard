@@ -63,7 +63,7 @@ type DB struct {
 	WalletTypeMap      map[int64]*context.WalletType //key WalletTypeID
 	AllowWalletTypeMap map[int64][]int64             //플랫폼별 허용가능한 지갑종류 : key basecoin & val walletID
 
-	SwapAbleCoinToCoins   []*context.SwapCointoCon    // coin to coin 전환 정보
+	SwapAbleCoinToCoins   []*context.SwapCointoCoin   // coin to coin 전환 정보
 	SwapAblePointToCoins  []*context.SwapPointToCoin  // point to coin 전환 정보
 	SwapAbleCoinToPoints  []*context.SwapCoinToPoint  // coin to point 전환 정보
 	SwapAblePointToPoints []*context.SwapPointToPoint // point to point 전환 정보
