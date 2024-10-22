@@ -9,6 +9,7 @@ import (
 	"github.com/LumiWave/baseutil/datetime"
 	"github.com/LumiWave/baseutil/log"
 	"github.com/LumiWave/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/servers/inno_web_server"
 )
 
 func (o *DB) PublishEvent(channel string, val interface{}) error {
@@ -104,7 +105,22 @@ func (o *DB) PubSubCmdByInternal(msg basedb.PubSubMessageV8) error {
 	} else if strings.EqualFold(header.Type, PubSub_type_meta_refresh) {
 		// db meta refresh
 		LoadDBMeta()
+		o.SendInnoWebHook(Webhook_type_meta_refresh)
 		log.Infof("pubsub cmd : %v", PubSub_type_meta_refresh)
 	}
 	return nil
+}
+
+func (o *DB) SendInnoWebHook(webhookType int) {
+	go func(wType int) {
+		if wType == Webhook_type_meta_refresh {
+			if res, err := inno_web_server.GetInstance().PostReloadMetaDashBoard(); err != nil {
+				log.Errorf("WebServer webhook error : %v", err)
+			} else {
+				if res.Code != 0 {
+					log.Errorf("WebServer webHook response err code :%v , message :%v ", res.Code, res.Message)
+				}
+			}
+		}
+	}(webhookType)
 }

@@ -15,6 +15,10 @@ const (
 	PubSub_type_meta_refresh         = "MetaRefresh"
 )
 
+const (
+	Webhook_type_meta_refresh = iota
+)
+
 type PSHeader struct {
 	Type string `json:"type"`
 }

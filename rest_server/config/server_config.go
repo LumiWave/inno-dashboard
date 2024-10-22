@@ -48,6 +48,7 @@ type ServerConfig struct {
 	Auth               ApiAuth         `yaml:"api_auth"`
 	InnoMarket         ApiInno         `yaml:"api_inno_market"`
 	PointMgrServer     ApiInno         `yaml:"api_point_manager_server"`
+	WebInno            ApiInno         `yaml:"web_inno_server"`
 }
 
 func GetInstance(filepath ...string) *ServerConfig {

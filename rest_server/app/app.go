@@ -13,6 +13,7 @@ import (
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/internalapi"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/servers/inno_market"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/servers/inno_web_server"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/servers/point_manager_server"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/upbit"
 	"github.com/LumiWave/inno-dashboard/rest_server/model"
@@ -37,6 +38,7 @@ func (o *ServerApp) Init(configFile string) (err error) {
 	auth.InitHttpClient()
 	o.InitPointManagerServer(o.conf)
 	o.InitMarketServer(o.conf)
+	o.InitWebInnoServer(o.conf)
 
 	if err := o.NewDB(o.conf); err != nil {
 		return err
@@ -94,6 +96,10 @@ func (o *ServerApp) InitPointManagerServer(conf *config.ServerConfig) {
 
 func (o *ServerApp) InitMarketServer(conf *config.ServerConfig) error {
 	return inno_market.InitMarketServer(conf)
+}
+
+func (o *ServerApp) InitWebInnoServer(conf *config.ServerConfig) error {
+	return inno_web_server.InitWebInno(conf)
 }
 
 func (o *ServerApp) NewDB(conf *config.ServerConfig) error {
