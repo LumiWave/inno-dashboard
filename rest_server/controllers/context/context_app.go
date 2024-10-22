@@ -52,6 +52,7 @@ type CoinInfo struct {
 	RechargeURL                   string           `json:"recharge_url"`
 	ExchangeSortOrder             int64            `json:"exchange_sort_order"`
 	CustomProperties              CustomProperties `json:"custom_properties"`
+	IsAlarmEnabled                bool             `json:"is_alarm_enabled"`
 }
 
 type CustomProperties struct {

@@ -135,7 +135,8 @@ func (o *DB) GetCoins() error {
 			&coin.IsRechargeable,
 			&coin.RechargeURL,
 			&coin.ExchangeSortOrder,
-			&customProperties); err == nil {
+			&customProperties,
+			&coin.IsAlarmEnabled); err == nil {
 			if err := json.Unmarshal([]byte(customProperties), &coin.CustomProperties); err != nil {
 				log.Error("USPAU_Scan_Coins customProperties Unmarshal err : ", err)
 			}
