@@ -19,6 +19,10 @@ type App struct {
 	LiquidityUpdate        bool   `json:"liquidity_update" yaml:"liquidity_update"`
 }
 
+type Swap struct {
+	ExpireCycle int64 `json:"expire_cycle" yaml:"expire_cycle"`
+}
+
 type Otp struct {
 	EnableSwap bool   `json:"enable_swap" yaml:"enable_swap"`
 	IssueName  string `json:"issue_name" yaml:"issue_name"`
@@ -41,6 +45,7 @@ type ServerConfig struct {
 	baseconf.Config `yaml:",inline"`
 
 	App                App             `yaml:"app"`
+	Swap               Swap            `yaml:"swap"`
 	Otp                Otp             `yaml:"otp"`
 	MssqlDBAccountAll  baseconf.DBAuth `yaml:"mssql_db_account"`
 	MssqlDBAccountRead baseconf.DBAuth `yaml:"mssql_db_account_read"`

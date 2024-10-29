@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/LumiWave/baseapp/base"
+	"github.com/LumiWave/inno-dashboard/rest_server/config"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 	"github.com/LumiWave/inno-dashboard/rest_server/model"
 	"github.com/labstack/echo"
@@ -32,6 +33,7 @@ func GetMeta(c echo.Context) error {
 			SwapAbleC2P: model.GetDB().SwapAbleCoinToPoints,
 			SwapAbleC2C: model.GetDB().SwapAbleCoinToCoins,
 			SwapAbleP2P: model.GetDB().SwapAblePointToPoints,
+			ExpireCycle: config.GetInstance().Swap.ExpireCycle,
 		},
 
 		BaseCoinList:   model.GetDB().BaseCoins,
