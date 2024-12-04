@@ -31,11 +31,7 @@ func GetMeWallets(c echo.Context, reqMeCoin *context.ReqMeCoin) error {
 			resp.SetReturn(resultcode.Result_Get_Me_WalletList_Scan_Error)
 		} else {
 			if balances.Return == 0 {
-				if len(balances.Value.Balances) == 0 {
-					resp.SetReturn(resultcode.Result_Error_Db_NotExistWallets)
-				} else {
-					resp.Value = balances.Value.Balances
-				}
+				resp.Value = balances.Value.Balances
 			} else {
 				resp.Message = balances.Message
 				resp.Return = balances.Return
