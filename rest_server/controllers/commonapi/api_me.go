@@ -274,7 +274,7 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 						resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_NotAllowedWalletType)
 					} else {
 						isMigration := true
-						if errType, isMigrated, err := model.GetDB().USPAU_Cnct_AccountWallets(params.AUID, params.BaseCoinID, params.WalletAddress, params.WalletTypeID); err != nil {
+						if errType, isMigrated, err := model.GetDB().USPAU_Cnct_AccountWallets(params.AUID, params.BaseCoinID, params.WalletAddress, params.WalletTypeID, params.ReferrerInnoUID); err != nil {
 							switch errType {
 							case 2:
 								resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegisteredDB_Error)

@@ -198,10 +198,11 @@ type DBWalletRegist struct {
 
 // //// 지갑등록요청
 type ReqPostWalletRegist struct {
-	AUID          int64  `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
-	BaseCoinID    int64  `json:"base_coin_id"`
-	WalletTypeID  int64  `json:"wallet_type_id"`
-	WalletAddress string `json:"wallet_address"`
+	AUID            int64  `json:"au_id" url:"au_id"` // 계정의 UID (Access Token에서 가져옴)
+	BaseCoinID      int64  `json:"base_coin_id"`
+	WalletTypeID    int64  `json:"wallet_type_id"`
+	WalletAddress   string `json:"wallet_address"`
+	ReferrerInnoUID string `json:"referrer_inno_uid"`
 }
 
 func (o *ReqPostWalletRegist) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {

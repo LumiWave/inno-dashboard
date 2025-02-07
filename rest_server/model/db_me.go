@@ -179,7 +179,7 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) ([]*context.DBWalletRegist
 }
 
 // 지갑등록
-func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string, walletTypeID int64) (int, bool, error) {
+func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string, walletTypeID int64, ReferrerInnoUID string) (int, bool, error) {
 	var returnValue orginMssql.ReturnStatus
 	proc := USPAU_Cnct_AccountWallets
 	isMigrated := false
@@ -189,6 +189,7 @@ func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddre
 		sql.Named("WalletAddress", walletAddress),
 		sql.Named("WalletTypeID", walletTypeID),
 		sql.Named("IsMigrated", sql.Out{Dest: &isMigrated}),
+		sql.Named("ReferrerInnoUID", ReferrerInnoUID),
 		&returnValue)
 
 	if rows != nil {
