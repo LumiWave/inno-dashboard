@@ -9,6 +9,7 @@ import (
 	"github.com/LumiWave/baseutil/log"
 	"github.com/LumiWave/baseutil/otp_google"
 	"github.com/LumiWave/inno-dashboard/rest_server/config"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/commonapi/inner"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/servers/inno_market"
@@ -274,7 +275,7 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 						resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_NotAllowedWalletType)
 					} else {
 						isMigration := true
-						if errType, isMigrated, err := model.GetDB().USPAU_Cnct_AccountWallets(params.AUID, params.BaseCoinID, params.WalletAddress, params.WalletTypeID, params.ReferrerInnoUID); err != nil {
+						if errType, isMigrated, referrals, err := model.GetDB().USPAU_Cnct_AccountWallets(params.AUID, params.BaseCoinID, params.WalletAddress, params.WalletTypeID, params.ReferrerInnoUID); err != nil {
 							switch errType {
 							case 2:
 								resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_AreadyRegisteredDB_Error)
@@ -284,6 +285,11 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 								resp.SetReturn(resultcode.Result_DBError)
 							}
 						} else {
+							// 추천인 코드가 있다면 프리세일 정보가 존재 하는지 확인해서 추천인과, 피추천인 둘다 포인트 보상처리를 해준다.
+							if len(params.ReferrerInnoUID) != 0 && referrals != nil {
+								inner.ProcReferrer(params.ReferrerInnoUID, ctx.GetValue().InnoUID, ctx.GetValue().AUID, referrals)
+							}
+
 							isMigration = isMigrated
 						}
 

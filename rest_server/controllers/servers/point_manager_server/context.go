@@ -248,3 +248,46 @@ type ResBalanceAll struct {
 }
 
 ////////////////////////////////////////
+
+// 멤버 등록
+type ReqPointMemberRegister struct {
+	AUID       int64 `json:"au_id"`
+	MUID       int64 `json:"mu_id"`
+	AppID      int64 `json:"app_id"`
+	DataBaseID int64 `json:"database_id"`
+}
+
+type RespPointMemberRegister struct {
+	Common
+	Value struct {
+		DataBaseID int64   `json:"database_id"`
+		MUID       int64   `json:"mu_id"`
+		Points     []Point `json:"points"`
+	} `json:"value"`
+}
+
+///////////////////////////////////
+
+// /////// app 포인트 업데이트
+type ReqPointAppUpdate struct {
+	AppID      int64 `json:"app_id"`
+	MUID       int64 `json:"mu_id"`
+	PointID    int64 `json:"point_id"`
+	DatabaseID int64 `json:"database_id"`
+
+	PreQuantity    int64 `json:"previous_quantity"`
+	AdjustQuantity int64 `json:"adjust_quantity"`
+}
+
+type ResPointAppUpdate struct {
+	Common
+	Value struct {
+		MUID    int64 `json:"mu_id"`
+		PointID int64 `json:"point_id"`
+
+		PreQuantity   int64 `json:"previous_quantity"`
+		TodayQuantity int64 `json:"today_quantity"`
+	}
+}
+
+////////////////////////////////////////

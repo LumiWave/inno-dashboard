@@ -179,7 +179,7 @@ func (o *DB) USPAU_GetList_AccountWallets(auid int64) ([]*context.DBWalletRegist
 }
 
 // 지갑등록
-func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string, walletTypeID int64, ReferrerInnoUID string) (int, bool, error) {
+func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddress string, walletTypeID int64, ReferrerInnoUID string) (int, bool, []*context.RefreralResponse, error) {
 	var returnValue orginMssql.ReturnStatus
 	proc := USPAU_Cnct_AccountWallets
 	isMigrated := false
@@ -198,7 +198,21 @@ func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddre
 
 	if err != nil {
 		log.Errorf("%s QueryContext error : %v", proc, err)
-		return 1, isMigrated, err
+		return 1, isMigrated, nil, err
+	}
+
+	res := []*context.RefreralResponse{}
+	if len(ReferrerInnoUID) != 0 { // ReferrerInnoUID 정보가 있을대만 referrer 처리가 되었는지 확인 가능
+
+		for rows.Next() {
+			data := &context.RefreralResponse{}
+			if err := rows.Scan(&data.SalesID, &data.IsRegistered); err != nil {
+				log.Errorf("%s Scan error : %v", proc, err)
+				return 1, isMigrated, nil, err
+			} else {
+				res = append(res, data)
+			}
+		}
 	}
 
 	if returnValue != 1 {
@@ -206,16 +220,16 @@ func (o *DB) USPAU_Cnct_AccountWallets(auid int64, baseCoinID int64, walletAddre
 		switch returnValue {
 		case 50106:
 			//이미 다른지갑에 연결된 지갑주소
-			return 2, isMigrated, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+			return 2, isMigrated, nil, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
 		case 50107:
 			//다른 사용자에 의해 연결된 지갑주소
-			return 3, isMigrated, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+			return 3, isMigrated, nil, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
 		default:
-			return 1, isMigrated, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+			return 1, isMigrated, nil, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
 		}
 	}
 
-	return 0, isMigrated, nil
+	return 0, isMigrated, res, nil
 }
 
 // 지갑삭제

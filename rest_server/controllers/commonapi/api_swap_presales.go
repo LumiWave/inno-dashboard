@@ -16,7 +16,7 @@ import (
 )
 
 // 전체 포인트, 코인 정보 리스트 조회
-func GetSwapList(c echo.Context) error {
+func GetPreSalesSwapList(c echo.Context) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
@@ -25,10 +25,7 @@ func GetSwapList(c echo.Context) error {
 		AppPoints: model.GetDB().AppPoints,
 		CoinList:  model.GetDB().Coins,
 		SwapAble: context.SwapAble{
-			SwapAbleP2C: model.GetDB().SwapAblePointToCoins,
-			SwapAbleC2P: model.GetDB().SwapAbleCoinToPoints,
-			SwapAbleC2C: model.GetDB().SwapAbleCoinToCoins,
-			SwapAbleP2P: model.GetDB().SwapAblePointToPoints,
+			SwapAbleP2C: model.GetDB().SwapAblePreSales,
 		},
 	}
 
@@ -37,16 +34,8 @@ func GetSwapList(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
-// Swap 가능 정보 조회 (최소, 변동률, 수수료)
-func GetSwapEnable(c echo.Context, reqSwapEnable *context.ReqSwapEnable) error {
-	resp := new(base.BaseResponse)
-	resp.Success()
-
-	return c.JSON(http.StatusOK, resp)
-}
-
 // Swap 처리
-func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInfo) error {
+func PostPreSalesSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInfo) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
@@ -82,59 +71,22 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	}()
 
 	// 기초 정보 생성
+	reqSwapInfo.EventID = context.EventID_Server_toC2P
 	swapInfo := inner.MakeSwapInfo(ctx.GetValue(), reqSwapInfo)
-
-	// SwapPoint 정보 추가 : P2C, C2P 인경우에만 처리
-	if reqSwapInfo.EventID == context.EventID_toC2P ||
-		reqSwapInfo.EventID == context.EventID_Server_toC2P ||
-		reqSwapInfo.EventID == context.EventID_toP2C ||
-		reqSwapInfo.EventID == context.EventID_toP2P {
-		if _, membersMap, err := model.GetDB().USPAU_GetList_Members(swapInfo.AUID); err != nil {
-			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
-			resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
-			return ctx.EchoContext.JSON(http.StatusOK, resp)
+	// SwapPoint 정보 추가 : C2P 인경우에만 처리
+	if _, membersMap, err := model.GetDB().USPAU_GetList_Members(swapInfo.AUID); err != nil {
+		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
+		resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	} else {
+		if member, ok := membersMap[swapInfo.SwapToPoint.AppID]; ok {
+			swapInfo.SwapToPoint.MUID = member.MUID
+			swapInfo.SwapToPoint.DatabaseID = member.DatabaseID
 		} else {
-			if reqSwapInfo.EventID == context.EventID_toC2P || reqSwapInfo.EventID == context.EventID_Server_toC2P {
-				if member, ok := membersMap[swapInfo.SwapToPoint.AppID]; ok {
-					swapInfo.SwapToPoint.MUID = member.MUID
-					swapInfo.SwapToPoint.DatabaseID = member.DatabaseID
-				} else {
-					// swap 하려는 app point 정보가 없다.
-					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
-					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
-					return ctx.EchoContext.JSON(http.StatusOK, resp)
-				}
-			} else if reqSwapInfo.EventID == context.EventID_toP2C {
-				if member, ok := membersMap[swapInfo.SwapFromPoint.AppID]; ok {
-					swapInfo.SwapFromPoint.MUID = member.MUID
-					swapInfo.SwapFromPoint.DatabaseID = member.DatabaseID
-				} else {
-					// swap 하려는 app point 정보가 없다.
-					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
-					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
-					return ctx.EchoContext.JSON(http.StatusOK, resp)
-				}
-			} else if reqSwapInfo.EventID == context.EventID_toP2P {
-				if member, ok := membersMap[swapInfo.SwapFromPoint.AppID]; ok {
-					swapInfo.SwapFromPoint.MUID = member.MUID
-					swapInfo.SwapFromPoint.DatabaseID = member.DatabaseID
-				} else {
-					// swap 하려는 app point 정보가 없다.
-					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
-					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
-					return ctx.EchoContext.JSON(http.StatusOK, resp)
-				}
-
-				if member, ok := membersMap[swapInfo.SwapToPoint.AppID]; ok {
-					swapInfo.SwapToPoint.MUID = member.MUID
-					swapInfo.SwapToPoint.DatabaseID = member.DatabaseID
-				} else {
-					// swap 하려는 app point 정보가 없다.
-					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
-					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
-					return ctx.EchoContext.JSON(http.StatusOK, resp)
-				}
-			}
+			// swap 하려는 app point 정보가 없다.
+			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+			resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
+			return ctx.EchoContext.JSON(http.StatusOK, resp)
 		}
 	}
 
@@ -167,9 +119,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					}
 				}
 				// from coin 처리를 위해 정보 수집
-				if swapInfo.TxType == context.EventID_toC2P ||
-					swapInfo.TxType == context.EventID_toC2C ||
-					swapInfo.TxType == context.EventID_Server_toC2P {
+				if swapInfo.TxType == context.EventID_toC2P || swapInfo.TxType == context.EventID_toC2C {
 					if swapInfo.SwapFromCoin.CoinID != 0 && wallet.BaseCoinID == model.GetDB().CoinsMap[swapInfo.SwapFromCoin.CoinID].BaseCoinID && wallet.ConnectionStatus == 1 {
 						swapInfo.SwapFromCoin.WalletAddress = wallet.WalletAddress
 						swapInfo.SwapFromCoin.WalletTypeID = wallet.WalletTypeID
@@ -234,7 +184,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
 
-func PutSwapStatus(ctx *context.InnoDashboardContext, params *context.PutSwapStatus) error {
+func PutPreSalesSwapStatus(ctx *context.InnoDashboardContext, params *context.PutSwapStatus) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 
@@ -258,7 +208,7 @@ func PutSwapStatus(ctx *context.InnoDashboardContext, params *context.PutSwapSta
 	return ctx.EchoContext.JSON(http.StatusOK, resp)
 }
 
-func GetSwapInprogressNotExist(ctx *context.InnoDashboardContext, params *context.ReqSwapInprogress) error {
+func GetPreSalesSwapInprogressNotExist(ctx *context.InnoDashboardContext, params *context.ReqSwapInprogress) error {
 	resp := new(base.BaseResponse)
 	resp.Success()
 

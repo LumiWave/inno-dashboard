@@ -1,6 +1,9 @@
 package util
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+)
 
 // string -> int64
 func ParseInt(data string) int64 {
@@ -56,4 +59,20 @@ func ContainsInt(x int64, arr []int64) bool {
 		}
 	}
 	return false
+}
+
+func IsTimeBetween(now time.Time, startStr, endStr string) (bool, error) {
+	// 문자열을 time.Time 형식으로 변환
+	startTime, err := time.Parse(time.RFC3339, startStr)
+	if err != nil {
+		return false, err
+	}
+
+	endTime, err := time.Parse(time.RFC3339, endStr)
+	if err != nil {
+		return false, err
+	}
+
+	// 현재 시간이 startTime과 endTime 사이인지 체크
+	return now.After(startTime) && now.Before(endTime), nil
 }

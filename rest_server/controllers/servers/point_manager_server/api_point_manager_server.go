@@ -186,3 +186,34 @@ func (o *PointManagerServerInfo) GetBalanceAll(req *ReqBalanceAll) (*ResBalanceA
 
 	return data.(*ResBalanceAll), nil
 }
+
+// point-manager 멤버 등록
+func (o *PointManagerServerInfo) PostPointMemberRegister(req *ReqPointMemberRegister) (*RespPointMemberRegister, error) {
+	api := ApiList[Api_post_point_member_register]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
+
+	pbytes, _ := json.Marshal(req)
+	buff := bytes.NewBuffer(pbytes)
+
+	apiResp, err := HttpCall(api.client, callUrl, o.ApiKey, api.Method, api.ApiType, buff, req, api.ResponseFuncType())
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResp.(*RespPointMemberRegister), nil
+}
+
+func (o *PointManagerServerInfo) PutPointAppUpdate(req *ReqPointAppUpdate) (*ResPointAppUpdate, error) {
+	api := ApiList[Api_put_point_update]
+	callUrl := fmt.Sprintf("%s%s%s", o.IntHostUri, o.IntVer, api.Uri)
+
+	pbytes, _ := json.Marshal(req)
+	buff := bytes.NewBuffer(pbytes)
+
+	apiResp, err := HttpCall(api.client, callUrl, o.ApiKey, api.Method, api.ApiType, buff, req, api.ResponseFuncType())
+	if err != nil {
+		return nil, err
+	}
+
+	return apiResp.(*ResPointAppUpdate), nil
+}

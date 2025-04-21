@@ -27,6 +27,8 @@ const (
 	Api_put_swap_status                 = 9  // swap 상태 정보 갱신 요청
 	Api_get_swap_inprogress_notexist    = 10 // swap 진행 중인 정보가 없는지 요청
 	Api_get_coin_ojbectids              = 11 // 코인 지갑별 보유 object id 리스트 조회 : GetCoinObjects
+	Api_post_point_member_register      = 12 // 멤버 등록 : PostPointMemberRegister
+	Api_put_point_update                = 13 // 맴버 포인트 업데이트 PutPointAppUpdate
 )
 
 type ApiInfo struct {
@@ -62,6 +64,10 @@ var ApiList = map[api_kind]ApiInfo{
 		ResponseFuncType: func() interface{} { return new(ResSwapInprogress) }, client: NewClient()},
 	Api_get_coin_ojbectids: ApiInfo{ApiType: Api_get_coin_ojbectids, Uri: "/coin/sui/objectids", Method: "GET",
 		ResponseFuncType: func() interface{} { return new(ResCoinObjects) }, client: NewClient()},
+	Api_post_point_member_register: ApiInfo{ApiType: Api_post_point_member_register, Uri: "/point/member/register", Method: "POST",
+		ResponseFuncType: func() interface{} { return new(RespPointMemberRegister) }, client: NewClient()},
+	Api_put_point_update: ApiInfo{ApiType: Api_put_point_update, Uri: "/point/app/update", Method: "PUT",
+		ResponseFuncType: func() interface{} { return new(ResPointAppUpdate) }, client: NewClient()},
 }
 
 func NewClient() *http.Client {

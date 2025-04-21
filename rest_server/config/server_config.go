@@ -50,10 +50,12 @@ type ServerConfig struct {
 	MssqlDBAccountAll  baseconf.DBAuth `yaml:"mssql_db_account"`
 	MssqlDBAccountRead baseconf.DBAuth `yaml:"mssql_db_account_read"`
 	MssqlDBLogRead     baseconf.DBAuth `yaml:"mssql_db_log_read"`
-	Auth               ApiAuth         `yaml:"api_auth"`
-	InnoMarket         ApiInno         `yaml:"api_inno_market"`
-	PointMgrServer     ApiInno         `yaml:"api_point_manager_server"`
-	WebInno            ApiInno         `yaml:"web_inno_server"`
+	MssqlDBPreSales    baseconf.DBAuth `yaml:"mssql_db_presales"`
+
+	Auth           ApiAuth `yaml:"api_auth"`
+	InnoMarket     ApiInno `yaml:"api_inno_market"`
+	PointMgrServer ApiInno `yaml:"api_point_manager_server"`
+	WebInno        ApiInno `yaml:"web_inno_server"`
 }
 
 func GetInstance(filepath ...string) *ServerConfig {

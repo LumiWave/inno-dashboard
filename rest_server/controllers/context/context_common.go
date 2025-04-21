@@ -23,6 +23,8 @@ const (
 	EventID_toC2P = 4  // 코인->포인트
 	EventID_toC2C = 26 // 코인->코인
 	EventID_toP2P = 28 // 포인트->포인트
+
+	EventID_Server_toC2P = 100000 // 백엔드 서에만 사용 : presales에서 사용되는 코인->포인트 스왑용
 )
 
 type ContextKey struct {

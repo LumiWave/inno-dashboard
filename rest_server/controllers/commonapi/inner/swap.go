@@ -40,7 +40,7 @@ func MakeSwapInfo(token *auth.VerifyAuthToken, reqSwapInfo *context.ReqSwapInfo)
 	}
 
 	switch reqSwapInfo.EventID {
-	case context.EventID_toC2P:
+	case context.EventID_toC2P, context.EventID_Server_toC2P:
 		swapInfo.SwapFromCoin = point_manager_server.SwapCoin{
 			CoinID:             reqSwapInfo.SwapFromCoin.CoinID,
 			WalletAddress:      "",
@@ -111,7 +111,7 @@ func CheckSwapFee(swapInfo *point_manager_server.ReqSwapInfo, resp *base.BaseRes
 	swapCoin := &point_manager_server.SwapCoin{}
 	if swapInfo.TxType == context.EventID_toP2C {
 		swapCoin = &swapInfo.SwapToCoin
-	} else if swapInfo.TxType == context.EventID_toC2P {
+	} else if swapInfo.TxType == context.EventID_toC2P || swapInfo.TxType == context.EventID_toC2C {
 		return
 	} else if swapInfo.TxType == context.EventID_toC2C {
 		swapCoin = &swapInfo.SwapToCoin
@@ -179,7 +179,7 @@ func CheckSwapCoinBalance(swapInfo *point_manager_server.ReqSwapInfo, resp *base
 	swapCoin := &point_manager_server.SwapCoin{}
 	if swapInfo.TxType == context.EventID_toP2C {
 		return
-	} else if swapInfo.TxType == context.EventID_toC2P || swapInfo.TxType == context.EventID_toC2C {
+	} else if swapInfo.TxType == context.EventID_toC2P || swapInfo.TxType == context.EventID_toC2C || swapInfo.TxType == context.EventID_Server_toC2P {
 		swapCoin = &swapInfo.SwapFromCoin
 	}
 

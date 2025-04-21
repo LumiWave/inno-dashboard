@@ -72,7 +72,11 @@ type ReqSwapInfo struct {
 }
 
 func (o *ReqSwapInfo) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
-	if o.EventID != EventID_toP2C && o.EventID != EventID_toC2P && o.EventID != EventID_toC2C && o.EventID != EventID_toP2P {
+	if o.EventID != EventID_toP2C &&
+		o.EventID != EventID_toC2P &&
+		o.EventID != EventID_toC2C &&
+		o.EventID != EventID_toP2P &&
+		o.EventID != EventID_Server_toC2P {
 		return base.MakeBaseResponse(resultcode.Result_Invalid_EventID_Error)
 	}
 	// event id에 따라  AdjustPointQuantity AdjustCoinQuantity두 정보 양수 음수 체크
@@ -80,7 +84,7 @@ func (o *ReqSwapInfo) CheckValidate(ctx *InnoDashboardContext) *base.BaseRespons
 		if !(o.SwapFromPoint.AdjustPointQuantity < 0 && o.SwapToCoin.AdjustCoinQuantity > 0) {
 			return base.MakeBaseResponse(resultcode.Result_Invalid_AdjustQuantity_Error)
 		}
-	} else if o.EventID == EventID_toC2P {
+	} else if o.EventID == EventID_toC2P || o.EventID == EventID_Server_toC2P {
 		if !(o.SwapFromCoin.AdjustCoinQuantity < 0 && o.SwapToPoint.AdjustPointQuantity > 0) {
 			return base.MakeBaseResponse(resultcode.Result_Invalid_AdjustQuantity_Error)
 		}

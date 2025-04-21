@@ -40,6 +40,7 @@ type DB struct {
 	MssqlAccountAll  *basedb.Mssql
 	MssqlAccountRead *basedb.Mssql
 	MssqlLogRead     *basedb.Mssql
+	MssqlPreSales    *basedb.Mssql
 	Cache            *basedb.CacheV8
 
 	MssqlPoints map[int64]*basedb.Mssql
@@ -67,6 +68,9 @@ type DB struct {
 	SwapAblePointToCoins  []*context.SwapPointToCoin  // point to coin 전환 정보
 	SwapAbleCoinToPoints  []*context.SwapCoinToPoint  // coin to point 전환 정보
 	SwapAblePointToPoints []*context.SwapPointToPoint // point to point 전환 정보
+
+	// presale 용
+	SwapAblePreSales []*context.PreSalesExchange // presale에 사용 가능한 스왑 정보 ( coin to point 전용)
 
 	RedSync *redsync.Redsync
 }
@@ -108,6 +112,10 @@ func InitDB(conf *config.ServerConfig) error {
 			if db := CheckPingDB(gDB.MssqlLogRead, conf.MssqlDBLogRead); db != nil {
 				gDB.MssqlLogRead = db
 			}
+
+			if db := CheckPingDB(gDB.MssqlPreSales, conf.MssqlDBPreSales); db != nil {
+				gDB.MssqlPreSales = db
+			}
 		}
 	}()
 
@@ -130,9 +138,10 @@ func LoadDBPoint(conf *config.ServerConfig) {
 	LoadDBMeta()
 
 	if conf.App.LiquidityUpdate {
-		gDB.LoadFullPointLiquidity(1000, true)
-		gDB.LoadFullCoinLiquidity(1000, true)
-		gDB.UpdateLiquidity()
+		// not used follow
+		// gDB.LoadFullPointLiquidity(1000, true)
+		// gDB.LoadFullCoinLiquidity(1000, true)
+		// gDB.UpdateLiquidity()
 		gDB.UpdateCoinFee()
 	}
 }
@@ -153,6 +162,7 @@ func LoadDBMeta() {
 	//wallet
 	gDB.USPAU_Scan_WalletTypes()
 	gDB.USPAU_Scan_BaseCoinWalletTypes()
+	gDB.USPPR_Scan_PreSalesExchangeCoinToPoints()
 }
 
 func MakeDbError(resp *base.BaseResponse, errCode int, err error) {
@@ -190,6 +200,11 @@ func ConnectAllDB(conf *config.ServerConfig) error {
 	}
 
 	gDB.MssqlLogRead, err = gDB.ConnectDB(&conf.MssqlDBLogRead)
+	if err != nil {
+		return err
+	}
+
+	gDB.MssqlPreSales, err = gDB.ConnectDB(&conf.MssqlDBPreSales)
 	if err != nil {
 		return err
 	}
