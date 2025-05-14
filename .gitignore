@@ -14,3 +14,4 @@ etc/conf/internal_api.yml
 __debug_bin
 etc/lumiwavecerti.crt
 etc/lumiwavecerti.key
+__debug_bin*
