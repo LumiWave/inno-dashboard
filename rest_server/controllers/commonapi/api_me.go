@@ -399,7 +399,11 @@ func DeleteWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqDe
 							resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_Diffrent_Wallet_Error) //현재 등록되어있는 지갑주소or지갑종류가 다름
 						} else {
 							if err := model.GetDB().USPAU_Dscnct_AccountWallets(params.AUID, walletData.BaseCoinID, params.WalletAddress, params.WalletTypeID); err != nil {
-								resp.SetReturn(resultcode.Result_DBError)
+								if err.Error() == "50108" {
+									resp.SetReturn(resultcode.Result_Get_Me_WalletRegist_No24hour)
+								} else {
+									resp.SetReturn(resultcode.Result_DBError)
+								}
 							}
 						}
 					}

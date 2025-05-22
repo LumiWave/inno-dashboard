@@ -63,6 +63,7 @@ const (
 	Result_Post_Me_WalletRegist_DeleteTime_Error                      = 34107 // 해제시간이 안됨
 	Result_Post_Me_WalletRegist_Diffrent_Wallet_Error                 = 34108 // 등록된 지갑주소와 정보가 다름
 	Result_Post_Me_WalletRegist_NotAllowedWalletType                  = 34109 // 허용된 지갑종류가 아님
+	Result_Get_Me_WalletRegist_No24hour                               = 34110 // 새지갑등록후 24시간이 지나지않음
 
 	Result_CoinTransfer_CoinSymbol_Empty = 36001 // Coin Symbol is Empty
 	Result_CoinTransfer_ToAddress_Empty  = 36002 // To Address is Empty
@@ -154,6 +155,7 @@ var ResultCodeText = map[int]string{
 	Result_Post_Me_WalletRegist_DeleteTime_Error:                      "can delete wallet in 24 hours.",
 	Result_Post_Me_WalletRegist_Diffrent_Wallet_Error:                 "Not a registered wallet address",
 	Result_Post_Me_WalletRegist_NotAllowedWalletType:                  "Not Allowed Wallet Type",
+	Result_Get_Me_WalletRegist_No24hour:                               "Delete wallet is only possible after 24 hours.",
 
 	Result_CoinTransfer_CoinSymbol_Empty: "CoinSymbol is empty",
 	Result_CoinTransfer_ToAddress_Empty:  "ToAddress is empty",

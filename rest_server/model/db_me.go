@@ -253,8 +253,12 @@ func (o *DB) USPAU_Dscnct_AccountWallets(auid int64, baseCoinID int64, walletAdd
 	}
 
 	if returnValue != 1 {
-		log.Errorf("%s returnvalue error : %v", proc, returnValue)
-		return errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+		if returnValue == 50108 {
+			return errors.New(strconv.Itoa(int(returnValue)))
+		} else {
+			log.Errorf("%s returnvalue error : %v", proc, returnValue)
+			return errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+		}
 	}
 
 	return nil
