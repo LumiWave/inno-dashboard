@@ -42,6 +42,8 @@ func (o *DB) USPPR_Scan_PreSales() ([]*context.PreSales, error) {
 			&item.OpenEndSDT,
 			&item.TotalExchangePointQuantity,
 			&item.CurrExchangePointQuantity,
+			&item.ReferralStartSDT,
+			&item.ReferralEndSDT,
 			&item.ReferralLimitCount,
 			&item.ReferralRewardAppID,
 			&item.ReferralRewardPointID,

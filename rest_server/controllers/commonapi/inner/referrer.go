@@ -29,60 +29,60 @@ func ProcReferrer(innoUID, myInnoUID string, auid int64, referrerlRess []*contex
 
 	for _, preSale := range preSales {
 		// presale 기간인지 체크
-		//if checkPreSalsPeriod(preSale) {
-		for _, referrerlRes := range referrerlRess {
-			if referrerlRes.SalesID == preSale.SalesID && referrerlRes.IsRegistered {
-				// 정상적으로 등록된 경우에만 포인트 적립
-				if preSale.ReferralRewardAppID == 0 {
-					continue
-				}
-
-				// 내 포인트 업데이트
-				if muid, databaseid, pointQuantity, err := checkMyPoint(preSale.ReferralRewardAppID, preSale.ReferralRewardPointID, auid, myInnoUID); err != nil {
-					log.Debugf("checkMyPoint err : %v", err)
-				} else {
-					req := &point_manager_server.ReqPointAppUpdate{
-						AppID:      preSale.ReferralRewardAppID,
-						MUID:       muid,
-						PointID:    preSale.ReferralRewardPointID,
-						DatabaseID: databaseid,
-
-						PreQuantity:    pointQuantity,
-						AdjustQuantity: preSale.ReferrerPointQuantity,
+		if checkPreSalsReferralPeriod(preSale) {
+			for _, referrerlRes := range referrerlRess {
+				if referrerlRes.SalesID == preSale.SalesID && referrerlRes.IsRegistered {
+					// 정상적으로 등록된 경우에만 포인트 적립
+					if preSale.ReferralRewardAppID == 0 {
+						continue
 					}
-					if res, err := point_manager_server.GetInstance().PutPointAppUpdate(req); err != nil {
-						log.Errorf("PutPointAppUpdate err : %v, req:%v", err, req)
+
+					// 내 포인트 업데이트
+					if muid, databaseid, pointQuantity, err := checkMyPoint(preSale.ReferralRewardAppID, preSale.ReferralRewardPointID, auid, myInnoUID); err != nil {
+						log.Debugf("checkMyPoint err : %v", err)
 					} else {
-						if res.Return != resultcode.Result_Success {
-							log.Errorf("PutPointAppUpdate fail return : %v, message : %v, req : %v ", res.Return, res.Message, req)
+						req := &point_manager_server.ReqPointAppUpdate{
+							AppID:      preSale.ReferralRewardAppID,
+							MUID:       muid,
+							PointID:    preSale.ReferralRewardPointID,
+							DatabaseID: databaseid,
+
+							PreQuantity:    pointQuantity,
+							AdjustQuantity: preSale.ReferrerPointQuantity,
+						}
+						if res, err := point_manager_server.GetInstance().PutPointAppUpdate(req); err != nil {
+							log.Errorf("PutPointAppUpdate err : %v, req:%v", err, req)
+						} else {
+							if res.Return != resultcode.Result_Success {
+								log.Errorf("PutPointAppUpdate fail return : %v, message : %v, req : %v ", res.Return, res.Message, req)
+							}
 						}
 					}
-				}
 
-				// 피추천인 포인트 업데이트
-				if muid, databaseid, pointQuantity, err := checkMyPoint(preSale.ReferralRewardAppID, preSale.ReferralRewardPointID, referreeAUID, innoUID); err != nil {
-					log.Debugf("checkMyPoint err : %v", err)
-				} else {
-					req := &point_manager_server.ReqPointAppUpdate{
-						AppID:      preSale.ReferralRewardAppID,
-						MUID:       muid,
-						PointID:    preSale.ReferralRewardPointID,
-						DatabaseID: databaseid,
-
-						PreQuantity:    pointQuantity,
-						AdjustQuantity: preSale.RefereePointQuantity,
-					}
-					if res, err := point_manager_server.GetInstance().PutPointAppUpdate(req); err != nil {
-						log.Errorf("PutPointAppUpdate err : %v, req:%v", err, req)
+					// 피추천인 포인트 업데이트
+					if muid, databaseid, pointQuantity, err := checkMyPoint(preSale.ReferralRewardAppID, preSale.ReferralRewardPointID, referreeAUID, innoUID); err != nil {
+						log.Debugf("checkMyPoint err : %v", err)
 					} else {
-						if res.Return != resultcode.Result_Success {
-							log.Errorf("PutPointAppUpdate fail return : %v, message : %v, req : %v ", res.Return, res.Message, req)
+						req := &point_manager_server.ReqPointAppUpdate{
+							AppID:      preSale.ReferralRewardAppID,
+							MUID:       muid,
+							PointID:    preSale.ReferralRewardPointID,
+							DatabaseID: databaseid,
+
+							PreQuantity:    pointQuantity,
+							AdjustQuantity: preSale.RefereePointQuantity,
+						}
+						if res, err := point_manager_server.GetInstance().PutPointAppUpdate(req); err != nil {
+							log.Errorf("PutPointAppUpdate err : %v, req:%v", err, req)
+						} else {
+							if res.Return != resultcode.Result_Success {
+								log.Errorf("PutPointAppUpdate fail return : %v, message : %v, req : %v ", res.Return, res.Message, req)
+							}
 						}
 					}
 				}
 			}
 		}
-		//}
 	}
 }
 
@@ -143,10 +143,10 @@ func checkMyPoint(appID, pointID, auid int64, innoUID string) (int64, int64, int
 	return 0, 0, 0, err
 }
 
-func checkPreSalsPeriod(saleinfo *context.PreSales) bool {
+func checkPreSalsReferralPeriod(saleinfo *context.PreSales) bool {
 	now := time.Now().UTC()
-	//sales 시간 체크
-	diff, err := util.IsTimeBetween(now, saleinfo.OpenStartSDT, saleinfo.OpenEndSDT)
+	//추천인 등록 가능 시간 체크
+	diff, err := util.IsTimeBetween(now, saleinfo.ReferralStartSDT, saleinfo.ReferralEndSDT)
 	if err != nil {
 		//return nil, errors.New("Sales Time Parse Error - " + saleinfo.OpenStartSDT + "/" + saleinfo.OpenEndSDT)
 		return false

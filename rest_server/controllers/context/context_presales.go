@@ -16,6 +16,8 @@ type PreSales struct {
 	OpenEndSDT                 string `json:"open_end_sdt"`
 	TotalExchangePointQuantity int64  `json:"total_exchange_point_quantity"`
 	CurrExchangePointQuantity  int64  `json:"curr_exchange_point_quantity"`
+	ReferralStartSDT           string `json:"referral_start_sdt"`
+	ReferralEndSDT             string `json:"referral_end_sdt"`
 	ReferralLimitCount         int64  `json:"referral_limit_count"`
 	ReferralRewardAppID        int64  `json:"referral_reward_app_id"`
 	ReferralRewardPointID      int64  `json:"referral_reward_point_id"`
