@@ -68,6 +68,11 @@ func (o *DB) UpdateCoinFee() {
 							transactionFee, _ = new(big.Float).Mul(gasPrice, new(big.Float).SetInt64(100000)).Float64()
 						}
 
+						// sui일때는 다시 계산한다
+						if baseCoin.BaseCoinSymbol == "SUI" {
+							transactionFee, _ = new(big.Float).Mul(gasPrice, new(big.Float).SetInt64(21000*1.2)).Float64()
+						}
+
 						fgasPrice, _ := gasPrice.Float64()
 						newFee := &context.ResGetCoinFee{
 							BaseCoinID:     baseCoin.BaseCoinID,
