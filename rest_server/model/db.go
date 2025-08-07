@@ -69,6 +69,17 @@ type DB struct {
 	SwapAbleCoinToPoints  []*context.SwapCoinToPoint  // coin to point 전환 정보
 	SwapAblePointToPoints []*context.SwapPointToPoint // point to point 전환 정보
 
+	SwapAbleC2CsMap map[int64]map[int64]*context.SwapCointoCoin   // coin to coin 전환 : key from coin id, key to coin id
+	SwapAbleP2CsMap map[int64]map[int64]*context.SwapPointToCoin  // point to coin 전환 : key from coin id, key to point id
+	SwapAbleC2PsMap map[int64]map[int64]*context.SwapCoinToPoint  // coint to point 전환 : key from point id, key to coin id
+	SwapAbleP2PsMap map[int64]map[int64]*context.SwapPointToPoint // point to point 전환
+
+	SwapP2CTiers    []*context.SwapP2CTier                    // point to coin 단계별 우대 환율 메타
+	SwapP2CTiersMap map[string]map[int64]*context.SwapP2CTier // point to coin 단계별 우대 환율 메타 map, key1:"from_to", key2:tierID
+
+	SwapP2CTierConditions    []*context.SwapP2CTierCondition                      // point to coin 단계별 우대 조건
+	SwapP2CTierConditionsMap map[string]map[int64][]*context.SwapP2CTierCondition // point to coin 단계별 우대 조건 map, key1:"from_to", key2:tierID
+
 	// presale 용
 	SwapAblePreSales []*context.PreSalesExchange // presale에 사용 가능한 스왑 정보 ( coin to point 전용)
 
@@ -158,6 +169,9 @@ func LoadDBMeta() {
 	gDB.USPAU_Scan_ExchangePointToCoins()
 	gDB.USPAU_Scan_ExchangeCoinToPoints()
 	gDB.USPAU_Scan_ExchangePointToPoints()
+
+	gDB.USPAU_Scan_ExchangePointToCoinTiers()
+	gDB.USPAU_Scan_ExchangePointToCoinTierConditions()
 
 	//wallet
 	gDB.USPAU_Scan_WalletTypes()

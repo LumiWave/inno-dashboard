@@ -173,6 +173,25 @@ func CheckSwapFee(swapInfo *point_manager_server.ReqSwapInfo, resp *base.BaseRes
 	}
 }
 
+func GetCoinBalance(coinSymbol string, walletAddress string, resp *base.BaseResponse) (int64, float64) {
+	req := &point_manager_server.ReqBalance{
+		Symbol:  coinSymbol,
+		Address: walletAddress,
+	}
+
+	res, err := point_manager_server.GetInstance().GetBalance(req)
+	if err != nil {
+		log.Errorf("GetBalance err : %v, wallet:%v", err, walletAddress)
+		resp.SetReturn(resultcode.ResultInternalServerError)
+	} else if res.Return != 0 {
+		log.Errorf("GetBalance return : %v, msg:%v", res.Return, res.Message)
+		resp.SetReturn(resultcode.ResultInternalServerError)
+	}
+
+	balance, _ := strconv.ParseInt(res.Value.Balance, 10, 64)
+	return balance, util.ToDecimalEncf(res.Value.Balance, res.Value.Decimal)
+}
+
 // swap에 필요한 코인 보유량 체크
 func CheckSwapCoinBalance(swapInfo *point_manager_server.ReqSwapInfo, resp *base.BaseResponse) {
 

@@ -33,6 +33,7 @@ func (o *DB) USPAU_Scan_ExchangeCoinToCoins() error {
 	}
 
 	o.SwapAbleCoinToCoins = []*context.SwapCointoCoin{}
+	o.SwapAbleC2CsMap = make(map[int64]map[int64]*context.SwapCointoCoin)
 
 	for rows.Next() {
 		swapAble := &context.SwapCointoCoin{}
@@ -49,6 +50,11 @@ func (o *DB) USPAU_Scan_ExchangeCoinToCoins() error {
 			return err
 		} else {
 			o.SwapAbleCoinToCoins = append(o.SwapAbleCoinToCoins, swapAble)
+
+			if o.SwapAbleC2CsMap[swapAble.FromID] == nil {
+				o.SwapAbleC2CsMap[swapAble.FromID] = make(map[int64]*context.SwapCointoCoin)
+			}
+			o.SwapAbleC2CsMap[swapAble.FromID][swapAble.ToID] = swapAble
 		}
 	}
 
@@ -75,6 +81,7 @@ func (o *DB) USPAU_Scan_ExchangePointToCoins() error {
 	}
 
 	o.SwapAblePointToCoins = []*context.SwapPointToCoin{}
+	o.SwapAbleP2CsMap = make(map[int64]map[int64]*context.SwapPointToCoin)
 
 	for rows.Next() {
 		swapAble := &context.SwapPointToCoin{}
@@ -90,6 +97,11 @@ func (o *DB) USPAU_Scan_ExchangePointToCoins() error {
 			return err
 		} else {
 			o.SwapAblePointToCoins = append(o.SwapAblePointToCoins, swapAble)
+
+			if o.SwapAbleP2CsMap[swapAble.FromID] == nil {
+				o.SwapAbleP2CsMap[swapAble.FromID] = make(map[int64]*context.SwapPointToCoin)
+			}
+			o.SwapAbleP2CsMap[swapAble.FromID][swapAble.ToID] = swapAble
 		}
 	}
 
@@ -116,6 +128,7 @@ func (o *DB) USPAU_Scan_ExchangeCoinToPoints() error {
 	}
 
 	o.SwapAbleCoinToPoints = []*context.SwapCoinToPoint{}
+	o.SwapAbleC2PsMap = make(map[int64]map[int64]*context.SwapCoinToPoint)
 
 	for rows.Next() {
 		swapAble := &context.SwapCoinToPoint{}
@@ -131,6 +144,11 @@ func (o *DB) USPAU_Scan_ExchangeCoinToPoints() error {
 			return err
 		} else {
 			o.SwapAbleCoinToPoints = append(o.SwapAbleCoinToPoints, swapAble)
+
+			if o.SwapAbleC2PsMap[swapAble.FromID] == nil {
+				o.SwapAbleC2PsMap[swapAble.FromID] = make(map[int64]*context.SwapCoinToPoint)
+			}
+			o.SwapAbleC2PsMap[swapAble.FromID][swapAble.ToID] = swapAble
 		}
 	}
 
@@ -157,6 +175,7 @@ func (o *DB) USPAU_Scan_ExchangePointToPoints() error {
 	}
 
 	o.SwapAblePointToPoints = []*context.SwapPointToPoint{}
+	o.SwapAbleP2PsMap = make(map[int64]map[int64]*context.SwapPointToPoint)
 
 	for rows.Next() {
 		swapAble := &context.SwapPointToPoint{}
@@ -172,6 +191,11 @@ func (o *DB) USPAU_Scan_ExchangePointToPoints() error {
 			return err
 		} else {
 			o.SwapAblePointToPoints = append(o.SwapAblePointToPoints, swapAble)
+
+			if o.SwapAbleP2PsMap[swapAble.FromID] == nil {
+				o.SwapAbleP2PsMap[swapAble.FromID] = make(map[int64]*context.SwapPointToPoint)
+			}
+			o.SwapAbleP2PsMap[swapAble.FromID][swapAble.ToID] = swapAble
 		}
 	}
 

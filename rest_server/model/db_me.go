@@ -12,15 +12,16 @@ import (
 )
 
 const (
-	USPAU_GetList_AccountCoins             = "[dbo].[USPAU_GetList_AccountCoins]"
-	USPAU_GetList_AccountPoints            = "[dbo].[USPAU_GetList_AccountPoints]"
-	USPAU_GetList_Members                  = "[dbo].[USPAU_GetList_Members]"
-	USPAU_GetList_AccountWallets           = "[dbo].[USPAU_GetList_AccountWallets]"
-	USPAU_Cnct_AccountWallets              = "[dbo].[USPAU_Cnct_AccountWallets]"
-	USPAU_Dscnct_AccountWallets            = "[dbo].[USPAU_Dscnct_AccountWallets]"
-	USPAU_GetList_MigrationData            = "[dbo].[USPAU_GetList_MigrationData]"
-	USPAU_Mod_Accounts_IsMigrated          = "[dbo].[USPAU_Mod_Accounts_IsMigrated]"
-	USPAU_GetList_AccountApplicationPoints = "[dbo].[USPAU_GetList_AccountApplicationPoints]"
+	USPAU_GetList_AccountCoins              = "[dbo].[USPAU_GetList_AccountCoins]"
+	USPAU_GetList_AccountPoints             = "[dbo].[USPAU_GetList_AccountPoints]"
+	USPAU_GetList_Members                   = "[dbo].[USPAU_GetList_Members]"
+	USPAU_GetList_AccountWallets            = "[dbo].[USPAU_GetList_AccountWallets]"
+	USPAU_Cnct_AccountWallets               = "[dbo].[USPAU_Cnct_AccountWallets]"
+	USPAU_Dscnct_AccountWallets             = "[dbo].[USPAU_Dscnct_AccountWallets]"
+	USPAU_GetList_MigrationData             = "[dbo].[USPAU_GetList_MigrationData]"
+	USPAU_Mod_Accounts_IsMigrated           = "[dbo].[USPAU_Mod_Accounts_IsMigrated]"
+	USPAU_GetList_AccountApplicationPoints  = "[dbo].[USPAU_GetList_AccountApplicationPoints]"
+	USPAU_GetList_NonFungibleTokens_By_AUID = "[dbo].[USPAU_GetList_NonFungibleTokens_By_AUID]"
 )
 
 // 계정 코인 조회
@@ -344,4 +345,40 @@ func (o *DB) USPAU_GetList_AccountApplicationPoints(auid, muid int64) (*context.
 	}
 
 	return points, nil
+}
+
+func (o *DB) USPAU_GetList_NonFungibleTokens_By_AUID(auid, nftPackID int64) ([]*context.MyNFTListByNFTPackID, error) {
+	var returnValue orginMssql.ReturnStatus
+	proc := USPAU_GetList_NonFungibleTokens_By_AUID
+	rows, err := o.MssqlAccountRead.QueryContext(contextR.Background(), proc,
+		sql.Named("AUID", auid),
+		sql.Named("NFTPackID", nftPackID),
+		&returnValue)
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
+	if err != nil {
+		log.Errorf("%s QueryContext error : %v", proc, err)
+		return nil, err
+	}
+
+	nftList := []*context.MyNFTListByNFTPackID{}
+	for rows.Next() {
+		nft := new(context.MyNFTListByNFTPackID)
+		if err := rows.Scan(&nft.BaseCoinID, &nft.WalletTypeID, &nft.WalletID, &nft.NFTID); err != nil {
+			log.Errorf("%s Scan error : %v", proc, err)
+			return nil, err
+		} else {
+			nftList = append(nftList, nft)
+		}
+	}
+
+	if returnValue != 1 {
+		log.Errorf("%s returnvalue error : %v", proc, returnValue)
+		return nil, errors.New(proc + " returnvalue error " + strconv.Itoa(int(returnValue)))
+	}
+
+	return nftList, nil
 }

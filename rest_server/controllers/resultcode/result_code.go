@@ -29,10 +29,13 @@ const (
 	Result_Invalid_TxStatus             = 32109 // invalid tx status
 	Result_Invalid_WalletTypeID_Error   = 32110 // wallet platform 이름
 	Result_Invalid_BaseCoinID_Error     = 32111 // basecoinid 유효성 에러
+	Result_Invalid_FromID_Error         = 32112
+	Result_Invalid_ToID_Error           = 32113
 
 	Result_Not_Exist_AppPointInfo_Error = 32201 // 앱 포인트 정보가 존재하지 않는다.
 	Result_Unknown_Swap_Error           = 32202 // unknown swap 에러
 	Result_Not_Support_Swap_Error       = 32303 // 지원하지 않는 스왑
+	Result_Not_Support_Swap_Tier        = 32304 // swap 우대 조건이 존재하지 않음
 
 	Result_Get_App_AppID_Empty                = 33001 // Get App AppID Empty
 	Result_Get_App_PointID_Empty              = 33002 // Get App PointID Empty
@@ -121,10 +124,13 @@ var ResultCodeText = map[int]string{
 	Result_Invalid_TxStatus:             "TxStatus is invalid",
 	Result_Invalid_WalletTypeID_Error:   "wallet_type_id is invalid",
 	Result_Invalid_BaseCoinID_Error:     "base_coin_id is invalid",
+	Result_Invalid_FromID_Error:         "from_id is invalid",
+	Result_Invalid_ToID_Error:           "to_id is invalid",
 
 	Result_Not_Exist_AppPointInfo_Error: "App point information does not exist",
 	Result_Unknown_Swap_Error:           "Unknown swap error",
 	Result_Not_Support_Swap_Error:       "Not support swap type",
+	Result_Not_Support_Swap_Tier:        "No swap priority conditions",
 
 	Result_Get_App_AppID_Empty:                "AppID is empty",
 	Result_Get_App_PointID_Empty:              "PointID is empty",

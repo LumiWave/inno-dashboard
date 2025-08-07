@@ -33,7 +33,7 @@ func (o *ExternalAPI) PostSwap(c echo.Context) error {
 	params := new(context.ReqSwapInfo)
 
 	// Request json 파싱
-	if err := c.Bind(params); err != nil {
+	if err := ctx.EchoContext.Bind(params); err != nil {
 		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
@@ -52,7 +52,7 @@ func (o *ExternalAPI) PutSwapStatus(c echo.Context) error {
 	params := new(context.PutSwapStatus)
 
 	// Request json 파싱
-	if err := c.Bind(params); err != nil {
+	if err := ctx.EchoContext.Bind(params); err != nil {
 		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
@@ -71,7 +71,7 @@ func (o *ExternalAPI) GetSwapInprogressNotExist(c echo.Context) error {
 	params := context.NewReqSwapIniprogress()
 
 	// Request json 파싱
-	if err := c.Bind(params); err != nil {
+	if err := ctx.EchoContext.Bind(params); err != nil {
 		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
 	}
@@ -82,4 +82,23 @@ func (o *ExternalAPI) GetSwapInprogressNotExist(c echo.Context) error {
 		return c.JSON(http.StatusOK, err)
 	}
 	return commonapi.GetSwapInprogressNotExist(ctx, params)
+}
+
+// swap tier 조건 체크
+func (o *ExternalAPI) GetSwapTierCheck(c echo.Context) error {
+	ctx := base.GetContext(c).(*context.InnoDashboardContext)
+	params := context.NewReqSwapTierCheck()
+
+	// Request json 파싱
+	if err := ctx.EchoContext.Bind(params); err != nil {
+		log.Errorf("%v", err)
+		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 유효성 체크
+	if err := params.CheckValidate(ctx); err != nil {
+		log.Errorf("%v", err)
+		return c.JSON(http.StatusOK, err)
+	}
+	return commonapi.GetSwapTierCheck(ctx, params)
 }

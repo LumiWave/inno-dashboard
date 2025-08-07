@@ -24,6 +24,9 @@ type SwapList struct {
 	CoinList
 
 	SwapAble `json:"swapable"`
+
+	SwapTier          `json:"swap_tier"`
+	SwapTierCondition `json:"swap_tier_condition"`
 }
 
 ////////////////////////////////////////

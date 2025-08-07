@@ -8,11 +8,21 @@ type SwapAble struct {
 	ExpireCycle int64 `json:"expire_cycle"`
 }
 
+type SwapTier struct {
+	SwapP2CTier any `json:"p2c_tier"`
+}
+
+type SwapTierCondition struct {
+	SwapP2CTierCondition any `json:"p2c_tier_condition"`
+}
+
 type Meta struct {
 	PointList
 	AppPoints
 	BaseCoinList
 	CoinList
-	SwapAble `json:"swapable"`
+	SwapAble          `json:"swapable"`
+	SwapTier          `json:"swap_tier"`
+	SwapTierCondition `json:"swap_tier_condition"`
 	WalletTypeList
 }

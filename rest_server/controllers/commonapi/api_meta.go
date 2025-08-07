@@ -35,6 +35,12 @@ func GetMeta(c echo.Context) error {
 			SwapAbleP2P: model.GetDB().SwapAblePointToPoints,
 			ExpireCycle: config.GetInstance().Swap.ExpireCycle,
 		},
+		SwapTier: context.SwapTier{
+			SwapP2CTier: model.GetDB().SwapP2CTiers,
+		},
+		SwapTierCondition: context.SwapTierCondition{
+			SwapP2CTierCondition: model.GetDB().SwapP2CTierConditions,
+		},
 
 		BaseCoinList:   model.GetDB().BaseCoins,
 		WalletTypeList: model.GetDB().WalletTypes,
