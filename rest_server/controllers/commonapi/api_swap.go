@@ -428,11 +428,6 @@ func GetSwapTierCheck(ctx *context.InnoDashboardContext, params *context.ReqSwap
 		}
 	}
 
-	isAchievedCMap = make(map[int64]bool)
-	isAchievedCMap[2] = true
-	isAchievedCMap[3] = false
-	isAchievedCMap[1] = false
-
 	// select achieved tier index
 	selectTier := int64(0)
 	hasFailure := false
