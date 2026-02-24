@@ -392,6 +392,7 @@ func DeleteWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqDe
 					limitDT := registDT.Add(time.Hour * context.DeleteWalletHour)
 					//limitDT := registDT.Add(0)
 					cmp := limitDT.Compare(time.Now())
+					cmp = 0 //디비로직대로만 처리하기위해서 일단은 비교값을 0으로 고정한다. (24시간이 지나지않았다는것도 디비에서 체크하기때문에 여기서도 체크하도록 남겨두긴하지만 실제로는 디비에서만 체크하도록 한다.)
 					if cmp > 0 {
 						resp.SetReturn(resultcode.Result_Post_Me_WalletRegist_DeleteTime_Error) //24시간이 안됨
 					} else {
