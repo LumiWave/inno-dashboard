@@ -107,7 +107,11 @@ type PutSwapStatus struct {
 }
 
 func (o *PutSwapStatus) CheckValidate(ctx *InnoDashboardContext) *base.BaseResponse {
-	if o.TxStatus < 2 && o.TxStatus > 4 {
+	// 회원이 알릴 수 있는 상태만 받는다.
+	// 2: 수수료 전송 시작, 3: 수수료 전송 성공, 4: 수수료 전송 실패, 8: 코인 전송 시작, 0: 코인 전송 실패
+	switch o.TxStatus {
+	case 2, 3, 4, 8, 0:
+	default:
 		return base.MakeBaseResponse(resultcode.Result_Invalid_TxStatus)
 	}
 	if len(o.FromWalletAddress) == 0 {

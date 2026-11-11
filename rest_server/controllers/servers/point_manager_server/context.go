@@ -92,6 +92,7 @@ type ReqSwapStatus struct {
 	TxStatus          int64  `json:"tx_status"`
 	TxHash            string `json:"tx_hash"`
 	FromWalletAddress string `json:"from_wallet_address"`
+	AUID              int64  `json:"au_id"` // 요청한 회원. point-manager 가 스왑 주인인지 확인하는 데 쓴다.
 }
 
 type ResSwapStatus struct {

@@ -188,11 +188,18 @@ func PutPreSalesSwapStatus(ctx *context.InnoDashboardContext, params *context.Pu
 	resp := new(base.BaseResponse)
 	resp.Success()
 
+	// 남의 지갑 주소를 넣어 다른 회원의 스왑 상태를 바꾸지 못하도록, 토큰의 계정을 같이 보낸다.
+	if ctx.GetValue() == nil || ctx.GetValue().AUID == 0 {
+		resp.SetReturn(resultcode.Result_Auth_InvalidJwt)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	}
+
 	req := &point_manager_server.ReqSwapStatus{
 		TxID:              params.TxID,
 		TxStatus:          params.TxStatus,
 		TxHash:            params.TxHash,
 		FromWalletAddress: params.FromWalletAddress,
+		AUID:              ctx.GetValue().AUID,
 	}
 
 	if resSwap, err := point_manager_server.GetInstance().PutSwapStatus(req); err != nil {
