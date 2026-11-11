@@ -1,6 +1,8 @@
 package context
 
 import (
+	"math"
+
 	"github.com/LumiWave/baseapp/base"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 )
@@ -24,11 +26,22 @@ func (o *ReqCoinTransfer) CheckValidate(ctx *InnoDashboardContext) *base.BaseRes
 	if len(o.ToAddress) == 0 {
 		return base.MakeBaseResponse(resultcode.Result_CoinTransfer_ToAddress_Empty)
 	}
-	if o.Quantity == 0 {
+	// 수량은 0 보다 큰 유한한 값이어야 한다. 음수를 받으면 잔액이 늘어나는 방향으로 처리될 수 있다.
+	if !IsPositiveQuantity(o.Quantity) {
 		return base.MakeBaseResponse(resultcode.Result_CoinTransfer_Quantity_Empty)
 	}
 
 	return nil
+}
+
+// IsPositiveQuantity 는 수량이 0 보다 큰 유한한 값인지 알려준다.
+func IsPositiveQuantity(quantity float64) bool {
+	return quantity > 0 && !math.IsInf(quantity, 0) && !math.IsNaN(quantity)
+}
+
+// IsMemberIdentity 는 토큰이 회원 계정을 가리키는지 알려준다.
+func IsMemberIdentity(auid int64) bool {
+	return auid > 0
 }
 
 ////////////////////////////////////////

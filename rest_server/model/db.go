@@ -190,8 +190,9 @@ func (o *DB) ConnectDB(conf *baseconf.DBAuth) (*basedb.Mssql, error) {
 		conf.ApplicationIntent, conf.Timeout, conf.ConnectRetryCount, conf.ConnectRetryInterval)
 
 	if err != nil {
-		log.Errorf("err: %v, val: %v, %v, %v, %v, %v, %v",
-			err, conf.Host, conf.ID, conf.Password, conf.Database, conf.PoolSize, conf.IdleSize)
+		// 비밀번호는 로그에 남기지 않는다.
+		log.Errorf("err: %v, val: %v, %v, %v, %v, %v",
+			err, conf.Host, conf.ID, conf.Database, conf.PoolSize, conf.IdleSize)
 		return nil, err
 	}
 	idleSize, _ := strconv.ParseInt(conf.IdleSize, 10, 32)

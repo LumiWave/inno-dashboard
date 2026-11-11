@@ -51,6 +51,15 @@ func PreCheck(c echo.Context) base.PreCheckResponse {
 			}
 		}
 
+		// "Bearer " 뒤에 토큰이 없으면 잘라낼 때 panic 이 나므로 길이를 먼저 확인한다.
+		if len(author) == 0 || len(author[0]) <= 7 {
+			res := base.MakeBaseResponse(resultcode.Result_Auth_InvalidJwt)
+			return base.PreCheckResponse{
+				IsSucceed: false,
+				Response:  res,
+			}
+		}
+
 		if value, returnValue, err := auth.CheckAuthToken(author[0][7:]); err != nil {
 			res := base.MakeBaseResponse(resultcode.Result_Auth_InvalidJwt)
 			return base.PreCheckResponse{
@@ -59,6 +68,15 @@ func PreCheck(c echo.Context) base.PreCheckResponse {
 			}
 		} else {
 			if value != nil {
+				// 대시보드의 토큰 필요 API 는 전부 회원 본인용이다. 계정(au_id)이 없는 토큰
+				// (앱 토큰, 인증 서버가 빈 값으로 성공을 돌려준 경우)은 AUID 0 으로 진행되지 않게 거절한다.
+				if !context.IsMemberIdentity(value.AUID) {
+					res := base.MakeBaseResponse(resultcode.Result_Auth_InvalidJwt)
+					return base.PreCheckResponse{
+						IsSucceed: false,
+						Response:  res,
+					}
+				}
 				base.GetContext(c).(*context.InnoDashboardContext).SetVerifyAuthToken(value)
 				log.Debugf("from : [companyid:%v][appid:%v][logintype:%v][au_id:%v]", value.CompanyID, value.AppID, value.LoginType, value.AUID)
 			} else {

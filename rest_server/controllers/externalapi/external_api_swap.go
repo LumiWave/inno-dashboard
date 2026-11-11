@@ -7,6 +7,7 @@ import (
 	"github.com/LumiWave/baseutil/log"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/commonapi"
 	"github.com/LumiWave/inno-dashboard/rest_server/controllers/context"
+	"github.com/LumiWave/inno-dashboard/rest_server/controllers/resultcode"
 	"github.com/labstack/echo"
 )
 
@@ -36,6 +37,11 @@ func (o *ExternalAPI) PostSwap(c echo.Context) error {
 	if err := ctx.EchoContext.Bind(params); err != nil {
 		log.Errorf("%v", err)
 		return base.BaseJSONInternalServerError(c, err)
+	}
+
+	// 서버가 프리세일 처리에만 쓰는 스왑 타입은 클라이언트에게서 받지 않는다.
+	if params.EventID == context.EventID_Server_toC2P {
+		return c.JSON(http.StatusOK, base.MakeBaseResponse(resultcode.Result_Invalid_EventID_Error))
 	}
 
 	// 유효성 체크

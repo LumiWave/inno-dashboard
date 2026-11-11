@@ -259,6 +259,22 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 	resp := new(base.BaseResponse)
 	resp.Success()
 
+	// 같은 계정의 지갑 등록을 한 번에 하나씩만 처리한다.
+	// 서로 다른 체인의 지갑 등록을 동시에 보내면 옛 계정의 잔액 이전이 두 번 나갈 수 있다.
+	mutex := model.GetDB().RedSync.NewMutex(model.MakeWalletRegistLockKey(params.AUID))
+	if err := mutex.Lock(); err != nil {
+		log.Errorf("wallet regist lock err : %v, auid:%v", err, params.AUID)
+		resp.SetReturn(resultcode.Result_RedisError_Lock_fail)
+		return ctx.EchoContext.JSON(http.StatusOK, resp)
+	}
+	defer func() {
+		if ok, err := mutex.Unlock(); !ok || err != nil {
+			if err != nil {
+				log.Errorf("wallet regist unlock err : %v", err)
+			}
+		}
+	}()
+
 	if walletRegistMap, errCode := GetWalletRegistInfo(params.AUID); errCode > 0 {
 		resp.SetReturn(errCode)
 	} else {
@@ -296,9 +312,12 @@ func PostWalletRegist(ctx *context.InnoDashboardContext, params *context.ReqPost
 						// 등록하기 전에 마이그래션을 위한 정보를 수집해준다.
 						// 마이그레이션은 비동기로 처리해준다.
 						if !isMigration {
+							// 이전 대상 조회는 락을 잡은 채로 먼저 끝낸다. 이 조회가 "이전 완료" 표시를 남기므로,
+							// 뒤따라온 다른 지갑 등록은 이전 대상이 아닌 것으로 처리된다. 실제 전송만 비동기로 한다.
+							migCoins, migNFT, migErr := model.GetDB().USPAU_GetList_MigrationData(params.AUID)
 							go func(auid int64, userWalletAddress string) {
-								if migCoins, migNFT, err := model.GetDB().USPAU_GetList_MigrationData(auid); err != nil {
-									log.Errorf("USPAU_GetList_MigrationData err : %v, auid:%v", err, auid)
+								if migErr != nil {
+									log.Errorf("USPAU_GetList_MigrationData err : %v, auid:%v", migErr, auid)
 								} else {
 									// 시작 전에 redis에 남기도록 해서 문제가 발생시 레디스를 삭제하지 않고 그대로 두고 추후 수동으로 처리해준다.
 									// 코인 전송 시작
