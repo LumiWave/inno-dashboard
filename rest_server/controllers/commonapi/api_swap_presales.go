@@ -41,7 +41,7 @@ func PostPreSalesSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.Re
 
 	// swap 사용 가능 상태 체크
 	if !inner.IsEnableSwap(reqSwapInfo) {
-		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Support_Swap_Error])
+		log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Not_Support_Swap_Error])
 		resp.SetReturn(resultcode.Result_Not_Support_Swap_Error)
 		resp.Message = "This swap is not currently supported."
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
@@ -75,7 +75,7 @@ func PostPreSalesSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.Re
 	swapInfo := inner.MakeSwapInfo(ctx.GetValue(), reqSwapInfo)
 	// SwapPoint 정보 추가 : C2P 인경우에만 처리
 	if _, membersMap, err := model.GetDB().USPAU_GetList_Members(swapInfo.AUID); err != nil {
-		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
+		log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
 		resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
 	} else {
@@ -84,7 +84,7 @@ func PostPreSalesSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.Re
 			swapInfo.SwapToPoint.DatabaseID = member.DatabaseID
 		} else {
 			// swap 하려는 app point 정보가 없다.
-			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+			log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
 			resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
 		}

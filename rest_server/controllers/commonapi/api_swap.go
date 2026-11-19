@@ -60,7 +60,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 
 	// swap 사용 가능 상태 체크
 	if !inner.IsEnableSwap(reqSwapInfo) {
-		log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Support_Swap_Error])
+		log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Not_Support_Swap_Error])
 		resp.SetReturn(resultcode.Result_Not_Support_Swap_Error)
 		resp.Message = "This swap is not currently supported."
 		return ctx.EchoContext.JSON(http.StatusOK, resp)
@@ -98,7 +98,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 		reqSwapInfo.EventID == context.EventID_toP2C ||
 		reqSwapInfo.EventID == context.EventID_toP2P {
 		if _, membersMap, err := model.GetDB().USPAU_GetList_Members(swapInfo.AUID); err != nil {
-			log.Errorf(resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
+			log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Get_MemberList_Scan_Error])
 			resp.SetReturn(resultcode.Result_Get_MemberList_Scan_Error)
 			return ctx.EchoContext.JSON(http.StatusOK, resp)
 		} else {
@@ -108,7 +108,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					swapInfo.SwapToPoint.DatabaseID = member.DatabaseID
 				} else {
 					// swap 하려는 app point 정보가 없다.
-					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+					log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
 					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
 					return ctx.EchoContext.JSON(http.StatusOK, resp)
 				}
@@ -118,7 +118,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					swapInfo.SwapFromPoint.DatabaseID = member.DatabaseID
 				} else {
 					// swap 하려는 app point 정보가 없다.
-					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+					log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
 					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
 					return ctx.EchoContext.JSON(http.StatusOK, resp)
 				}
@@ -128,7 +128,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					swapInfo.SwapFromPoint.DatabaseID = member.DatabaseID
 				} else {
 					// swap 하려는 app point 정보가 없다.
-					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+					log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
 					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
 					return ctx.EchoContext.JSON(http.StatusOK, resp)
 				}
@@ -138,7 +138,7 @@ func PostSwap(ctx *context.InnoDashboardContext, reqSwapInfo *context.ReqSwapInf
 					swapInfo.SwapToPoint.DatabaseID = member.DatabaseID
 				} else {
 					// swap 하려는 app point 정보가 없다.
-					log.Errorf(resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
+					log.Errorf("%s", resultcode.ResultCodeText[resultcode.Result_Not_Exist_AppPointInfo_Error])
 					resp.SetReturn(resultcode.Result_Not_Exist_AppPointInfo_Error)
 					return ctx.EchoContext.JSON(http.StatusOK, resp)
 				}

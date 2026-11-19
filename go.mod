@@ -1,6 +1,6 @@
 module github.com/LumiWave/inno-dashboard
 
-go 1.20
+go 1.26.0
 
 require (
 	github.com/LumiWave/baseInnoClient v1.2.0
